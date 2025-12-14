@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico - EmbraPac</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS COMPARTILHADOS --- */
+        :root {
+            --primary-blue: #003B73;
+            --secondary-blue: #4DA6E0;
+            --accent-yellow: #FFD700;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --bg-color: #F4F7F6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-light: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex; flex-direction: column; height: 100vh;
+            position: relative;
+        }
+
+        /* Marca D'água */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('243186829.jpeg'); 
+            background-repeat: no-repeat; background-position: center; background-size: 600px;
+            opacity: 0.08; z-index: -1; pointer-events: none; filter: grayscale(100%);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-blue); color: var(--text-light);
+            padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 59, 115, 0.2); z-index: 10;
+        }
+
+        .logo-container { display: flex; align-items: center; font-size: 1.4rem; font-weight: bold; }
+        .logo-img { height: 50px; margin-right: 15px; background-color: #fff; padding: 2px; border-radius: 4px; display: block; }
+
+        nav a {
+            text-decoration: none; color: rgba(255, 255, 255, 0.7);
+            padding: 10px 15px; font-size: 1rem; transition: all 0.3s; border-radius: 4px; display: inline-block;
+        }
+        nav a.active { color: var(--text-light); font-weight: bold; background-color: rgba(255, 255, 255, 0.1); }
+        nav a:hover { color: var(--text-light); background-color: rgba(255, 255, 255, 0.1); }
+
+        main { flex: 1; padding: 25px; overflow-y: auto; }
+
+        .card-full {
+            background: var(--card-bg); border-radius: 10px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 3px solid var(--secondary-blue);
+        }
+
+        /* Filtros */
+        .filters {
+            display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee;
+        }
+        
+        select, input, .btn-filter {
+            padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;
+        }
+        
+        .btn-filter {
+            background-color: var(--primary-blue); color: white; cursor: pointer; border: none; font-weight: bold;
+        }
+        .btn-filter:hover { opacity: 0.9; }
+
+        /* Tabela */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background-color: #f8f9fa; color: var(--primary-blue); text-align: left; padding: 12px; border-bottom: 2px solid var(--secondary-blue); }
+        td { padding: 12px; border-bottom: 1px solid #eee; color: #555; }
+        tr:hover { background-color: #f1f1f1; }
+
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
+        .badge-active { background-color: #ffebee; color: var(--danger-color); }
+        .badge-ack { background-color: #fff3cd; color: #856404; }
+        .badge-norm { background-color: #d4edda; color: var(--success-color); }
+        .badge-info { background-color: #e2e3e5; color: #383d41; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="243186829.jpeg" alt="Logo Embrapac" class="logo-img">
+            IHM Operacional
+        </div>
+        <nav>
+            <a href="index.html">Painel Operação</a>
+            <a href="historico.html" class="active">Histórico</a>
+            <a href="supervisor.html"><i class="fas fa-lock"></i> Supervisor</a>
+        </nav>
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i> Olá, Sr. Agenor (Operador) | <a href="#" style="color: var(--accent-yellow)">Sair</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="card-full">
+            <h2 style="color: var(--primary-blue); margin-top:0;">
+                <i class="fas fa-history"></i> Log de Eventos e Alarmes
+            </h2>
+            
+            <div class="filters">
+                <input type="date" id="filter-date">
+                
+                <select id="filter-status">
+                    <option value="all">Todos os Status</option>
+                    <option value="ATIVO">Ativo</option>
+                    <option value="RECONHECIDO">Reconhecido</option>
+                    <option value="NORMAL">Normal</option>
+                    <option value="INFO">Info</option>
+                </select>
+
+                <button class="btn-filter" onclick="filterTable()">
+                    <i class="fas fa-search"></i> Filtrar
+                </button>
+                
+                <button class="btn-filter" style="background-color: var(--success-color); margin-left: auto;" onclick="exportTableToCSV()">
+    <i class="fas fa-file-export"></i> Exportar
+                </button>
+            </div>
+
+            <table id="events-table">
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Descrição do Evento</th>
+                        <th>Usuário</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-row">
+                        <td>14/12/2025 09:42:10</td>
+                        <td>Início do Ciclo de Produção</td>
+                        <td>Sr. Agenor</td>
+                        <td><span class="badge badge-info">INFO</span></td>
+                    </tr>
+                    <tr class="table-row">
+                        <td>14/12/2025 09:15:00</td>
+                        <td>ALARME: Falha Motor M2 Travado</td>
+                        <td>Sistema</td>
+                        <td><span class="badge badge-active">ATIVO</span></td>
+                    </tr>
+                    <tr class="table-row">
+                        <td>14/12/2025 09:15:30</td>
+                        <td>Reconhecimento de Alarme (M2)</td>
+                        <td>Sr. Agenor</td>
+                        <td><span class="badge badge-ack">RECONHECIDO</span></td>
+                    </tr>
+                    <tr class="table-row">
+                        <td>14/12/2025 08:00:00</td>
+                        <td>Início de Turno - Manhã</td>
+                        <td>Sup. Carlos</td>
+                        <td><span class="badge badge-norm">NORMAL</span></td>
+                    </tr>
+                    <tr class="table-row">
+                        <td>13/12/2025 18:00:00</td>
+                        <td>Fim de Turno</td>
+                        <td>Sup. Carlos</td>
+                        <td><span class="badge badge-info">INFO</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p style="text-align: right; color: #999; font-size: 0.9rem; margin-top: 15px;">
+                Exibindo registros encontrados.
+            </p>
+        </div>
+    </main>
+
+   <script>
+        // --- FUNÇÃO 1: FILTRAR TABELA ---
+        function filterTable() {
+            const statusFilter = document.getElementById('filter-status').value;
+            const rows = document.querySelectorAll('.table-row');
+
+            rows.forEach(row => {
+                const statusText = row.querySelector('.badge').innerText;
+                if (statusFilter === 'all' || statusText === statusFilter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // --- FUNÇÃO 2: EXPORTAR PARA EXCEL (CSV) ---
+        function exportTableToCSV() {
+            // 1. Seleciona as linhas da tabela
+            const rows = document.querySelectorAll("table tr");
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // O \uFEFF ajuda o Excel a entender acentos (UTF-8)
+
+            // 2. Passa por cada linha e pega o texto
+            rows.forEach(row => {
+                // Pega as colunas (td ou th)
+                const cols = row.querySelectorAll("td, th");
+                let rowData = [];
+                
+                // Limpa o texto e prepara para o CSV
+                cols.forEach(col => rowData.push(col.innerText));
+                
+                // Junta as colunas com ponto-e-vírgula (Padrão Excel Brasil)
+                csvContent += rowData.join(";") + "\r\n";
+            });
+
+            // 3. Cria um link invisível para forçar o download
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "historico_alarmes_embrapac.csv");
+            document.body.appendChild(link); // Necessário para Firefox
+            
+            // 4. Clica no link e remove
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+
+</body>
+</html>
