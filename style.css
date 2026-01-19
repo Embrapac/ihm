@@ -1,0 +1,126 @@
+/        /* --- ESTILOS COMPARTILHADOS --- */
+        :root {
+            --primary-blue: #003B73;
+            --secondary-blue: #4DA6E0;
+            --accent-yellow: #FFD700;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --bg-color: #F4F7F6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-light: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex; flex-direction: column; height: 100vh;
+            position: relative;
+        }
+
+        /* Marca D'água */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('project_image/243186829.jpeg'); 
+            background-repeat: no-repeat; background-position: center; background-size: 600px;
+            opacity: 0.08; z-index: -1; pointer-events: none; filter: grayscale(100%);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-blue); color: var(--text-light);
+            padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 59, 115, 0.2); z-index: 10;
+        }
+
+        .logo-container { display: flex; align-items: center; font-size: 1.4rem; font-weight: bold; }
+        .logo-img { height: 50px; margin-right: 15px; background-color: #fff; padding: 2px; border-radius: 4px; display: block; }
+
+        nav a {
+            text-decoration: none; color: rgba(255, 255, 255, 0.7);
+            padding: 10px 15px; font-size: 1rem; transition: all 0.3s; border-radius: 4px; display: inline-block;
+        }
+        nav a.active { color: var(--text-light); font-weight: bold; background-color: rgba(255, 255, 255, 0.1); }
+        nav a:hover { color: var(--text-light); background-color: rgba(255, 255, 255, 0.1); }
+
+        main { flex: 1; padding: 25px; overflow-y: auto; }
+
+        .card-full {
+            background: var(--card-bg); border-radius: 10px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 3px solid var(--secondary-blue);
+            margin-bottom: 25px; /* Espaço entre cards */
+        }
+
+        /* Filtros */
+        .filters {
+            display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; align-items: center;
+        }
+        
+        select, input, .btn-filter {
+            padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;
+        }
+        
+        .btn-filter {
+            background-color: var(--primary-blue); color: white; cursor: pointer; border: none; font-weight: bold;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .btn-filter:hover { opacity: 0.9; }
+
+        /* --- CORREÇÃO DA TABELA --- */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 10px;
+            table-layout: fixed; /* OBRIGATÓRIO para fixar larguras */
+        }
+        
+        th { 
+            background-color: #f8f9fa; 
+            color: var(--primary-blue); 
+            text-align: left; 
+            padding: 12px; 
+            border-bottom: 2px solid var(--secondary-blue);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; /* Evita quebra de linha no header */
+        }
+        
+        td { 
+            padding: 12px; 
+            border-bottom: 1px solid #eee; 
+            color: #555; 
+            vertical-align: middle;
+            overflow: hidden; text-overflow: ellipsis; /* Corta texto muito longo */
+        }
+        
+        tr:hover { background-color: #f1f1f1; }
+
+        /* Definição de Larguras das Colunas (Ajuste conforme necessidade) */
+        .col-data { width: 18%; }
+        .col-desc { width: 35%; }
+        .col-user { width: 15%; } /* Usado em Eventos e Fonte em Alarmes */
+        .col-attr { width: 15%; }
+        .col-status { width: 17%; text-align: center; }
+
+        /* --- CORREÇÃO DO TAMANHO DO STATUS --- */
+        .badge { 
+            padding: 6px 8px; /* Ajustei levemente o padding */
+            border-radius: 12px; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+            display: inline-block;
+            
+            /* Novas propriedades para padronizar tamanho */
+            min-width: 110px; /* Largura suficiente para caber "RECONHECIDO" */
+            text-align: center; /* Centraliza o texto dentro da largura fixa */
+        }
+
+        .badge-active { background-color: #ffebee; color: var(--danger-color); }
+        .badge-ack { background-color: #fff3cd; color: #856404; }
+        .badge-norm { background-color: #d4edda; color: var(--success-color); }
+        .badge-info { background-color: #e2e3e5; color: #383d41; }
+        
+        /* Ajuste para centralizar o conteúdo da coluna de status */
+        td:last-child { text-align: center; }
+
+        h2 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
