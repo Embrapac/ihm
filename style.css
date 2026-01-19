@@ -23,7 +23,7 @@ body {
 /* Marca D'água */
 body::before {
     content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('project_image/243186829.jpeg'); 
+    background-image: url('img/logo-embrapac.jpeg');
     background-repeat: no-repeat; background-position: center; background-size: 600px;
     opacity: 0.08; z-index: -1; pointer-events: none; filter: grayscale(100%);
 }
@@ -51,6 +51,21 @@ main { flex: 1; padding: 25px; overflow-y: auto; }
     background: var(--card-bg); border-radius: 10px; padding: 25px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 3px solid var(--secondary-blue);
     margin-bottom: 25px; /* Espaço entre cards */
+}
+
+/* --- SEPARADOR CUSTOMIZADO --- */
+.separator {
+    border: 0;
+    height: 1px;
+    margin: 30px 0; /* Espaço em cima e embaixo */
+    
+    /* O Segredo: Gradiente que vai do transparente -> cor -> transparente */
+    background-image: linear-gradient(
+        to right, 
+        rgba(0, 0, 0, 0),       /* Começa invisível */
+        rgba(0, 59, 115, 0.4),  /* Azul da Embrapac com 40% de transparência */
+        rgba(0, 0, 0, 0)        /* Termina invisível */
+    );
 }
 
 /* Filtros */
