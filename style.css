@@ -1,4 +1,4 @@
-/* --- ESTILOS COMPARTILHADOS --- */
+/* style.css */
 :root {
     --primary-blue: #003B73;
     --secondary-blue: #4DA6E0;
@@ -9,6 +9,7 @@
     --card-bg: #ffffff;
     --text-main: #333333;
     --text-light: #ffffff;
+    --shadow-std: 0 4px 15px rgba(0,0,0,0.05);
 }
 
 body {
@@ -16,131 +17,95 @@ body {
     margin: 0; padding: 0;
     background-color: var(--bg-color);
     color: var(--text-main);
-    display: flex; flex-direction: column; height: 100vh;
-    position: relative;
+    display: flex; flex-direction: column; min-height: 100vh;
 }
 
-/* Marca D'água */
+/* Marca d'água de fundo */
 body::before {
     content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url('img/logo-embrapac.jpeg');
+    background-image: url('img/logo-embrapac.jpeg'); 
     background-repeat: no-repeat; background-position: center; background-size: 600px;
-    opacity: 0.08; z-index: -1; pointer-events: none; filter: grayscale(100%);
+    opacity: 0.05; z-index: -1; pointer-events: none; filter: grayscale(100%);
 }
 
-/* Header */
+/* --- HEADER --- */
 header {
     background-color: var(--primary-blue); color: var(--text-light);
     padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
     box-shadow: 0 2px 10px rgba(0, 59, 115, 0.2); z-index: 10;
 }
 
-.logo-container { display: flex; align-items: center; font-size: 1.4rem; font-weight: bold; }
-.logo-img { height: 50px; margin-right: 15px; background-color: #fff; padding: 2px; border-radius: 4px; display: block; }
+.logo-container { 
+    display: flex; align-items: center; font-size: 1.4rem; font-weight: bold; gap: 15px;
+}
 
+.logo-img { 
+    height: 45px; width: auto; background-color: #fff; padding: 4px; border-radius: 6px; 
+}
+
+/* --- NAVEGAÇÃO --- */
 nav a {
     text-decoration: none; color: rgba(255, 255, 255, 0.7);
     padding: 10px 15px; font-size: 1rem; transition: all 0.3s; border-radius: 4px; display: inline-block;
 }
-nav a.active { color: var(--text-light); font-weight: bold; background-color: rgba(255, 255, 255, 0.1); }
-nav a:hover { color: var(--text-light); background-color: rgba(255, 255, 255, 0.1); }
+nav a.active, nav a:hover { 
+    color: var(--text-light); background-color: rgba(255, 255, 255, 0.15); font-weight: 600;
+}
 
-main { flex: 1; padding: 25px; overflow-y: auto; }
+/* --- LAYOUT PRINCIPAL --- */
+main {
+    flex: 1; padding: 25px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px;
+    align-content: start;
+}
 
-.card-full {
+.card {
     background: var(--card-bg); border-radius: 10px; padding: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 3px solid var(--secondary-blue);
-    margin-bottom: 25px; /* Espaço entre cards */
+    box-shadow: var(--shadow-std); 
+    border-top: 4px solid var(--primary-blue); /* Padrão azul */
+    transition: transform 0.2s;
 }
 
-/* --- SEPARADOR CUSTOMIZADO --- */
-.separator {
-    border: 0;
-    height: 1px;
-    margin: 30px 0; /* Espaço em cima e embaixo */
-    
-    /* O Segredo: Gradiente que vai do transparente -> cor -> transparente */
-    background-image: linear-gradient(
-        to right, 
-        rgba(0, 0, 0, 0),       /* Começa invisível */
-        rgba(0, 59, 115, 0.4),  /* Azul da Embrapac com 40% de transparência */
-        rgba(0, 0, 0, 0)        /* Termina invisível */
-    );
+/* Destaque para cards de supervisão */
+.card.supervisor-card { border-top-color: var(--accent-yellow); }
+
+h2 { 
+    margin-top: 0; color: var(--primary-blue); font-size: 1.3rem; 
+    border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;
 }
 
-/* Filtros */
-.filters {
-    display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; align-items: center;
+/* --- ELEMENTOS DE FORMULÁRIO E BOTÕES --- */
+.input-std {
+    width: 100%; padding: 10px; margin: 5px 0 15px 0; 
+    border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
 }
 
-select, input, .btn-filter {
-    padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;
+.btn-action {
+    display: block; width: 100%; padding: 12px; margin-top: 10px;
+    border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white;
+    transition: opacity 0.2s, transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 8px;
 }
+.btn-action:hover { opacity: 0.9; }
+.btn-action:active { transform: scale(0.98); }
 
-.btn-filter {
-    background-color: var(--primary-blue); color: white; cursor: pointer; border: none; font-weight: bold;
-    display: flex; align-items: center; gap: 5px;
+.btn-blue { background-color: var(--primary-blue); }
+.btn-green { background-color: var(--success-color); }
+.btn-red { background-color: var(--danger-color); }
+
+/* --- KPIs (DASHBOARD) --- */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
+.kpi-box { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
+.kpi-val { font-size: 1.6rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 5px;}
+.kpi-label { font-size: 0.85rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px;}
+
+/* --- MODAL DE LOGIN --- */
+#login-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 59, 115, 0.9); /* Azul escuro transparente */
+    backdrop-filter: blur(5px); z-index: 2000;
+    display: flex; justify-content: center; align-items: center;
 }
-.btn-filter:hover { opacity: 0.9; }
-
-/* --- CORREÇÃO DA TABELA --- */
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 10px;
-    table-layout: fixed; /* OBRIGATÓRIO para fixar larguras */
+.login-box {
+    background: white; padding: 40px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
-
-th { 
-    background-color: #f8f9fa; 
-    color: var(--primary-blue); 
-    text-align: left; 
-    padding: 12px; 
-    border-bottom: 2px solid var(--secondary-blue);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
-}
-
-td { 
-    padding: 12px; 
-    border-bottom: 1px solid #eee; 
-    color: #555; 
-    vertical-align: middle;
-    overflow: hidden; text-overflow: ellipsis; 
-}
-
-tr:hover { background-color: #f1f1f1; }
-
-/* --- LARGURAS DAS COLUNAS (ATUALIZADO) --- */
-.col-data { width: 18%; }
-.col-desc { width: 35%; }
-
-/* Eventos usa User (15) + Attr (15) = 30% */
-.col-user { width: 15%; } 
-.col-attr { width: 15%; }
-
-/* Alarmes usa Source (30%) para alinhar com o de cima */
-.col-source { width: 30%; } 
-
-.col-status { width: 17%; text-align: center; }
-
-/* --- CORREÇÃO DO TAMANHO DO STATUS --- */
-.badge { 
-    padding: 6px 8px; 
-    border-radius: 12px; 
-    font-size: 0.8rem; 
-    font-weight: bold; 
-    display: inline-block;
-    
-    min-width: 110px; 
-    text-align: center; 
-}
-
-.badge-active { background-color: #ffebee; color: var(--danger-color); }
-.badge-ack { background-color: #fff3cd; color: #856404; }
-.badge-norm { background-color: #d4edda; color: var(--success-color); }
-.badge-info { background-color: #e2e3e5; color: #383d41; }
-
-/* Ajuste para centralizar o conteúdo da coluna de status */
-td:last-child { text-align: center; }
-
-h2 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }

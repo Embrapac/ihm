@@ -5,113 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supervisor - EmbraPac</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        /* Copiando estilos base do tema */
-        :root {
-            --primary-blue: #003B73;
-            --secondary-blue: #4DA6E0;
-            --accent-yellow: #FFD700;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --bg-color: #F4F7F6;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-light: #ffffff;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex; flex-direction: column; height: 100vh;
-        }
-
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('243186829.jpeg'); 
-            background-repeat: no-repeat; background-position: center; background-size: 600px;
-            opacity: 0.08; z-index: -1; pointer-events: none; filter: grayscale(100%);
-        }
-
-        header {
-            background-color: var(--primary-blue); color: var(--text-light);
-            padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 59, 115, 0.2); z-index: 10;
-        }
-
-        .logo-container { display: flex; align-items: center; font-size: 1.4rem; font-weight: bold; }
-        .logo-img { height: 50px; margin-right: 15px; background-color: #fff; padding: 2px; border-radius: 4px; display: block; }
-
-        nav a {
-            text-decoration: none; color: rgba(255, 255, 255, 0.7);
-            padding: 10px 15px; font-size: 1rem; transition: all 0.3s; border-radius: 4px; display: inline-block;
-        }
-        nav a.active { color: var(--text-light); font-weight: bold; background-color: rgba(255, 255, 255, 0.1); }
-        nav a:hover { color: var(--text-light); background-color: rgba(255, 255, 255, 0.1); }
-
-        main {
-            flex: 1; padding: 25px;
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px;
-            align-content: start;
-        }
-
-        .card {
-            background: var(--card-bg); border-radius: 10px; padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 3px solid var(--accent-yellow); /* Amarelo para destacar supervisão */
-        }
-
-        h2 { margin-top: 0; color: var(--primary-blue); font-size: 1.3rem; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-
-        /* Botões Específicos */
-        .btn-action {
-            display: block; width: 100%; padding: 12px; margin-top: 10px;
-            border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white;
-            transition: opacity 0.2s;
-        }
-        .btn-action:hover { opacity: 0.9; }
-        .btn-blue { background-color: var(--primary-blue); }
-        .btn-green { background-color: var(--success-color); }
-        
-        /* Dashboard KPI */
-        .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
-        .kpi-box { background: #f8f9fa; padding: 15px; border-radius: 8px; }
-        .kpi-val { font-size: 1.5rem; font-weight: bold; color: var(--primary-blue); }
-        .kpi-label { font-size: 0.8rem; color: #666; }
-
-        /* MODAL DE LOGIN (Simulação de Segurança) */
-        #login-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 2000;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .login-box {
-            background: white; padding: 40px; border-radius: 10px; width: 350px; text-align: center;
-        }
-        .login-input {
-            width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="login-modal">
         <div class="login-box">
-            <img src="243186829.jpeg" style="height: 60px; margin-bottom: 20px;">
-            <h3>Acesso Restrito</h3>
-            <p>Área exclusiva para Supervisores.</p>
-            <input type="password" class="login-input" placeholder="Digite a Senha de Supervisor" value="admin">
-            <button class="btn-action btn-blue" onclick="closeLogin()">ENTRAR</button>
+            <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" style="height: 70px; margin-bottom: 20px;">
+            <h3 style="color: var(--primary-blue);">Acesso Restrito</h3>
+            <p style="color: #666; margin-bottom: 20px;">Área exclusiva para Supervisores.</p>
+            
+            <input type="password" id="admin-pass" class="input-std" placeholder="Senha (admin)" autofocus>
+            
+            <button class="btn-action btn-blue" onclick="attemptLogin()">
+                <i class="fas fa-sign-in-alt"></i> ENTRAR
+            </button>
             <br>
-            <a href="index.html" style="color: #666; font-size: 0.9rem;">Voltar para Operação</a>
+            <a href="index.html" style="color: #999; font-size: 0.9rem; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> Voltar para Operação
+            </a>
         </div>
     </div>
 
     <header>
         <div class="logo-container">
-            <img src="243186829.jpeg" alt="Logo Embrapac" class="logo-img">
-            Módulo de Supervisão
+            <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" class="logo-img">
+            <span>Módulo de Supervisão</span>
         </div>
         <nav>
             <a href="index.html">Painel Operação</a>
@@ -119,115 +38,77 @@
             <a href="supervisor.html" class="active"><i class="fas fa-lock"></i> Supervisor</a>
         </nav>
         <div class="user-info">
-            <i class="fas fa-user-tie"></i> Olá, Carlos (Supervisor) | <a href="index.html" style="color: var(--accent-yellow)">Sair</a>
+            <i class="fas fa-user-tie"></i> Olá, Carlos (Sup.) | <a href="index.html" style="color: var(--accent-yellow); text-decoration: none; margin-left: 5px;">Sair</a>
         </div>
     </header>
 
     <main>
-        <div class="card">
+        <div class="card supervisor-card">
             <h2><i class="fas fa-clock"></i> Gestão de Turno</h2>
             
-            <p><strong>Status Atual:</strong> <span id="shift-status" style="color: #7f8c8d; font-weight:bold;">AGUARDANDO INÍCIO</span></p>
-            <p id="shift-time">--:--</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <p style="margin: 0; color: #666;">Status Atual</p>
+                <span id="shift-status" style="font-size: 1.2rem; font-weight: bold; color: #7f8c8d;">AGUARDANDO INÍCIO</span>
+                <p id="shift-time" style="font-size: 0.9rem; margin-top: 5px;">--:--</p>
+            </div>
             
-            <hr style="border: 0; border-top: 1px solid #eee;">
-            
-            <label>Ações de Controle:</label>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
             
             <button id="btn-start-shift" class="btn-action btn-green" onclick="toggleTurno(true)">
                 <i class="fas fa-play-circle"></i> Iniciar Novo Turno
             </button>
 
             <div id="active-shift-controls" style="display: none;">
-                <button class="btn-action btn-blue" onclick="alert('Relatório de turno gerado e enviado para nuvem!')">
-                    <i class="fas fa-file-csv"></i> Gerar Relatório de Produção (CSV)
+                <button class="btn-action btn-blue" onclick="alert('Relatório CSV enviado para o e-mail do supervisor.')">
+                    <i class="fas fa-file-csv"></i> Exportar Dados
                 </button>
                 
-                <button class="btn-action" style="background-color: var(--danger-color);" onclick="toggleTurno(false)">
+                <button class="btn-action btn-red" onclick="toggleTurno(false)">
                     <i class="fas fa-stop-circle"></i> Encerrar Turno
                 </button>
             </div>
         </div>
 
         <div class="card">
-            <h2><i class="fas fa-chart-line"></i> KPIs da Linha (Tempo Real)</h2>
+            <h2><i class="fas fa-chart-line"></i> KPIs em Tempo Real</h2>
             <div class="kpi-grid">
                 <div class="kpi-box">
                     <div class="kpi-val">85%</div>
-                    <div class="kpi-label">OEE (Eficiência)</div>
+                    <div class="kpi-label">OEE Global</div>
                 </div>
                 <div class="kpi-box">
-                    <div class="kpi-val">1240</div>
-                    <div class="kpi-label">Produção Total</div>
+                    <div class="kpi-val">1.240</div>
+                    <div class="kpi-label">Peças Prod.</div>
                 </div>
                 <div class="kpi-box">
                     <div class="kpi-val" style="color: var(--danger-color);">2.1%</div>
-                    <div class="kpi-label">Taxa de Refugo</div>
+                    <div class="kpi-label">Refugo</div>
                 </div>
                 <div class="kpi-box">
-                    <div class="kpi-val">15min</div>
-                    <div class="kpi-label">Tempo Parado</div>
+                    <div class="kpi-val">15m</div>
+                    <div class="kpi-label">Parada</div>
                 </div>
             </div>
-            <p style="font-size: 0.8rem; color: #999; margin-top: 15px; text-align: center;">
-                Conectado ao Módulo Edge
+            <p style="font-size: 0.75rem; color: #999; margin-top: 15px; text-align: right;">
+                <i class="fas fa-wifi"></i> Conexão IoT Estável
             </p>
         </div>
         
-        <div class="card">
-            <h2><i class="fas fa-cogs"></i> Configurações da Linha</h2>
-            <label>Meta de Produção:</label>
-            <input type="number" class="login-input" value="1500">
+        <div class="card supervisor-card">
+            <h2><i class="fas fa-sliders-h"></i> Parâmetros de Linha</h2>
             
-            <label>Tempo de Ciclo (s):</label>
-            <input type="number" class="login-input" value="2.5">
+            <label style="font-weight: bold; font-size: 0.9rem;">Meta de Produção (peças/h):</label>
+            <input type="number" class="input-std" value="1500">
             
-            <button class="btn-action btn-blue" onclick="alert('Parâmetros atualizados!')">Salvar Parâmetros</button>
+            <label style="font-weight: bold; font-size: 0.9rem;">Tempo de Ciclo (segundos):</label>
+            <input type="number" class="input-std" value="2.5" step="0.1">
+            
+            <button class="btn-action btn-blue" onclick="alert('Novos parâmetros enviados para o CLP!')">
+                <i class="fas fa-save"></i> Salvar Alterações
+            </button>
         </div>
     </main>
 
-    <script>
-        // Função para fechar o modal de login
-        function closeLogin() {
-            document.getElementById('login-modal').style.display = 'none';
-        }
-
-        // Função para Alternar o Estado do Turno
-        function toggleTurno(iniciar) {
-            const statusSpan = document.getElementById('shift-status');
-            const timeSpan = document.getElementById('shift-time');
-            const btnStart = document.getElementById('btn-start-shift');
-            const controlsActive = document.getElementById('active-shift-controls');
-
-            if (iniciar) {
-                // Iniciando o Turno
-                statusSpan.innerText = "EM ANDAMENTO";
-                statusSpan.style.color = "var(--success-color)"; // Verde
-                
-                const now = new Date();
-                timeSpan.innerText = "Início: " + now.toLocaleTimeString();
-
-                // Esconde botão Iniciar, Mostra controles de Encerramento
-                btnStart.style.display = 'none';
-                controlsActive.style.display = 'block';
-
-            } else {
-                // Encerrando o Turno (Pede confirmação)
-                if(confirm('Deseja realmente encerrar o turno e gerar o relatório final?')) {
-                    statusSpan.innerText = "TURNO FINALIZADO";
-                    statusSpan.style.color = "#7f8c8d"; // Cinza
-                    
-                    timeSpan.innerText = "Finalizado às: " + new Date().toLocaleTimeString();
-
-                    // Esconde controles, Mostra botão Iniciar novamente
-                    controlsActive.style.display = 'none';
-                    btnStart.style.display = 'block';
-                    btnStart.innerText = "Iniciar Próximo Turno";
-                    
-                    alert("Turno encerrado. Dados exportados para o servidor.");
-                }
-            }
-        }
-    </script>
+    <script src="supervisor.js"></script>
 </body>
 </html>
