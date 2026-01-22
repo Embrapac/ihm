@@ -65,3 +65,35 @@ function toggleTurno(iniciar) {
         }
     }
 }
+// ... (mantenha o código anterior de Login e Turno aqui) ...
+
+// 3. Validação de Entradas (Novas Funções)
+
+/**
+ * Garante que apenas números positivos sejam inseridos.
+ * Usado na Meta de Produção.
+ */
+function validarNumero(input) {
+    // Remove qualquer caractere que não seja número (0-9)
+    // Isso impede sinais de negativo (-) ou letras 'e'
+    input.value = input.value.replace(/[^0-9]/g, '');
+}
+/**
+ * Garante números inteiros entre 1 e 60.
+ * Usado no Tempo de Ciclo.
+ */
+function validarCiclo(input) {
+    // 1. Remove não numéricos
+    input.value = input.value.replace(/[^0-9]/g, '');
+    
+    // 2. Lógica de Limites (Range 1-60)
+    if (input.value !== '') {
+        let valor = parseInt(input.value);
+        
+        if (valor > 60) {
+            input.value = 60; // Trava no máximo
+        } else if (valor === 0) {
+            input.value = 1;  // Trava no mínimo (se tentar digitar 0)
+        }
+    }
+}
