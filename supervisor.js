@@ -1,99 +1,112 @@
 // supervisor.js
 
-// 1. Lógica de Login
+// --- 1. LÓGICA DE LOGIN ---
 function attemptLogin() {
     const passInput = document.getElementById('admin-pass');
     const modal = document.getElementById('login-modal');
     
-    // Senha simples para demonstração
     if (passInput.value === 'admin') {
-        // Efeito de fade-out (opcional)
         modal.style.opacity = '0';
-        modal.style.transition = 'opacity 0.5s';
-        
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 500);
+        setTimeout(() => { modal.style.display = 'none'; }, 500);
     } else {
         alert('Senha Incorreta! Tente novamente.');
         passInput.value = '';
         passInput.focus();
     }
 }
-
-// Permitir login com a tecla Enter
 document.getElementById('admin-pass').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        attemptLogin();
-    }
+    if (e.key === 'Enter') attemptLogin();
 });
 
-// 2. Lógica de Gestão de Turno
-function toggleTurno(iniciar) {
-    const statusSpan = document.getElementById('shift-status');
-    const timeSpan = document.getElementById('shift-time');
-    const btnStart = document.getElementById('btn-start-shift');
-    const controlsActive = document.getElementById('active-shift-controls');
+
+// --- 2. LÓGICA DE STATUS, MANUTENÇÃO E RELATÓRIO ---
+
+// Função: SIMULAR FALHA
+function simularFalha() {
+    const display = document.getElementById('status-display');
+    const detail = document.getElementById('status-detail');
+    const btnReset = document.getElementById('btn-reset');
+    const btnExport = document.getElementById('btn-export');
+
+    // 1. Muda para FALHA (Vermelho)
+    display.className = "status-badge status-error";
+    display.innerHTML = '<i class="fas fa-exclamation-triangle"></i> FALHA CRÍTICA';
     
-    const now = new Date();
+    const hora = new Date().toLocaleTimeString();
+    detail.innerText = `Erro #502: Motor Travado às ${hora}. Aguardando Reset.`;
+    detail.style.color = "var(--danger-color)";
+    detail.style.fontWeight = "bold";
 
-    if (iniciar) {
-        // --- Iniciando o Turno ---
-        statusSpan.innerText = "EM ANDAMENTO";
-        statusSpan.style.color = "var(--success-color)";
-        timeSpan.innerText = "Início: " + now.toLocaleTimeString('pt-BR');
+    // 2. Habilita Reset
+    btnReset.className = "btn-action btn-warning"; 
+    btnReset.disabled = false;
 
-        // Alterna botões
-        btnStart.style.display = 'none';
-        controlsActive.style.display = 'block';
+    // 3. Garante que Exportar esteja INVISÍVEL
+    btnExport.style.display = 'none';
+    
+    alert("ALERTA: Falha simulada. O sistema parou.");
+}
+
+// Função: RESETAR FALHAS
+function resetarFalhas() {
+    const display = document.getElementById('status-display');
+    const detail = document.getElementById('status-detail');
+    const btnReset = document.getElementById('btn-reset');
+    const btnExport = document.getElementById('btn-export');
+
+    if (confirm('Confirma o reset das falhas e liberação da linha?')) {
+        // 1. Vai para PARADO / PRONTO (Cinza) - Conforme solicitado
+        display.className = "status-badge status-stopped";
+        display.innerHTML = 'PARADO / PRONTO';
         
-        console.log(`Turno iniciado em: ${now}`);
+        // Mensagem temporária antes do envio do relatório
+        detail.innerText = "Falha corrigida. Sistema pronto. Relatório disponível.";
+        detail.style.color = "var(--success-color)";
+        detail.style.fontWeight = "bold";
+        
+        // 2. Trava Reset
+        btnReset.className = "btn-action btn-disabled";
+        btnReset.disabled = true;
 
-    } else {
-        // --- Encerrando o Turno ---
-        if(confirm('ATENÇÃO: Deseja encerrar o turno e consolidar os dados?')) {
-            statusSpan.innerText = "TURNO FINALIZADO";
-            statusSpan.style.color = "#7f8c8d";
-            timeSpan.innerText = "Finalizado às: " + now.toLocaleTimeString('pt-BR');
+        // 3. FAZ O BOTÃO DE RELATÓRIO APARECER
+        btnExport.style.display = 'flex';
+        btnExport.className = "btn-action btn-blue";
+        btnExport.innerText = 'EXPORTAR RELATÓRIO (CSV)';
+        btnExport.disabled = false;
 
-            // Alterna botões
-            controlsActive.style.display = 'none';
-            btnStart.style.display = 'flex'; // Flex para alinhar ícone e texto
-            btnStart.innerHTML = '<i class="fas fa-play-circle"></i> Iniciar Próximo Turno';
-            
-            alert("Turno encerrado com sucesso. Relatório gerado.");
-        }
+        alert('Sistema Resetado');
     }
 }
-// ... (mantenha o código anterior de Login e Turno aqui) ...
 
-// 3. Validação de Entradas (Novas Funções)
+// Função: EXPORTAR RELATÓRIO
+function exportarRelatorio() {
+    const btnExport = document.getElementById('btn-export');
+    const detail = document.getElementById('status-detail');
+    
+    // Simula envio
+    const nomeArquivo = `incidente_${Date.now()}.csv`;
+    alert(`Sucesso!\n\nRelatório "${nomeArquivo}" enviado por email.`);
+    
+    // 1. O botão SOME
+    btnExport.style.display = 'none';
 
-/**
- * Garante que apenas números positivos sejam inseridos.
- * Usado na Meta de Produção.
- */
+    // 2. A frase de "Falha corrigida" SOME e volta ao padrão neutro
+    detail.innerText = "Aguardando o Operador reiniciar.";
+    detail.style.color = "#666"; 
+    detail.style.fontWeight = "normal";
+}
+
+
+// --- 3. VALIDAÇÃO DE PARÂMETROS ---
 function validarNumero(input) {
-    // Remove qualquer caractere que não seja número (0-9)
-    // Isso impede sinais de negativo (-) ou letras 'e'
     input.value = input.value.replace(/[^0-9]/g, '');
 }
-/**
- * Garante números inteiros entre 1 e 60.
- * Usado no Tempo de Ciclo.
- */
+
 function validarCiclo(input) {
-    // 1. Remove não numéricos
     input.value = input.value.replace(/[^0-9]/g, '');
-    
-    // 2. Lógica de Limites (Range 1-60)
     if (input.value !== '') {
         let valor = parseInt(input.value);
-        
-        if (valor > 60) {
-            input.value = 60; // Trava no máximo
-        } else if (valor === 0) {
-            input.value = 1;  // Trava no mínimo (se tentar digitar 0)
-        }
+        if (valor > 60) input.value = 60;
+        if (valor === 0) input.value = 1;
     }
 }
