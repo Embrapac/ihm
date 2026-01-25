@@ -1,13 +1,13 @@
-/* style.css - Completo */
+/* style.css - Versão Final Completa */
 
-/* --- VARIÁVEIS DE CORES --- */
+/* --- 1. VARIÁVEIS E GERAL --- */
 :root {
     --primary-blue: #003B73;
     --secondary-blue: #4DA6E0;
     --accent-yellow: #FFD700;
     --success-color: #28a745;
     --danger-color: #dc3545;
-    --warning-color: #f39c12; /* Laranja para Reset */
+    --warning-color: #f39c12;
     --bg-color: #F4F7F6;
     --card-bg: #ffffff;
     --text-main: #333333;
@@ -23,30 +23,24 @@ body {
     position: relative;
 }
 
-/* --- MARCA D'ÁGUA (FUNDO) --- */
+/* Marca d'água de fundo */
 body::before {
     content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    /* Verifique se a imagem img/logo-embrapac.jpeg está na pasta */
+    /* Certifique-se que a imagem está na pasta correta */
     background-image: url('img/logo-embrapac.jpeg'); 
     background-repeat: no-repeat; background-position: center; background-size: 600px;
     opacity: 0.08; z-index: -1; pointer-events: none; filter: grayscale(100%);
 }
 
-/* --- HEADER --- */
+/* --- 2. HEADER E NAVEGAÇÃO --- */
 header {
     background-color: var(--primary-blue); color: var(--text-light);
     padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
     box-shadow: 0 2px 10px rgba(0, 59, 115, 0.2); z-index: 10;
 }
 
-.logo-container {
-    display: flex; align-items: center; font-size: 1.4rem; font-weight: bold; gap: 10px;
-}
-
-.logo-img {
-    height: 50px; background-color: #fff; padding: 2px; border-radius: 4px; display: block;
-}
-
+.logo-container { display: flex; align-items: center; font-size: 1.4rem; font-weight: bold; gap: 10px; }
+.logo-img { height: 50px; background-color: #fff; padding: 2px; border-radius: 4px; display: block; }
 .user-info { font-size: 0.9rem; opacity: 0.9; }
 
 nav a {
@@ -54,49 +48,73 @@ nav a {
     padding: 10px 15px; font-size: 1rem; transition: all 0.3s; border-radius: 4px; display: inline-block;
 }
 nav a.active, nav a:hover { 
-    color: var(--text-light); background-color: rgba(255, 255, 255, 0.15); font-weight: 600;
+    color: var(--text-light); background-color: rgba(255, 255, 255, 0.15); font-weight: 600; 
 }
 
-/* --- LAYOUT GRID --- */
+/* --- 3. LAYOUT GRID (3 COLUNAS) --- */
 main {
     flex: 1; padding: 25px;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px;
-    align-content: start; z-index: 1;
+    display: grid;
+    /* Define 3 colunas de tamanho igual */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 25px;
+    align-items: start; /* Alinha cartões ao topo */
 }
 
-/* --- CARDS --- */
+/* Responsividade: Vira 1 coluna em telas menores */
+@media (max-width: 1000px) {
+    main { grid-template-columns: 1fr; }
+}
+
+/* Classe para empilhar cards verticalmente (Esquerda e Direita) */
+.col-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* --- 4. CARDS --- */
 .card {
     background: var(--card-bg); border-radius: 10px; padding: 25px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;
     border-top: 3px solid var(--secondary-blue);
     position: relative;
+    /* height: 100%; Opcional: Se quiser que estiquem */
 }
-/* Destaque para cards de Supervisão (Borda Amarela) */
+
+/* Destaque Amarelo para Supervisão */
 .card.supervisor-card { border-top-color: var(--accent-yellow); }
 
-h2 { margin-top: 0; color: var(--primary-blue); font-size: 1.3rem; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+h2 { 
+    margin-top: 0; color: var(--primary-blue); font-size: 1.2rem; 
+    margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; 
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
 
-/* --- STATUS BADGES --- */
+/* --- 5. STATUS E ALARMES (BADGES) --- */
 .status-badge {
     display: block; width: 100%; padding: 15px 0;
-    border-radius: 50px; color: var(--text-light); font-weight: bold;
+    border-radius: 50px; color: var(--text-light); font-weight: 800;
     text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-    font-size: 1.2rem;
-}
-.status-running { background-color: var(--success-color); border: 2px solid #218838; }
-.status-stopped { background-color: #7f8c8d; border: 2px solid #6c757d; }
-.status-error { 
-    background-color: var(--danger-color); 
-    border: 2px solid #bd2130;
-    animation: pulse 1.5s infinite; /* Piscar */
+    font-size: 1.2rem; transition: all 0.3s;
 }
 
-/* --- BOTÕES --- */
+.status-running { background-color: var(--success-color); border: 2px solid #218838; }
+.status-stopped { background-color: #7f8c8d; border: 2px solid #6c757d; }
+
+/* Status de Erro com Animação de Pulso (Igual Tela 1) */
+.status-error { 
+    background-color: var(--danger-color); 
+    border: 2px solid #bd2130; 
+    animation: pulse 1s infinite;
+}
+
+/* --- 6. BOTÕES --- */
 .btn-action {
     display: flex; justify-content: center; align-items: center; gap: 10px;
-    width: 100%; padding: 15px; margin-top: 15px;
-    border: none; border-radius: 6px; font-size: 1rem; cursor: pointer;
+    width: 100%; padding: 12px; margin-top: 10px;
+    border: none; border-radius: 6px; font-size: 0.95rem; cursor: pointer;
     font-weight: bold; color: white; transition: transform 0.1s, opacity 0.2s;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -104,28 +122,55 @@ h2 { margin-top: 0; color: var(--primary-blue); font-size: 1.3rem; margin-bottom
 .btn-action:active { transform: translateY(0); }
 
 .btn-blue { background-color: var(--primary-blue); }
-.btn-warning { background-color: var(--warning-color); color: #fff; } /* Laranja */
+.btn-green { background-color: var(--success-color); }
+.btn-red { background-color: var(--danger-color); }
+.btn-warning { background-color: var(--warning-color); color: #fff; }
 
-/* Botão Desabilitado */
-.btn-disabled {
-    background-color: #ccc; color: #666;
-    cursor: not-allowed; opacity: 0.6; pointer-events: none; box-shadow: none;
+/* CLASSE NOVA PARA O BOTÃO REFUGO ATIVO */
+.btn-orange { background-color: #d35400; color: white; }
+.btn-orange:hover { background-color: #e67e22; }
+
+.btn-disabled { 
+    background-color: #ccc; color: #666; 
+    cursor: not-allowed; opacity: 0.6; pointer-events: none; box-shadow: none; 
 }
 
-/* --- INPUTS --- */
+/* --- 7. INPUTS E KPIs --- */
 .input-std {
-    width: 100%; padding: 12px; margin: 5px 0 15px 0;
+    width: 100%; padding: 10px; margin: 5px 0 15px 0;
     border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;
-    font-size: 1.1rem; text-align: center; font-weight: bold; color: var(--primary-blue);
+    font-size: 1rem; text-align: center; font-weight: bold; color: var(--primary-blue);
 }
 
-/* --- KPIS DASHBOARD --- */
-.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .kpi-box { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
 .kpi-val { font-size: 1.5rem; font-weight: 800; color: var(--primary-blue); }
-.kpi-label { font-size: 0.8rem; color: #666; text-transform: uppercase; margin-top: 5px; }
+.kpi-label { font-size: 0.75rem; color: #666; text-transform: uppercase; margin-top: 5px; }
 
-/* --- LOGIN MODAL --- */
+/* --- 8. PAINEL DE ALARME (RODAPÉ) --- */
+#alarm-panel {
+    background-color: var(--danger-color); color: var(--text-light);
+    padding: 20px 30px; 
+    display: none; /* Começa oculto */
+    justify-content: space-between; align-items: center;
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    box-sizing: border-box; border-top: 5px solid #b71c1c;
+    z-index: 1000; box-shadow: 0 -4px 20px rgba(220, 53, 69, 0.3);
+}
+
+#alarm-panel.active { display: flex; animation: slideUp 0.3s ease-out; }
+
+.alarm-text { font-size: 1.3rem; font-weight: bold; display: flex; align-items: center; gap: 15px; }
+
+/* Botão Reset no Rodapé (Amarelo) */
+.btn-ack { 
+    background-color: var(--accent-yellow); color: var(--primary-blue); 
+    border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px;
+}
+.btn-ack:hover { background-color: #e0be00; }
+
+/* --- 9. EXTRAS (Login e Dev Tools) --- */
 #login-modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 59, 115, 0.95); backdrop-filter: blur(4px);
@@ -137,8 +182,23 @@ h2 { margin-top: 0; color: var(--primary-blue); font-size: 1.3rem; margin-bottom
     box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
+.dev-tools {
+    position: fixed; bottom: 10px; right: 10px;
+    opacity: 0.6; font-size: 0.8rem;
+    background: rgba(255,255,255,0.8);
+    padding: 5px; border-radius: 4px;
+    z-index: 2000;
+}
+.dev-tools:hover { opacity: 1; }
+
+/* --- 10. ANIMAÇÕES --- */
 @keyframes pulse {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
     70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+@keyframes slideUp { 
+    from { transform: translateY(100%); } 
+    to { transform: translateY(0); } 
 }

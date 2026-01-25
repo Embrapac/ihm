@@ -42,76 +42,126 @@
 
     <main>
         
-        <div class="card supervisor-card">
-            <h2><i class="fas fa-traffic-light"></i> STATUS DO SISTEMA</h2>
+        <div class="col-stack">
             
-            <div id="status-display" class="status-badge status-running">
-                OPERANDO
-            </div>
-            <p id="status-detail" style="color: var(--success-color); font-weight: bold; margin-bottom: 25px;">
-                Produção em andamento. Monitoramento ativo.
-            </p>
-
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
-            
-            <label style="font-weight: bold; color: var(--primary-blue); display:block; text-align:left;">Controle de Manutenção:</label>
-            
-            <button id="btn-reset" class="btn-action btn-disabled" onclick="resetarFalhas()" disabled>
-                <i class="fas fa-wrench"></i> RESETAR FALHAS
-            </button>
-
-            <button id="btn-export" class="btn-action btn-blue" onclick="exportarRelatorio()" style="display: none;">
-                <i class="fas fa-envelope"></i> EXPORTAR RELATÓRIO (CSV)
-            </button>
-
-            <button onclick="simularFalha()" style="margin-top:20px; background:transparent; border:1px dashed #ccc; color:#999; width:100%; cursor:pointer; padding: 5px; font-size: 0.8rem;">
-                [DEV] Simular Ocorrência de Falha
-            </button>
-        </div>
-
-        <div class="card">
-            <h2><i class="fas fa-chart-line"></i> DASHBOARD (TEMPO REAL)</h2>
-            <div class="kpi-grid">
-                <div class="kpi-box">
-                    <div class="kpi-val">85%</div>
-                    <div class="kpi-label">OEE</div>
-                </div>
-                <div class="kpi-box">
-                    <div class="kpi-val">1.240</div>
-                    <div class="kpi-label">Produção Total</div>
-                </div>
-                <div class="kpi-box">
-                    <div class="kpi-val" style="color: var(--danger-color);">2.1%</div>
-                    <div class="kpi-label">Taxa de Refugo</div>
-                </div>
-                <div class="kpi-box">
-                    <div class="kpi-val">15m</div>
-                    <div class="kpi-label">Tempo Parado</div>
+            <div class="card">
+                <h2><i class="fas fa-traffic-light"></i> STATUS DA LINHA</h2>
+                <div id="status-display" class="status-badge status-stopped">
+                    PARADO
                 </div>
             </div>
-            <p style="font-size: 0.75rem; color: #999; margin-top: 15px; text-align: right;">
-                <i class="fas fa-wifi"></i> Conexão IoT: Estável
-            </p>
+
+            <div class="card supervisor-card">
+                <h2><i class="fas fa-clock"></i> GESTÃO DE TURNO</h2>
+                
+                <div style="margin-bottom: 15px;">
+                    <p style="margin:5px 0;"><strong>Turno:</strong> <span id="shift-status" style="color: #7f8c8d;">AGUARDANDO</span></p>
+                    <p id="shift-time" style="font-size: 0.85rem; color:#999;">--:--</p>
+                    
+                    <button id="btn-start-shift" class="btn-action btn-green" onclick="toggleTurno(true)" style="padding: 8px;">
+                        <i class="fas fa-play"></i> Iniciar Turno
+                    </button>
+
+                    <div id="active-shift-controls" style="display: none;">
+                        <button class="btn-action btn-red" onclick="toggleTurno(false)" style="padding: 8px;">
+                            <i class="fas fa-stop"></i> Encerrar Turno
+                        </button>
+                    </div>
+                    
+                    <button id="btn-export" class="btn-action btn-blue" onclick="exportarRelatorio()" style="display: none; padding: 12px;">
+                        <i class="fas fa-file-csv"></i> ENVIAR RELATÓRIO
+                    </button>
+                </div>
+            </div>
+
         </div>
-        
-        <div class="card supervisor-card">
-            <h2><i class="fas fa-sliders-h"></i> PARÂMETROS DE LINHA</h2>
+
+        <div class="col-stack">
             
-            <label style="font-weight: bold; font-size: 0.9rem; display:block; text-align:left;">Meta de Produção (un):</label>
-            <input type="number" id="meta-input" class="input-std" 
-                   value="1500" min="0" step="1"
-                   oninput="validarNumero(this)">
-            
-            <label style="font-weight: bold; font-size: 0.9rem; display:block; text-align:left;">Tempo de Ciclo (1 a 60s):</label>
-            <input type="number" id="ciclo-input" class="input-std" 
-                   value="2" min="1" max="60" step="1"
-                   oninput="validarCiclo(this)">
-            
-            <button class="btn-action btn-blue" onclick="alert('Parâmetros enviados ao CLP com sucesso!')">
-                <i class="fas fa-save"></i> SALVAR ALTERAÇÕES
-            </button>
+            <div class="card supervisor-card">
+                <h2><i class="fas fa-chart-line"></i> KPIs DA LINHA (TEMPO REAL)</h2>
+                <div class="kpi-grid">
+                    <div class="kpi-box">
+                        <div class="kpi-val" id="kpi-oee">0%</div>
+                        <div class="kpi-label">OEE Global</div>
+                    </div>
+                    <div class="kpi-box">
+                        <div class="kpi-val" id="kpi-production">0</div>
+                        <div class="kpi-label">Produção (Turno)</div>
+                    </div>
+                    <div class="kpi-box">
+                        <div class="kpi-val" id="kpi-refugo" style="color: var(--danger-color);">0.0%</div>
+                        <div class="kpi-label">Taxa de Refugo</div>
+                    </div>
+                    <div class="kpi-box">
+                        <div class="kpi-val" id="kpi-downtime">00:00</div>
+                        <div class="kpi-label">Tempo Parado</div>
+                    </div>
+                </div>
+                <p style="font-size: 0.75rem; color: #999; margin-top: 15px; text-align: right;">
+                    <i class="fas fa-wifi"></i> Conexão IoT: Estável
+                </p>
+            </div>
+
         </div>
+
+        <div class="col-stack">
+            
+            <div class="card">
+                <h2><i class="fas fa-cogs"></i> CONTROLE MANUAL</h2>
+                
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button id="btn-man-start" class="btn-action btn-disabled" onclick="startLine()" disabled style="flex: 1; margin: 0;">
+                        <i class="fas fa-play"></i> INICIAR
+                    </button>
+                    <button id="btn-man-stop" class="btn-action btn-disabled" onclick="stopLine()" disabled style="flex: 1; margin: 0;">
+                        <i class="fas fa-stop"></i> PARAR
+                    </button>
+                </div>
+                
+                <button id="btn-refugo" class="btn-action btn-disabled" onclick="registrarRefugo()" disabled style="margin-top: 15px;">
+                    <i class="fas fa-trash-alt"></i> APONTAR REFUGO (+1)
+                </button>
+            </div>
+
+            <div class="card supervisor-card">
+                <h2><i class="fas fa-sliders-h"></i> PARÂMETROS DA LINHA</h2>
+                
+                <label style="font-weight: bold; font-size: 0.9rem; display:block; text-align:left; margin-top:10px;">Meta (un):</label>
+                <input type="number" id="meta-input" class="input-std" 
+                       value="100" min="0" step="1" 
+                       oninput="validarNumero(this); atualizarKPIs()">
+                
+                <label style="font-weight: bold; font-size: 0.9rem; display:block; text-align:left;">Ciclo (s):</label>
+                <input type="number" id="ciclo-input" class="input-std" 
+                       value="1" min="1" max="60" step="1" 
+                       oninput="validarCiclo(this)" onchange="atualizarVelocidade()">
+                
+                <button id="btn-save-params" class="btn-action btn-blue" onclick="salvarParametros()" style="margin-top: 20px;">
+                    <i class="fas fa-save"></i> SALVAR ALTERAÇÕES
+                </button>
+            </div>
+
+        </div>
+
     </main>
+
+    <div id="alarm-panel">
+        <div class="alarm-text">
+            <i class="fas fa-exclamation-triangle fa-2x"></i>
+            <div>
+                <span id="alarm-msg">FALHA CRÍTICA DETECTADA</span><br>
+                <small id="alarm-time" style="opacity: 0.8;">--:--</small>
+            </div>
+        </div>
+        <button id="btn-reset" class="btn-ack" onclick="resetarFalhas()">
+            <i class="fas fa-wrench"></i> RESETAR FALHAS DA LINHA
+        </button>
+    </div>
+
+    <div class="dev-tools">
+        <button onclick="simularFalha()">[DEV] Simular Falha</button>
+    </div>
 
     <script src="supervisor.js"></script>
 </body>
