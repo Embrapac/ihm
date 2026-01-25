@@ -9,6 +9,7 @@
     --card-bg: #ffffff;
     --text-main: #333333;
     --text-light: #ffffff;
+    --gray-btn: #6c757d; /* Cor para o botão de reset */
 }
 
 body {
@@ -20,12 +21,16 @@ body {
     position: relative;
 }
 
-/* Marca D'água */
+/* --- MARCA D'ÁGUA (LOGO ORIGINAL) --- */
 body::before {
-    content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    content: ""; 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-image: url('img/logo-embrapac.jpeg');
-    background-repeat: no-repeat; background-position: center; background-size: 600px;
-    opacity: 0.08; z-index: -1; pointer-events: none; filter: grayscale(100%);
+    background-repeat: no-repeat; 
+    background-position: center; 
+    background-size: 600px;
+    opacity: 0.08; 
+    z-index: -1; pointer-events: none; filter: grayscale(100%);
 }
 
 /* Header */
@@ -47,30 +52,49 @@ nav a:hover { color: var(--text-light); background-color: rgba(255, 255, 255, 0.
 
 main { flex: 1; padding: 25px; overflow-y: auto; }
 
+/* Card Padrão (Sólido) */
 .card-full {
     background: var(--card-bg); border-radius: 10px; padding: 25px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 3px solid var(--secondary-blue);
-    margin-bottom: 25px; /* Espaço entre cards */
+    margin-bottom: 25px;
 }
 
-/* --- SEPARADOR CUSTOMIZADO --- */
+/* --- CLASSE NOVA: CARD TRANSPARENTE (EFEITO VIDRO) --- */
+.card-full.transparent-bg {
+    background: rgba(255, 255, 255, 0.4) !important; 
+    backdrop-filter: blur(5px); 
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 59, 115, 0.05);
+}
+
+/* Header dentro do Card */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.card-header h2 {
+    margin: 0;
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* Separador */
 .separator {
     border: 0;
     height: 1px;
-    margin: 30px 0; /* Espaço em cima e embaixo */
-    
-    /* O Segredo: Gradiente que vai do transparente -> cor -> transparente */
+    margin: 30px 0;
     background-image: linear-gradient(
         to right, 
-        rgba(0, 0, 0, 0),       /* Começa invisível */
-        rgba(0, 59, 115, 0.4),  /* Azul da Embrapac com 40% de transparência */
-        rgba(0, 0, 0, 0)        /* Termina invisível */
+        rgba(0, 0, 0, 0),       
+        rgba(0, 59, 115, 0.4),  
+        rgba(0, 0, 0, 0)        
     );
 }
 
 /* Filtros */
 .filters {
-    display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; align-items: center;
+    display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; align-items: center; flex-wrap: wrap;
 }
 
 select, input, .btn-filter {
@@ -83,56 +107,46 @@ select, input, .btn-filter {
 }
 .btn-filter:hover { opacity: 0.9; }
 
-/* --- CORREÇÃO DA TABELA --- */
+/* Botão de Reset (Cinza) */
+.btn-reset {
+    background-color: var(--gray-btn);
+}
+.btn-reset:hover { background-color: #5a6268; }
+
+/* Tabela */
 table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 10px;
-    table-layout: fixed; /* OBRIGATÓRIO para fixar larguras */
+    width: 100%; border-collapse: collapse; margin-top: 10px;
+    table-layout: fixed;
 }
 
 th { 
-    background-color: #f8f9fa; 
-    color: var(--primary-blue); 
-    text-align: left; 
-    padding: 12px; 
+    background-color: rgba(248, 249, 250, 0.6); 
+    color: var(--primary-blue); text-align: left; padding: 12px; 
     border-bottom: 2px solid var(--secondary-blue);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
 }
 
 td { 
-    padding: 12px; 
-    border-bottom: 1px solid #eee; 
-    color: #555; 
-    vertical-align: middle;
+    padding: 12px; border-bottom: 1px solid rgba(238, 238, 238, 0.5); 
+    color: #333; vertical-align: middle;
     overflow: hidden; text-overflow: ellipsis; 
 }
 
-tr:hover { background-color: #f1f1f1; }
+tr:hover { background-color: rgba(255, 255, 255, 0.3); }
 
-/* --- LARGURAS DAS COLUNAS (ATUALIZADO) --- */
+/* Larguras das Colunas */
 .col-data { width: 18%; }
 .col-desc { width: 35%; }
-
-/* Eventos usa User (15) + Attr (15) = 30% */
 .col-user { width: 15%; } 
 .col-attr { width: 15%; }
-
-/* Alarmes usa Source (30%) para alinhar com o de cima */
-.col-source { width: 30%; } 
-
+.col-source { width: 15%; } 
+.col-workflow { width: 15%; }
 .col-status { width: 17%; text-align: center; }
 
-/* --- CORREÇÃO DO TAMANHO DO STATUS --- */
+/* Badges */
 .badge { 
-    padding: 6px 8px; 
-    border-radius: 12px; 
-    font-size: 0.8rem; 
-    font-weight: bold; 
-    display: inline-block;
-    
-    min-width: 110px; 
-    text-align: center; 
+    padding: 6px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; 
+    display: inline-block; min-width: 110px; text-align: center; 
 }
 
 .badge-active { background-color: #ffebee; color: var(--danger-color); }
@@ -140,7 +154,4 @@ tr:hover { background-color: #f1f1f1; }
 .badge-norm { background-color: #d4edda; color: var(--success-color); }
 .badge-info { background-color: #e2e3e5; color: #383d41; }
 
-/* Ajuste para centralizar o conteúdo da coluna de status */
 td:last-child { text-align: center; }
-
-h2 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }

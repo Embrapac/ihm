@@ -6,7 +6,6 @@
     <title>Histórico - EmbraPac</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
@@ -33,30 +32,42 @@
             </h2>
             
             <div class="filters">
-                <input type="date" id="filter-date">
+                <label for="filter-date-start" style="font-weight: bold; color: var(--primary-blue);">De:</label>
+                <input type="date" id="filter-date-start">
                 
+                <label for="filter-date-end" style="font-weight: bold; color: var(--primary-blue);">Até:</label>
+                <input type="date" id="filter-date-end">
+                
+                <div style="width: 1px; height: 30px; background: #ddd; margin: 0 10px;"></div>
+
                 <select id="filter-status">
                     <option value="all">Todos os Status</option>
                     <option value="ATIVO">Ativo</option>
                     <option value="RECONHECIDO">Reconhecido</option>
                     <option value="NORMAL">Normal</option>
-                    <option value="INFO">Info</option>
-                </select>
+                    <option value="INFORME">Informe</option> </select>
 
                 <button class="btn-filter" onclick="filterTable()">
                     <i class="fas fa-search"></i> Filtrar
                 </button>
-                
-                <button class="btn-filter" style="background-color: var(--success-color); margin-left: auto;" onclick="exportTableToCSV()">
-                    <i class="fas fa-file-export"></i> Exportar
+
+                <button class="btn-filter btn-reset" onclick="resetFilters()">
+                    <i class="fas fa-sync-alt"></i> Limpar
                 </button>
             </div>
         </div>
 
-        </div class="card-full">
-            <h2 style="color: var(--primary-blue); margin-top:0;">
-                <i class="fas fa-history"></i> Eventos
-            </h2>
+        <hr class="separator">
+        
+        <div class="card-full transparent-bg">
+            <div class="card-header">
+                <h2 style="color: var(--primary-blue);">
+                    <i class="fas fa-history"></i> Eventos
+                </h2>
+                <button class="btn-filter" style="background-color: var(--success-color);" onclick="exportTableToCSV('tabela-eventos', 'eventos_embrapac.csv')">
+                    <i class="fas fa-file-export"></i> Exportar Eventos
+                </button>
+            </div>
 
             <table id="tabela-eventos">
                 <thead>
@@ -101,12 +112,17 @@
             </table>
         </div>
 
-        </div> <hr class="separator">
+        <hr class="separator">
 
-        </div class="card-full">
-            <h2 style="color: var(--primary-blue); margin-top:0;">
-                <i class="fas fa-exclamation-triangle"></i> Alarmes
-            </h2>
+        <div class="card-full transparent-bg">
+            <div class="card-header">
+                <h2 style="color: var(--primary-blue);">
+                    <i class="fas fa-exclamation-triangle"></i> Alarmes
+                </h2>
+                <button class="btn-filter" style="background-color: var(--success-color);" onclick="exportTableToCSV('tabela-alarmes', 'alarmes_embrapac.csv')">
+                    <i class="fas fa-file-export"></i> Exportar Alarmes
+                </button>
+            </div>
 
             <table id="tabela-alarmes">
                 <thead>
@@ -114,96 +130,29 @@
                        <th class="col-data">Data/Hora</th>
                        <th class="col-desc">Descrição do Evento</th>
                        <th class="col-source">Fonte</th> 
+                       <th class="col-workflow">Workflow</th>
                        <th class="col-status">Status</th> 
                     </tr>
                  </thead>
                  <tbody>                    
-        <tr class="table-row">
-            <td>14/12/2025 09:15:00</td>
-            <td>ALARME: Falha Motor M2 Travado</td>
-            <td>Sistema</td>
-            <td><span class="badge badge-active">ATIVO</span></td>
-        </tr>                                                                
-    </tbody>
+                    <tr class="table-row">
+                        <td>14/12/2025 09:15:00</td>
+                        <td>ALARME: Falha Motor M2 Travado</td>
+                        <td>Sistema</td>
+                        <td>Automático</td> 
+                        <td><span class="badge badge-active">ATIVO</span></td>
+                    </tr>                                                                
+                </tbody>
             </table>
-            
-           </div> <hr class="separator">
-       
-            <p style="text-align: right; color: #999; font-size: 0.9rem; margin-top: 15px;">
-                Exibindo registros encontrados.
-            </p>
         </div>
+        
+        <hr class="separator">
+
+        <p style="text-align: right; color: #999; font-size: 0.9rem; margin-top: 15px;">
+            Exibindo registros encontrados.
+        </p>
     </main>
 
-   <script>
-        // --- FUNÇÃO 1: FILTRAR TABELA (DATA E STATUS) ---
-        function filterTable() {
-            const statusFilter = document.getElementById('filter-status').value;
-            const dateFilter = document.getElementById('filter-date').value; // Retorna string formato "YYYY-MM-DD"
-            
-            // Seleciona linhas de AMBAS as tabelas
-            const rows = document.querySelectorAll('.table-row');
-
-            rows.forEach(row => {
-                let showRow = true;
-
-                // 1. Verificação de Status
-                const badge = row.querySelector('.badge');
-                if (badge) {
-                    const statusText = badge.innerText;
-                    if (statusFilter !== 'all' && statusText !== statusFilter) {
-                        showRow = false;
-                    }
-                }
-
-                // 2. Verificação de Data
-                if (dateFilter && showRow) { // Só checa data se já passou no filtro de status
-                    // Pega a data da primeira célula (ex: "14/12/2025 09:42:10")
-                    const cellFullText = row.cells[0].innerText.trim();
-                    const cellDatePart = cellFullText.split(' ')[0]; // Pega só "14/12/2025"
-                    
-                    // Converte de DD/MM/YYYY para YYYY-MM-DD para poder comparar
-                    const [day, month, year] = cellDatePart.split('/');
-                    const formattedCellDate = `${year}-${month}-${day}`;
-
-                    if (formattedCellDate !== dateFilter) {
-                        showRow = false;
-                    }
-                }
-
-                // Aplica a visibilidade
-                row.style.display = showRow ? '' : 'none';
-            });
-        }
-
-        // --- FUNÇÃO 2: EXPORTAR PARA CSV ---
-        function exportTableToCSV() {
-            const rows = document.querySelectorAll("table tr");
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
-
-            rows.forEach(row => {
-                if (row.style.display !== 'none') {
-                    const cols = row.querySelectorAll("td, th");
-                    let rowData = [];
-                    
-                    cols.forEach(col => {
-                        let text = col.innerText.replace(/(\r\n|\n|\r)/gm, " ").trim();
-                        rowData.push(text);
-                    });
-                    
-                    csvContent += rowData.join(";") + "\r\n";
-                }
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "historico_embrapac.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
