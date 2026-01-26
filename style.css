@@ -1,0 +1,294 @@
+/* style.css - Versão Final Completa */
+
+/* --- 1. VARIÁVEIS E GERAL --- */
+:root {
+    --primary-blue: #003B73;
+    --secondary-blue: #4DA6E0;
+    --accent-yellow: #FFD700;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #f39c12;
+    --bg-color: #F4F7F6;
+    --card-bg: #ffffff;
+    --text-main: #333333;
+    --text-light: #ffffff;
+    --gray-btn: #6c757d; /* Cor para o botão de reset */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex; flex-direction: column; min-height: 100vh;
+    position: relative;
+}
+
+/* --- MARCA D'ÁGUA (LOGO ORIGINAL) --- */
+body::before {
+    content: ""; 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('img/logo-embrapac.jpeg');
+    background-repeat: no-repeat; 
+    background-position: center; 
+    background-size: 600px;
+    opacity: 0.08; 
+    z-index: -1; pointer-events: none; filter: grayscale(100%);
+}
+
+/* --- 2. HEADER E NAVEGAÇÃO --- */
+header {
+    background-color: var(--primary-blue); color: var(--text-light);
+    padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 59, 115, 0.2); z-index: 10;
+}
+
+.logo-container { display: flex; align-items: center; font-size: 1.4rem; font-weight: bold; gap: 10px; }
+.logo-img { height: 50px; background-color: #fff; padding: 2px; border-radius: 4px; display: block; }
+.user-info { font-size: 0.9rem; opacity: 0.9; }
+
+nav a {
+    text-decoration: none; color: rgba(255, 255, 255, 0.7);
+    padding: 10px 15px; font-size: 1rem; transition: all 0.3s; border-radius: 4px; display: inline-block;
+}
+nav a.active, nav a:hover { 
+    color: var(--text-light); background-color: rgba(255, 255, 255, 0.15); font-weight: 600; 
+}
+
+/* --- 3. LAYOUT GRID (3 COLUNAS) --- */
+main {
+    flex: 1; padding: 25px;
+    display: grid;
+    /* Define 3 colunas de tamanho igual */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 25px;
+    align-items: start; /* Alinha cartões ao topo */
+}
+
+/* Responsividade: Vira 1 coluna em telas menores */
+@media (max-width: 1000px) {
+    main { grid-template-columns: 1fr; }
+}
+
+/* Classe para empilhar cards verticalmente (Esquerda e Direita) */
+.col-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* --- 4. CARDS --- */
+.card {
+    background: var(--card-bg); border-radius: 10px; padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;
+    border-top: 3px solid var(--secondary-blue);
+    position: relative;
+    /* height: 100%; Opcional: Se quiser que estiquem */
+}
+
+/* Destaque Amarelo para Supervisão */
+.card.supervisor-card { border-top-color: var(--accent-yellow); }
+
+h2 { 
+    margin-top: 0; color: var(--primary-blue); font-size: 1.2rem; 
+    margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; 
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* --- 5. STATUS E ALARMES (BADGES) --- */
+.status-badge {
+    display: block; width: 100%; padding: 15px 0;
+    border-radius: 50px; color: var(--text-light); font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 1.2rem; transition: all 0.3s;
+}
+/* Card Padrão (Sólido) */
+.card-full {
+    background: var(--card-bg); border-radius: 10px; padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 3px solid var(--secondary-blue);
+    margin-bottom: 25px;
+}
+
+/* --- CLASSE NOVA: CARD TRANSPARENTE (EFEITO VIDRO) --- */
+.card-full.transparent-bg {
+    background: rgba(255, 255, 255, 0.4) !important; 
+    backdrop-filter: blur(5px); 
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 59, 115, 0.05);
+}
+
+/* Header dentro do Card */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.card-header h2 {
+    margin: 0;
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* Separador */
+.separator {
+    border: 0;
+    height: 1px;
+    margin: 30px 0;
+    background-image: linear-gradient(
+        to right, 
+        rgba(0, 0, 0, 0),       
+        rgba(0, 59, 115, 0.4),  
+        rgba(0, 0, 0, 0)        
+    );
+}
+
+/* Filtros */
+.filters {
+    display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; align-items: center; flex-wrap: wrap;
+}
+
+.status-running { background-color: var(--success-color); border: 2px solid #218838; }
+.status-stopped { background-color: #7f8c8d; border: 2px solid #6c757d; }
+
+/* Status de Erro com Animação de Pulso (Igual Tela 1) */
+.status-error { 
+    background-color: var(--danger-color); 
+    border: 2px solid #bd2130; 
+    animation: pulse 1s infinite;
+}
+
+/* --- 6. BOTÕES --- */
+.btn-action {
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+    width: 100%; padding: 12px; margin-top: 10px;
+    border: none; border-radius: 6px; font-size: 0.95rem; cursor: pointer;
+    font-weight: bold; color: white; transition: transform 0.1s, opacity 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-action:active { transform: translateY(0); }
+
+.btn-blue { background-color: var(--primary-blue); }
+.btn-green { background-color: var(--success-color); }
+.btn-red { background-color: var(--danger-color); }
+.btn-warning { background-color: var(--warning-color); color: #fff; }
+
+/* CLASSE NOVA PARA O BOTÃO REFUGO ATIVO */
+.btn-orange { background-color: #d35400; color: white; }
+.btn-orange:hover { background-color: #e67e22; }
+
+.btn-disabled { 
+    background-color: #ccc; color: #666; 
+    cursor: not-allowed; opacity: 0.6; pointer-events: none; box-shadow: none; 
+}
+
+/* --- 7. INPUTS E KPIs --- */
+.input-std {
+    width: 100%; padding: 10px; margin: 5px 0 15px 0;
+    border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;
+    font-size: 1rem; text-align: center; font-weight: bold; color: var(--primary-blue);
+}
+
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.kpi-box { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
+.kpi-val { font-size: 1.5rem; font-weight: 800; color: var(--primary-blue); }
+.kpi-label { font-size: 0.75rem; color: #666; text-transform: uppercase; margin-top: 5px; }
+
+/* --- 8. PAINEL DE ALARME (RODAPÉ) --- */
+#alarm-panel {
+    background-color: var(--danger-color); color: var(--text-light);
+    padding: 20px 30px; 
+    display: none; /* Começa oculto */
+    justify-content: space-between; align-items: center;
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    box-sizing: border-box; border-top: 5px solid #b71c1c;
+    z-index: 1000; box-shadow: 0 -4px 20px rgba(220, 53, 69, 0.3);
+}
+
+#alarm-panel.active { display: flex; animation: slideUp 0.3s ease-out; }
+
+.alarm-text { font-size: 1.3rem; font-weight: bold; display: flex; align-items: center; gap: 15px; }
+
+/* Botão Reset no Rodapé (Amarelo) */
+.btn-ack { 
+    background-color: var(--accent-yellow); color: var(--primary-blue); 
+    border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px;
+}
+.btn-ack:hover { background-color: #e0be00; }
+
+/* --- 9. EXTRAS (Login e Dev Tools) --- */
+#login-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 59, 115, 0.95); backdrop-filter: blur(4px);
+    z-index: 2000; display: flex; justify-content: center; align-items: center;
+    transition: opacity 0.5s;
+}
+.login-box {
+    background: white; padding: 40px; border-radius: 12px; width: 100%; max-width: 350px; text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+/* Botão de Reset (Cinza) */
+.btn-reset {
+    background-color: var(--gray-btn);
+}
+.btn-reset:hover { background-color: #5a6268; }
+
+/* Tabela */
+table { 
+    width: 100%; border-collapse: collapse; margin-top: 10px;
+    table-layout: fixed;
+}
+
+th { 
+    background-color: rgba(248, 249, 250, 0.6); 
+    color: var(--primary-blue); text-align: left; padding: 12px; 
+    border-bottom: 2px solid var(--secondary-blue);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
+}
+
+td { 
+    padding: 12px; border-bottom: 1px solid rgba(238, 238, 238, 0.5); 
+    color: #333; vertical-align: middle;
+    overflow: hidden; text-overflow: ellipsis; 
+}
+
+tr:hover { background-color: rgba(255, 255, 255, 0.3); }
+
+/* Larguras das Colunas */
+.col-data { width: 18%; }
+.col-desc { width: 35%; }
+.col-user { width: 15%; } 
+.col-attr { width: 15%; }
+.col-source { width: 15%; } 
+.col-workflow { width: 15%; }
+.col-status { width: 17%; text-align: center; }
+
+/* Badges */
+.badge { 
+    padding: 6px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; 
+    display: inline-block; min-width: 110px; text-align: center; 
+}
+
+.dev-tools {
+    position: fixed; bottom: 10px; right: 10px;
+    opacity: 0.6; font-size: 0.8rem;
+    background: rgba(255,255,255,0.8);
+    padding: 5px; border-radius: 4px;
+    z-index: 2000;
+}
+.dev-tools:hover { opacity: 1; }
+
+/* --- 10. ANIMAÇÕES --- */
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+@keyframes slideUp { 
+    from { transform: translateY(100%); } 
+    to { transform: translateY(0); } 
+}
+td:last-child { text-align: center; }
