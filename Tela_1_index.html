@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmbraPac - IHM Operacional</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* --- PALETA DE CORES EMBRAPAC --- */
+        :root {
+            --primary-blue: #003B73;
+            --secondary-blue: #4DA6E0;
+            --accent-yellow: #FFD700;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --bg-color: #F4F7F6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-light: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative; /* Necessário para a marca d'água */
+        }
+
+        /* --- MARCA D'ÁGUA (BACKGROUND) --- */
+        /* Esta configuração coloca o logo gigante e transparente no fundo */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Caminho da imagem (mesmo arquivo do logo pequeno) */
+            background-image: url('243186829.jpeg'); 
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 600px; /* Tamanho aumentado */
+            opacity: 0.08; /* Transparência bem alta (apenas 8% visível) */
+            z-index: -1; /* Garante que fique ATRÁS de tudo */
+            pointer-events: none; /* Permite clicar através da imagem */
+            filter: grayscale(100%); /* Opcional: deixa preto e branco para ficar mais discreto */
+        }
+
+        /* --- CABEÇALHO --- */
+        header {
+            background-color: var(--primary-blue);
+            color: var(--text-light);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 59, 115, 0.2);
+            z-index: 10; /* Garante que o menu fique sobre a marca d'água */
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        
+        .logo-img {
+            height: 50px;
+            margin-right: 15px;
+            background-color: #fff;
+            padding: 2px;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .user-info { font-size: 0.9rem; opacity: 0.9; }
+        
+        nav button {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+        nav button.active { 
+            color: var(--text-light); 
+            font-weight: bold; 
+            background-color: rgba(255, 255, 255, 0.1); 
+        }
+        nav button:hover { color: var(--text-light); background-color: rgba(255, 255, 255, 0.1); }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        main {
+            flex: 1;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            align-content: start;
+            z-index: 1; /* Fica acima da marca d'água */
+        }
+
+        /* Cartões */
+        .card {
+            background: var(--card-bg); /* Fundo branco cobre a marca d'água para leitura */
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 3px solid var(--secondary-blue);
+        }
+
+        h2 { 
+            margin-top: 0; 
+            color: var(--primary-blue); 
+            font-size: 1.3rem; 
+        }
+        
+        .big-number {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin: 15px 0;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: #e9ecef;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--secondary-blue);
+            border-radius: 6px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 30px;
+            color: var(--text-light);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .status-running { background-color: var(--success-color); }
+        .status-stopped { background-color: #7f8c8d; }
+        .status-error { background-color: var(--danger-color); animation: pulse 1s infinite; }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 8px;
+            color: var(--text-light);
+            font-weight: bold;
+            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .btn-start { background-color: var(--success-color); }
+        .btn-stop { background-color: var(--danger-color); }
+        .btn-ack { background-color: var(--accent-yellow); color: var(--primary-blue); }
+
+        #alarm-panel {
+            background-color: var(--danger-color);
+            color: var(--text-light);
+            padding: 20px 30px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+            border-top: 5px solid #b71c1c;
+            z-index: 1000;
+            box-shadow: 0 -4px 20px rgba(220, 53, 69, 0.3);
+        }
+        
+        #alarm-panel.active {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .alarm-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dev-tools {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            opacity: 0.6;
+            font-size: 0.8rem;
+            background: rgba(255,255,255,0.8);
+            padding: 5px;
+            border-radius: 4px;
+            z-index: 2000;
+        }
+        .dev-tools:hover { opacity: 1; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="243186829.jpeg" alt="Logo Embrapac" class="logo-img">
+            Embrapac - IHM Operacional
+        </div>
+        <nav>
+            <button class="active">Painel Operação</button>
+            <button>Histórico</button>
+            <button><i class="fas fa-lock"></i> Supervisor</button>
+        </nav>
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i> Olá, Sr. Agenor (Operador) | <a href="#" style="color: var(--accent-yellow)">Sair</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="card">
+            <h2>STATUS DA LINHA</h2>
+            <div id="status-display" class="status-badge status-stopped">
+                PARADO
+            </div>
+            <p id="status-detail" style="color: #666;">Aguardando comando...</p>
+        </div>
+
+        <div class="card">
+            <h2>PRODUÇÃO (TURNO)</h2>
+            <div class="big-number" id="counter">0</div>
+            <p style="color: #666;">Meta: 1.500 un</p>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>CONTROLE MANUAL</h2>
+            <button id="btn-start" class="btn btn-start" onclick="startLine()">
+                <i class="fas fa-play"></i> INICIAR
+            </button>
+            <button id="btn-stop" class="btn btn-stop" onclick="stopLine()" disabled>
+                <i class="fas fa-stop"></i> PARAR
+            </button>
+        </div>
+    </main>
+
+    <div id="alarm-panel">
+        <div class="alarm-text">
+            <i class="fas fa-exclamation-triangle fa-2x"></i>
+            <div>
+                <span id="alarm-msg">FALHA CRÍTICA DETECTADA</span><br>
+                <small id="alarm-time" style="opacity: 0.8;">--:--</small>
+            </div>
+        </div>
+        <button class="btn btn-ack" onclick="acknowledgeAlarm()">
+            <i class="fas fa-bell-slash"></i> RECONHECER ALARME
+        </button>
+    </div>
+
+    <div class="dev-tools">
+        <button onclick="simulateFault()">[DEV] Simular Falha Motor</button>
+    </div>
+
+    <script>
+        let isRunning = false;
+        let productionCount = 1240;
+        let intervalId = null;
+        let alarmActive = false;
+
+        const statusDisplay = document.getElementById('status-display');
+        const statusDetail = document.getElementById('status-detail');
+        const counterDisplay = document.getElementById('counter');
+        const btnStart = document.getElementById('btn-start');
+        const btnStop = document.getElementById('btn-stop');
+        const alarmPanel = document.getElementById('alarm-panel');
+        const progressBar = document.getElementById('progress-bar');
+        
+        updateScreen();
+
+        function startLine() {
+            if (alarmActive) return alert("Resolva o alarme antes de iniciar!");
+            isRunning = true;
+            statusDisplay.className = "status-badge status-running";
+            statusDisplay.innerText = "OPERANDO";
+            statusDetail.innerText = "Produção normal. Velocidade nominal.";
+            intervalId = setInterval(() => {
+                productionCount++;
+                updateScreen();
+            }, 2000);
+            updateButtons();
+        }
+
+        function stopLine() {
+            isRunning = false;
+            statusDisplay.className = "status-badge status-stopped";
+            statusDisplay.innerText = "PARADO";
+            statusDetail.innerText = "Parada manual pelo operador.";
+            clearInterval(intervalId);
+            updateButtons();
+        }
+
+        function simulateFault() {
+            if (isRunning) stopLine();
+            alarmActive = true;
+            statusDisplay.className = "status-badge status-error";
+            statusDisplay.innerText = "FALHA";
+            statusDetail.innerText = "Erro #502: Motor M2 Travado";
+            const now = new Date();
+            document.getElementById('alarm-msg').innerText = "ALARME: MOTOR DA ESTEIRA TRAVADO";
+            document.getElementById('alarm-time').innerText = "Ocorrido às: " + now.toLocaleTimeString();
+            alarmPanel.classList.add('active');
+            updateButtons();
+        }
+
+        function acknowledgeAlarm() {
+            alert("Alarme Reconhecido. O som foi silenciado. A falha persiste até manutenção.");
+            alarmPanel.classList.remove('active');
+            setTimeout(() => {
+                let fixed = confirm("O técnico consertou o motor fisicamente?");
+                if(fixed) {
+                    alarmActive = false;
+                    statusDisplay.className = "status-badge status-stopped";
+                    statusDisplay.innerText = "PRONTO";
+                    statusDetail.innerText = "Falha normalizada. Pronto para iniciar.";
+                    updateButtons();
+                }
+            }, 1000);
+        }
+
+        function updateScreen() {
+            counterDisplay.innerText = productionCount;
+            let percentage = (productionCount / 1500) * 100;
+            progressBar.style.width = percentage + "%";
+        }
+
+        function updateButtons() {
+            btnStart.disabled = isRunning || alarmActive;
+            btnStop.disabled = !isRunning;
+        }
+    </script>
+</body>
+</html>
