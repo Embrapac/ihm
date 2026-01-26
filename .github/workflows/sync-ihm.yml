@@ -1,0 +1,22 @@
+name: sync to rt-embarcados ORG
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # necessário para histórico completo
+      - name: push to rt-embarcados
+        env:
+          TOKEN: ${{ secrets.RT_EMBARCADOS_TOKEN }}
+        run: |
+          git remote add rt-embarcados https://${TOKEN}@github.com/rt-embarcados/grp1_repo.git
+          git fetch rt-embarcados
+          git push rt-embarcados main:ihm --force-with-lease
