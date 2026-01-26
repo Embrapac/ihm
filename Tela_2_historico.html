@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico - EmbraPac</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="historico.css"> 
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" class="logo-img">
+            IHM Operacional
+        </div>
+        <nav>
+            <a href="index.html">Painel Operação</a>
+            <a href="historico.html" class="active">Histórico</a>
+            <a href="supervisor.html"><i class="fas fa-lock"></i> Supervisor</a>
+        </nav>
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i> Olá, Sr. Agenor (Operador) | <a href="#" style="color: var(--accent-yellow)">Sair</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="card-full">
+            <h2 style="color: var(--primary-blue); margin-top:0;">
+                <i class="fas fa-filter"></i> Filtros de Pesquisa
+            </h2>
+            
+            <div class="filters">
+                <label for="filter-date-start" style="font-weight: bold; color: var(--primary-blue);">De:</label>
+                <input type="date" id="filter-date-start">
+                
+                <label for="filter-date-end" style="font-weight: bold; color: var(--primary-blue);">Até:</label>
+                <input type="date" id="filter-date-end">
+                
+                <div style="width: 1px; height: 30px; background: #ddd; margin: 0 10px;"></div>
+
+                <select id="filter-status">
+                    <option value="all">Todos os Status</option>
+                    <option value="ATIVO">Ativo</option>
+                    <option value="RECONHECIDO">Reconhecido</option>
+                    <option value="NORMAL">Normal</option>
+                    <option value="INFORME">Informe</option> 
+                </select>
+
+                <button class="btn-filter" onclick="filterTable()">
+                    <i class="fas fa-search"></i> Filtrar
+                </button>
+
+                <button class="btn-filter btn-reset" onclick="resetFilters()">
+                    <i class="fas fa-sync-alt"></i> Limpar
+                </button>
+            </div>
+        </div>
+
+        <hr class="separator">
+        
+        <div class="card-full transparent-bg">
+            <div class="card-header">
+                <h2 style="color: var(--primary-blue);">
+                    <i class="fas fa-history"></i> Eventos
+                </h2>
+                <button class="btn-filter" style="background-color: var(--success-color);" onclick="exportTableToCSV('tabela-eventos', 'eventos_embrapac.csv')">
+                    <i class="fas fa-file-export"></i> Exportar Eventos
+                </button>
+            </div>
+
+            <table id="tabela-eventos">
+                <thead>
+                    <tr>
+                        <th class="col-data">Data/Hora</th>
+                        <th class="col-desc">Descrição do Evento</th>
+                        <th class="col-user">Usuário</th>
+                        <th class="col-attr">Atributo</th>
+                        <th class="col-status">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-row">
+                        <td>14/12/2025 09:42:10</td>
+                        <td>Início do Ciclo de Produção</td>
+                        <td>Operador</td>
+                        <td>Agenor</td>                        
+                        <td><span class="badge badge-info">INFORME</span></td>
+                    </tr>                    
+                    <tr class="table-row">
+                        <td>14/12/2025 09:15:30</td>
+                        <td>Reconhecimento de Alarme (M2)</td>
+                        <td>Operador</td>
+                        <td>Agenor</td>                        
+                        <td><span class="badge badge-ack">RECONHECIDO</span></td>
+                    </tr>
+                    <tr class="table-row">
+                        <td>14/12/2025 08:00:00</td>
+                        <td>Início de Turno - Manhã</td>
+                        <td>Supervisor</td>
+                        <td>Carlos</td>                
+                        <td><span class="badge badge-norm">NORMAL</span></td>
+                    </tr>
+                    <tr class="table-row">
+                        <td>13/12/2025 18:00:00</td>
+                        <td>Fim de Turno</td>
+                        <td>Supervisor</td>
+                        <td>Carlos</td>                
+                        <td><span class="badge badge-info">INFORME</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="separator">
+
+        <div class="card-full transparent-bg">
+            <div class="card-header">
+                <h2 style="color: var(--primary-blue);">
+                    <i class="fas fa-exclamation-triangle"></i> Alarmes
+                </h2>
+                <button class="btn-filter" style="background-color: var(--success-color);" onclick="exportTableToCSV('tabela-alarmes', 'alarmes_embrapac.csv')">
+                    <i class="fas fa-file-export"></i> Exportar Alarmes
+                </button>
+            </div>
+
+            <table id="tabela-alarmes">
+                <thead>
+                    <tr>
+                       <th class="col-data">Data/Hora</th>
+                       <th class="col-desc">Descrição do Evento</th>
+                       <th class="col-source">Fonte</th> 
+                       <th class="col-workflow">Workflow</th>
+                       <th class="col-status">Status</th> 
+                    </tr>
+                 </thead>
+                 <tbody>                    
+                    <tr class="table-row">
+                        <td>14/12/2025 09:15:00</td>
+                        <td>ALARME: Falha Motor M2 Travado</td>
+                        <td>Sistema</td>
+                        <td>Automático</td> 
+                        <td><span class="badge badge-active">ATIVO</span></td>
+                    </tr>                                                                
+                </tbody>
+            </table>
+        </div>
+        
+        <p style="text-align: right; color: #999; font-size: 0.9rem; margin-top: 15px;">
+            Exibindo registros encontrados.
+        </p>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
