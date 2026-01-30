@@ -13,10 +13,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # necessário para histórico completo
-      - name: push to rt-embarcados
-        env:
-          TOKEN: ${{ secrets.RT_EMBARCADOS_TOKEN }}
+      - name: Setup SSH
         run: |
-          git remote add rt-embarcados https://x-access-token:${TOKEN}@github.com/rt-embarcados/grp1_repo.git
+          mkdir -p ~/.ssh
+          echo "${{ secrets.RT_EMBARCADOS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - name: push to rt-embarcados
+        run: |
+          git remote add rt-embarcados git@github.com:rt-embarcados/grp1_repo.git
           git fetch rt-embarcados
           git push rt-embarcados main:ihm --force-with-lease
