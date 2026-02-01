@@ -1,5 +1,8 @@
-// --- script.js ---
+/* ============================================================
+   SCRIPT.JS - Funções Gerais (Histórico e Utilitários)
+   ============================================================ */
 
+// --- FILTRAR TABELA (DATA E STATUS) ---
 function filterTable() {
     const statusFilter = document.getElementById('filter-status').value;
     
@@ -23,10 +26,11 @@ function filterTable() {
 
         // 2. Verificação de Data (Intervalo)
         if (showRow) { 
+            // Pega a data da primeira célula (ex: "14/12/2025 09:42:10")
             const cellFullText = row.cells[0].innerText.trim();
             const cellDatePart = cellFullText.split(' ')[0]; // Pega só "14/12/2025"
             
-            // Converte para formato comparável (YYYY-MM-DD)
+            // Converte de DD/MM/YYYY para YYYY-MM-DD para poder comparar
             const [day, month, year] = cellDatePart.split('/');
             const rowDateFormatted = `${year}-${month}-${day}`;
 
@@ -45,30 +49,33 @@ function filterTable() {
     });
 }
 
-// --- NOVA FUNÇÃO: RESETAR FILTROS ---
+// --- RESETAR FILTROS ---
 function resetFilters() {
     // 1. Limpa os valores dos inputs
     document.getElementById('filter-date-start').value = '';
     document.getElementById('filter-date-end').value = '';
     document.getElementById('filter-status').value = 'all';
 
-    // 2. Chama o filtro novamente (que agora vai mostrar tudo, pois os campos estão vazios)
+    // 2. Chama o filtro novamente (que agora vai mostrar tudo)
     filterTable();
 }
 
+// --- EXPORTAR PARA CSV ---
 function exportTableToCSV(tableId, filename) {
     const table = document.getElementById(tableId);
     if (!table) return;
 
     const rows = table.querySelectorAll("tr");
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // BOM para acentuação no Excel
 
     rows.forEach(row => {
+        // Só exporta linhas visíveis
         if (row.style.display !== 'none') {
             const cols = row.querySelectorAll("td, th");
             let rowData = [];
             
             cols.forEach(col => {
+                // Limpa quebras de linha dentro da célula
                 let text = col.innerText.replace(/(\r\n|\n|\r)/gm, " ").trim();
                 rowData.push(text);
             });
@@ -77,6 +84,7 @@ function exportTableToCSV(tableId, filename) {
         }
     });
 
+    // Cria link de download invisível e clica nele
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);

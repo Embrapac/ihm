@@ -1,385 +1,333 @@
-// supervisor.js - Versão Final (Reset no Relatório)
+/* ============================================================
+   SUPERVISOR.JS - MASTER (Completo: Relatório, Meta, Downtime, 2 Tempos)
+   ============================================================ */
 
-// VARIÁVEIS DE ESTADO
-let productionCount = 0; 
-let refugoCount = 0; 
+const ESTADO_PADRAO = {
+    producao: 0,
+    refugo: 0,
+    meta: 1500,
+    ciclo: 1,
+    status: 'OPERANDO',
+    ultimoUpdate: Date.now(),
+    turnoAtivo: false,
+    relatorioPendente: false, // Controla o botão azul
+    downtime: 0,              // Contador de tempo parado
+    horaInicioTurno: '--:--',
+    horaFimTurno: '--:--',
+    horaFalha: '--:--'
+};
+
+let estado = { ...ESTADO_PADRAO };
 let productionInterval = null;
+let syncInterval = null;
+let clockInterval = null;
+let stepFalha = 0; // Controle dos passos da falha no Supervisor
 
-let downtimeSeconds = 0;
-let downtimeInterval = null;
-let isShiftActive = false;
-
-// 1. LOGIN
 function attemptLogin() {
-    const passInput = document.getElementById('admin-pass');
+    const input = document.getElementById('admin-pass');
     const modal = document.getElementById('login-modal');
-    if (passInput.value === 'admin') {
+    if (input && input.value === 'admin') {
         modal.style.opacity = '0';
         setTimeout(() => { modal.style.display = 'none'; }, 500);
+        salvarEstado(); 
     } else {
         alert('Senha Incorreta!');
     }
 }
-document.getElementById('admin-pass').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') attemptLogin();
+
+document.addEventListener('DOMContentLoaded', () => {
+    carregarEstado();
+    const passInput = document.getElementById('admin-pass');
+    if(passInput) passInput.addEventListener('keypress', (e) => { if(e.key==='Enter') attemptLogin(); });
+
+    document.getElementById('meta-input').value = estado.meta;
+    document.getElementById('ciclo-input').value = estado.ciclo;
+
+    iniciarRelogioTurno();
+    syncInterval = setInterval(cicloPrincipal, 500);
+    atualizarInterface();
 });
 
-
-// 2. GESTÃO DE TURNO
-function toggleTurno(iniciar) {
-    const statusSpan = document.getElementById('shift-status');
-    const timeSpan = document.getElementById('shift-time');
-    const btnStart = document.getElementById('btn-start-shift');
-    const controlsActive = document.getElementById('active-shift-controls');
-    const btnExport = document.getElementById('btn-export');
-    const display = document.getElementById('status-display');
-    const btnManStart = document.getElementById('btn-man-start');
-    const btnManStop = document.getElementById('btn-man-stop');
-    const btnRefugo = document.getElementById('btn-refugo');
-    const btnSave = document.getElementById('btn-save-params');
-
-    if (iniciar) {
-        // --- INICIAR TURNO ---
-        isShiftActive = true;
-        
-        // Garante que começa zerado (caso venha de um reload)
-        // O reset principal agora acontece ao exportar o relatório anterior
-        if(document.getElementById('kpi-production').innerText !== '0') {
-             productionCount = 0; refugoCount = 0; downtimeSeconds = 0;
-             atualizarKPIs();
-             atualizarDisplayDowntime();
-             document.getElementById('kpi-production').innerText = 0;
-        }
-        
-        statusSpan.innerText = "EM ANDAMENTO";
-        statusSpan.style.color = "var(--success-color)";
-        timeSpan.innerText = "Início: " + new Date().toLocaleTimeString();
-        
-        display.className = "status-badge status-stopped";
-        display.innerHTML = 'PARADO';
-
-        startDowntimeTimer(); 
-
-        btnStart.style.display = 'none';
-        controlsActive.style.display = 'block';
-        btnExport.style.display = 'none';
-
-        // Libera Controle Manual
-        btnManStart.disabled = false;
-        btnManStart.className = "btn-action btn-green";
-        btnManStop.disabled = true;
-        btnManStop.className = "btn-action btn-disabled";
-        
-        btnRefugo.disabled = true;
-        btnRefugo.className = "btn-action btn-disabled";
-
-        btnSave.disabled = false;
-        btnSave.className = "btn-action btn-blue";
-
-    } else {
-        // --- ENCERRAR TURNO ---
-        if(confirm('Confirma o encerramento do turno?')) {
-            isShiftActive = false;
-            
-            statusSpan.innerText = "TURNO FINALIZADO";
-            statusSpan.style.color = "#7f8c8d";
-            timeSpan.innerText = "Fim: " + new Date().toLocaleTimeString();
-            
-            stopProductionTimer();
-            stopDowntimeTimer();
-            
-            display.className = "status-badge status-stopped";
-            display.innerHTML = 'PARADO';
-
-            controlsActive.style.display = 'none';
-            btnExport.style.display = 'flex';      
-            btnExport.className = "btn-action btn-blue";
-            btnExport.innerHTML = '<i class="fas fa-file-csv"></i> ENVIAR RELATÓRIO';
-            
-            // Trava tudo
-            btnManStart.disabled = true;
-            btnManStart.className = "btn-action btn-disabled";
-            btnManStop.disabled = true;
-            btnManStop.className = "btn-action btn-disabled";
-            btnRefugo.disabled = true;
-            btnRefugo.className = "btn-action btn-disabled";
-            
-            btnSave.disabled = false;
-            btnSave.className = "btn-action btn-blue";
-
-            // NÃO ZERA AQUI. APENAS PARA E MOSTRA MENSAGEM.
-            alert("Turno encerrado. \nOs dados estão congelados para conferência.");
-        }
+function carregarEstado() {
+    try {
+        const salvo = localStorage.getItem('embrapac_db');
+        if (salvo) estado = { ...ESTADO_PADRAO, ...JSON.parse(salvo) };
+        else salvarEstado();
+    } catch (e) {
+        estado = { ...ESTADO_PADRAO };
+        salvarEstado();
+    }
+    
+    // Sincronia de Reset Externo (Se operador resolveu, reseta aqui)
+    if (estado.status !== 'FALHA' && stepFalha > 0) {
+        stepFalha = 0;
+        document.getElementById('alarm-panel').classList.remove('active');
+        document.getElementById('btn-reset-text').innerText = "RESETAR FALHAS";
     }
 }
 
-// 3. CONTROLE MANUAL
-function startLine() {
-    const meta = parseInt(document.getElementById('meta-input').value) || 0;
-    if (productionCount >= meta && meta > 0) {
-        alert("A meta de produção já foi atingida (" + meta + ").");
-        return;
+function salvarEstado() {
+    localStorage.setItem('embrapac_db', JSON.stringify(estado));
+}
+
+// --- CICLO PRINCIPAL (PRODUÇÃO) ---
+function cicloPrincipal() {
+    carregarEstado();
+    const agora = Date.now();
+
+    if (estado.status === 'OPERANDO') {
+        if (agora - estado.ultimoUpdate >= (estado.ciclo * 1000)) {
+            // Verifica Meta
+            if (estado.producao >= estado.meta) {
+                estado.status = 'PARADO';
+                salvarEstado();
+                alert("META ATINGIDA! Linha parada automaticamente.");
+                atualizarInterface();
+            } else {
+                estado.producao++;
+                estado.ultimoUpdate = agora;
+                salvarEstado();
+            }
+        }
     }
+    atualizarInterface();
+}
 
-    const display = document.getElementById('status-display');
-    const btnManStart = document.getElementById('btn-man-start');
-    const btnManStop = document.getElementById('btn-man-stop');
-    const btnRefugo = document.getElementById('btn-refugo');
-    const btnSave = document.getElementById('btn-save-params');
+// --- RELÓGIO + DOWNTIME (OTIMIZADO) ---
+function iniciarRelogioTurno() {
+    if (clockInterval) clearInterval(clockInterval);
+    clockInterval = setInterval(() => {
+        // Relógio Visual
+        const elTime = document.getElementById('shift-time');
+        if (elTime) {
+            if (!estado.turnoAtivo) {
+                elTime.innerText = "Início: " + new Date().toLocaleTimeString();
+            } else {
+                elTime.innerText = "Início: " + estado.horaInicioTurno;
+            }
+        }
 
-    display.className = "status-badge status-running";
-    display.innerHTML = 'OPERANDO';
+        // Lógica de Tempo Parado (Downtime)
+        // Conta apenas se: Turno ATIVO + (PARADO ou FALHA)
+        if (estado.turnoAtivo && (estado.status === 'PARADO' || estado.status === 'FALHA')) {
+            estado.downtime++;
+            salvarEstado();
+            // Atualiza KPI na hora para fluidez
+            const kpiDowntime = document.getElementById('kpi-downtime');
+            if(kpiDowntime) kpiDowntime.innerText = formatTime(estado.downtime);
+        }
+    }, 1000);
+}
+
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+}
+
+// --- GESTÃO DE TURNO ---
+function toggleTurno(iniciar) {
+    if (iniciar) {
+        estado.turnoAtivo = true;
+        estado.relatorioPendente = false; // Reseta estado do relatório
+        estado.horaInicioTurno = new Date().toLocaleTimeString();
+        salvarEstado();
+    } else {
+        if (confirm('Confirma o encerramento do turno?')) {
+            estado.turnoAtivo = false;
+            estado.relatorioPendente = true; // Ativa botão azul
+            estado.horaFimTurno = new Date().toLocaleTimeString();
+            salvarEstado();
+        }
+    }
+    atualizarInterface();
+}
+
+function exportarRelatorio() {
+    alert(`Relatório CSV enviado com sucesso!\n\nPeríodo: ${estado.horaInicioTurno} - ${estado.horaFimTurno}\nProdução Total: ${estado.producao}\nTempo Parado: ${formatTime(estado.downtime)}`);
     
-    stopDowntimeTimer();
-    startProductionTimer();
+    estado.relatorioPendente = false; // Libera para iniciar próximo turno
+    salvarEstado();
+    atualizarInterface();
+}
 
-    btnManStart.disabled = true;
-    btnManStart.className = "btn-action btn-disabled";
+function zerarTurno() {
+    if (estado.status !== 'PARADO') {
+        alert("Pare a linha para zerar dados."); return;
+    }
+    if (confirm("Zerar todos os contadores (Produção, Refugo, Tempo)?")) {
+        estado.producao = 0;
+        estado.refugo = 0;
+        estado.downtime = 0;
+        salvarEstado();
+        atualizarInterface();
+    }
+}
+
+// --- CONTROLES ---
+function startLine() {
+    if (estado.status === 'FALHA') { alert("Resete a falha primeiro."); return; }
+    if (estado.producao >= estado.meta) { alert("Meta atingida! Aumente a meta para continuar."); return; }
     
-    btnManStop.disabled = false;
-    btnManStop.className = "btn-action btn-red";
-
-    btnRefugo.disabled = false;
-    btnRefugo.className = "btn-action btn-orange";
-
-    btnSave.disabled = true;
-    btnSave.className = "btn-action btn-disabled";
+    estado.status = 'OPERANDO';
+    estado.ultimoUpdate = Date.now();
+    salvarEstado();
+    atualizarInterface();
 }
 
 function stopLine() {
-    const display = document.getElementById('status-display');
-    const btnManStart = document.getElementById('btn-man-start');
-    const btnManStop = document.getElementById('btn-man-stop');
-    const btnRefugo = document.getElementById('btn-refugo');
-    const btnSave = document.getElementById('btn-save-params');
-
-    display.className = "status-badge status-stopped";
-    display.innerHTML = 'PARADO';
-    
-    stopProductionTimer();
-    if (isShiftActive) startDowntimeTimer();
-
-    const statusSpan = document.getElementById('shift-status');
-    if (statusSpan.innerText === "EM ANDAMENTO") {
-        btnManStart.disabled = false;
-        btnManStart.className = "btn-action btn-green";
-    }
-    
-    btnManStop.disabled = true;
-    btnManStop.className = "btn-action btn-disabled";
-
-    btnRefugo.disabled = true;
-    btnRefugo.className = "btn-action btn-disabled";
-
-    btnSave.disabled = false;
-    btnSave.className = "btn-action btn-blue";
+    estado.status = 'PARADO';
+    salvarEstado();
+    atualizarInterface();
 }
 
-// 3.1 REGISTRO DE REFUGO
 function registrarRefugo() {
-    if (productionCount > 0) {
-        productionCount--; 
-        document.getElementById('kpi-production').innerText = productionCount;
-        refugoCount++;
-        atualizarKPIs();
-    } else {
-        alert("Não é possível apontar refugo: A produção está zerada.");
+    if (estado.producao > 0) {
+        estado.producao--;
+        estado.refugo++;
+        salvarEstado();
+        atualizarInterface();
     }
 }
 
-// 3.2 SALVAR PARÂMETROS
 function salvarParametros() {
-    const display = document.getElementById('status-display');
-    if (display.innerText === 'OPERANDO' || display.innerText === 'FALHA') {
-        alert("ERRO: Pare a linha antes de alterar parâmetros!");
-        return;
-    }
-    alert("Parâmetros salvos com sucesso!");
+    const meta = parseInt(document.getElementById('meta-input').value);
+    const ciclo = parseInt(document.getElementById('ciclo-input').value);
+    if (!meta || meta < 1) { alert("Meta inválida."); return; }
+    if (!ciclo || ciclo < 1 || ciclo > 60) { alert("Ciclo inválido."); return; }
+    estado.meta = meta;
+    estado.ciclo = ciclo;
+    salvarEstado();
+    alert("Parâmetros Atualizados!");
 }
 
-// --- LÓGICA DE PRODUÇÃO ---
-function startProductionTimer() {
-    stopProductionTimer();
-    let cicloInput = document.getElementById('ciclo-input').value;
-    let velocidadeMs = parseFloat(cicloInput) * 1000;
-    if (isNaN(velocidadeMs) || velocidadeMs < 100) velocidadeMs = 1000;
-
-    productionInterval = setInterval(() => {
-        const meta = parseInt(document.getElementById('meta-input').value) || 0;
-
-        if (productionCount >= meta && meta > 0) {
-            stopLine(); 
-            alert("META DE PRODUÇÃO ATINGIDA!\nSistema parado automaticamente.");
-            return;
-        }
-
-        productionCount++;
-        document.getElementById('kpi-production').innerText = productionCount;
-        atualizarKPIs();
-
-    }, velocidadeMs);
-}
-
-function stopProductionTimer() {
-    if (productionInterval) {
-        clearInterval(productionInterval);
-        productionInterval = null;
-    }
-}
-
-// --- CÁLCULO DE KPIs ---
-function atualizarKPIs() {
-    const meta = parseInt(document.getElementById('meta-input').value) || 1; 
-    let oee = (productionCount / meta) * 100;
-    document.getElementById('kpi-oee').innerText = oee.toFixed(1) + "%";
-
-    let totalProduzido = productionCount + refugoCount;
-    let taxa = 0;
-    if (totalProduzido > 0) {
-        taxa = (refugoCount / totalProduzido) * 100;
-    }
-    document.getElementById('kpi-refugo').innerText = taxa.toFixed(1) + "%";
-}
-
-
-// --- LÓGICA DE DOWNTIME ---
-function startDowntimeTimer() {
-    if (!downtimeInterval && isShiftActive) {
-        downtimeInterval = setInterval(() => {
-            downtimeSeconds++;
-            atualizarDisplayDowntime();
-        }, 1000);
-    }
-}
-
-function stopDowntimeTimer() {
-    if (downtimeInterval) {
-        clearInterval(downtimeInterval);
-        downtimeInterval = null;
-    }
-}
-
-function actualizarDisplayDowntime() { 
-    const display = document.getElementById('kpi-downtime');
-    display.innerText = formatTime(downtimeSeconds);
-}
-const atualizarDisplayDowntime = actualizarDisplayDowntime; 
-
-function formatTime(totalSeconds) {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
-// --- AUXILIARES ---
-function atualizarVelocidade() {
-    const display = document.getElementById('status-display');
-    if (display.innerText === 'OPERANDO') {
-        startProductionTimer();
-    }
-}
-
-// --- FUNÇÃO EXPORTAR (MUDANÇA AQUI: ZERA DEPOIS DE ENVIAR) ---
-function exportarRelatorio() {
-    const btnExport = document.getElementById('btn-export');
-    const btnStart = document.getElementById('btn-start-shift');
-    const taxaRefugo = document.getElementById('kpi-refugo').innerText;
-    
-    // 1. Envia Relatório (Simulação)
-    alert(`Relatório Enviado com Sucesso!\n\n-- DADOS FINAIS --\nProdução (Boas): ${productionCount}\nRefugo: ${refugoCount} (${taxaRefugo})\nTempo Parado: ${formatTime(downtimeSeconds)}\nOEE Final: ${document.getElementById('kpi-oee').innerText}\n\nO sistema será zerado agora.`);
-    
-    // 2. Zera as variáveis
-    productionCount = 0;
-    refugoCount = 0;
-    downtimeSeconds = 0;
-
-    // 3. Atualiza a tela para 0
-    document.getElementById('kpi-production').innerText = 0;
-    atualizarKPIs();
-    atualizarDisplayDowntime();
-
-    // 4. Prepara botões para novo turno
-    btnExport.style.display = 'none';
-    btnStart.style.display = 'flex';
-    btnStart.innerHTML = '<i class="fas fa-play-circle"></i> Iniciar Próximo Turno';
-}
-
-// 5. FALHA E RESET
+// --- FALHAS (2 TEMPOS) ---
 function simularFalha() {
-    const currentStatus = document.getElementById('status-display').innerText;
-
-    if (currentStatus !== "OPERANDO") {
-        alert("Atenção: A simulação de falhas só pode ser realizada com a linha em operação (Ciclo Iniciado).");
+    if (estado.status !== 'OPERANDO') { 
+        alert("Simulação de falha apenas em modo operando."); 
         return; 
     }
-
-    const display = document.getElementById('status-display');
-    const btnReset = document.getElementById('btn-reset');
-    const alarmPanel = document.getElementById('alarm-panel');
-    const btnSave = document.getElementById('btn-save-params');
-    const hora = new Date().toLocaleTimeString();
-
-    stopProductionTimer();
-    startDowntimeTimer();
-
-    display.className = "status-badge status-error";
-    display.innerHTML = '<i class="fas fa-exclamation-triangle"></i> FALHA';
+    estado.status = 'FALHA';
+    estado.horaFalha = new Date().toLocaleTimeString();
+    salvarEstado();
     
-    document.getElementById('btn-man-start').disabled = true;
-    document.getElementById('btn-man-start').className = "btn-action btn-disabled";
-    document.getElementById('btn-man-stop').disabled = true;
-    document.getElementById('btn-man-stop').className = "btn-action btn-disabled";
-    document.getElementById('btn-refugo').disabled = true;
-    document.getElementById('btn-refugo').className = "btn-action btn-disabled";
-
-    btnSave.disabled = true;
-    btnSave.className = "btn-action btn-disabled";
-
-    document.getElementById('alarm-msg').innerText = "ALARME CRÍTICO: MOTOR TRAVADO";
-    document.getElementById('alarm-time').innerText = "Ocorrido às: " + hora;
-    alarmPanel.classList.add('active'); 
+    stepFalha = 1;
+    document.getElementById('btn-reset-text').innerText = "RESETAR FALHAS";
     
-    btnReset.disabled = false;
+    document.getElementById('alarm-msg').innerText = "ALARME: MOTOR DA ESTEIRA TRAVADO";
+    document.getElementById('alarm-time').innerText = "Ocorrido às: " + estado.horaFalha;
+    document.getElementById('alarm-panel').classList.add('active');
 }
 
 function resetarFalhas() {
-    const display = document.getElementById('status-display');
-    const btnReset = document.getElementById('btn-reset');
-    const alarmPanel = document.getElementById('alarm-panel');
-    const btnManStart = document.getElementById('btn-man-start');
-    const btnRefugo = document.getElementById('btn-refugo');
-    const btnSave = document.getElementById('btn-save-params');
-
-    if (confirm('Confirma manutenção realizada?')) {
-        display.className = "status-badge status-stopped";
-        display.innerHTML = 'PRONTO';
-        
-        alarmPanel.classList.remove('active');
-        btnReset.disabled = true;
-
-        const statusSpan = document.getElementById('shift-status');
-        if (statusSpan.innerText === "EM ANDAMENTO") {
-            btnManStart.disabled = false;
-            btnManStart.className = "btn-action btn-green";
+    if (stepFalha === 1) {
+        // Passo 1
+        alert("Falha em análise, aguarde a manutenção.");
+        document.getElementById('btn-reset-text').innerText = "CONFIRMAR CONSERTO";
+        stepFalha = 2;
+    } else if (stepFalha === 2) {
+        // Passo 2
+        if (confirm("O técnico realizou a manutenção?")) {
+            document.getElementById('alarm-panel').classList.remove('active');
+            estado.status = 'PRONTO';
+            salvarEstado();
             
-            btnRefugo.disabled = true;
-            btnRefugo.className = "btn-action btn-disabled";
-
-            btnSave.disabled = false;
-            btnSave.className = "btn-action btn-blue";
+            stepFalha = 0; 
+            document.getElementById('btn-reset-text').innerText = "RESETAR FALHAS";
+            
+            atualizarInterface();
+            alert("Falha resetada. Sistema PRONTO.");
         }
-
-        alert('Sistema resetado. Pronto para iniciar.');
     }
 }
 
-// 6. VALIDAÇÃO
-function validarNumero(input) { input.value = input.value.replace(/[^0-9]/g, ''); }
-function validarCiclo(input) {
-    input.value = input.value.replace(/[^0-9]/g, '');
-    if (input.value !== '') {
-        let v = parseInt(input.value);
-        if (v > 60) input.value = 60;
-        if (v === 0) input.value = 1;
+function atualizarInterface() {
+    const display = document.getElementById('status-display');
+    const btnStart = document.getElementById('btn-man-start');
+    const btnStop = document.getElementById('btn-man-stop');
+    const btnZerar = document.getElementById('btn-zerar-turno');
+
+    // Status
+    display.className = "status-badge";
+    if (estado.status === 'OPERANDO') {
+        display.classList.add('status-pulsing');
+        display.innerHTML = 'OPERANDO';
+        btnStart.disabled = true; btnStart.className = "btn-action btn-disabled";
+        btnStop.disabled = false; btnStop.className = "btn-action btn-red";
+    } else if (estado.status === 'PARADO' || estado.status === 'PRONTO') {
+        display.classList.add('status-stopped');
+        display.innerHTML = estado.status === 'PRONTO' ? 'PRONTO' : 'PARADO';
+        btnStart.disabled = false; btnStart.className = "btn-action btn-green";
+        btnStop.disabled = true; btnStop.className = "btn-action btn-disabled";
+    } else if (estado.status === 'FALHA') {
+        display.classList.add('status-error');
+        display.innerHTML = 'FALHA';
+        btnStart.disabled = true; btnStart.className = "btn-action btn-disabled";
+        btnStop.disabled = true; btnStop.className = "btn-action btn-disabled";
+        
+        const panel = document.getElementById('alarm-panel');
+        if(!panel.classList.contains('active')) {
+            document.getElementById('alarm-msg').innerText = "ALARME: MOTOR DA ESTEIRA TRAVADO";
+            document.getElementById('alarm-time').innerText = "Ocorrido às: " + (estado.horaFalha || '--:--');
+            panel.classList.add('active');
+            stepFalha = 1; 
+        }
+    } else {
+        document.getElementById('alarm-panel').classList.remove('active');
     }
+
+    // Turno e Botões
+    const btnStartShift = document.getElementById('btn-start-shift');
+    const controlsShift = document.getElementById('active-shift-controls');
+    const btnExport = document.getElementById('btn-export');
+    
+    if (estado.turnoAtivo) {
+        // Turno Ativo
+        btnStartShift.style.display = 'none';
+        controlsShift.style.display = 'block';
+        btnExport.style.display = 'none';
+        document.getElementById('shift-status').innerText = "EM ANDAMENTO";
+        document.getElementById('shift-status').style.color = "var(--success-color)";
+        btnZerar.disabled = true;
+        btnZerar.className = "btn-action btn-disabled";
+    } else {
+        // Turno Encerrado
+        controlsShift.style.display = 'none';
+        document.getElementById('shift-status').innerText = "TURNO ENCERRADO";
+        document.getElementById('shift-status').style.color = "#7f8c8d";
+
+        if (estado.relatorioPendente) {
+            // Estado: Relatório Pendente (Mostra botão Azul)
+            btnStartShift.style.display = 'none';
+            btnExport.style.display = 'block';
+        } else {
+            // Estado: Aguardando Início (Mostra botão Verde)
+            btnStartShift.style.display = 'block';
+            btnExport.style.display = 'none';
+            document.getElementById('shift-status').innerText = "";
+        }
+
+        // Regra Zerar: Só se estiver parado
+        if (estado.status === 'PARADO' || estado.status === 'PRONTO') {
+            btnZerar.disabled = false;
+            btnZerar.className = "btn-action btn-warning";
+        } else {
+            btnZerar.disabled = true;
+            btnZerar.className = "btn-action btn-disabled";
+        }
+    }
+
+    // KPIs Updates
+    document.getElementById('kpi-production').innerText = estado.producao;
+    // KPI Downtime já atualizado no loop do relógio, mas garantimos aqui também
+    if(document.getElementById('kpi-downtime')) {
+        document.getElementById('kpi-downtime').innerText = formatTime(estado.downtime);
+    }
+    
+    let oee = (estado.producao / estado.meta) * 100;
+    document.getElementById('kpi-oee').innerText = (oee > 100 ? 100 : oee).toFixed(1) + "%";
+    
+    let total = estado.producao + estado.refugo;
+    let taxa = total > 0 ? (estado.refugo / total) * 100 : 0;
+    document.getElementById('kpi-refugo').innerText = taxa.toFixed(1) + "%";
 }

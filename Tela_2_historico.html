@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Histórico - EmbraPac</title>
-    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
@@ -17,12 +15,12 @@
             IHM Operacional
         </div>
         <nav>
-            <a href="index.html">Painel Operação</a>
-            <a href="historico.html" class="active">Histórico</a>
-            <a href="supervisor.html"><i class="fas fa-lock"></i> Supervisor</a>
+            <a href="Tela_1_index.html">Painel de Operações</a>
+            <a href="Tela_2_historico.html" class="active">Histórico</a>
+            <a href="Tela_3_supervisor.html"><i class="fas fa-lock"></i> Supervisor</a>
         </nav>
         <div class="user-info">
-            <i class="fas fa-user-circle"></i> Olá, Sr. Agenor (Operador) | <a href="#" style="color: var(--accent-yellow)">Sair</a>
+            <i class="fas fa-user-circle"></i> Olá, Sr. Agenor (Operador) | <a href="Tela_1_index.html" style="color: var(--accent-yellow)">Sair</a>
         </div>
     </header>
 
@@ -63,7 +61,7 @@
         
         <div class="card-full transparent-bg">
             <div class="card-header">
-                <h2 style="color: var(--primary-blue);">
+                <h2 style="color: var(--primary-blue); margin:0;">
                     <i class="fas fa-history"></i> Eventos
                 </h2>
                 <button class="btn-filter" style="background-color: var(--success-color);" onclick="exportTableToCSV('tabela-eventos', 'eventos_embrapac.csv')">
@@ -118,7 +116,7 @@
 
         <div class="card-full transparent-bg">
             <div class="card-header">
-                <h2 style="color: var(--primary-blue);">
+                <h2 style="color: var(--primary-blue); margin:0;">
                     <i class="fas fa-exclamation-triangle"></i> Alarmes
                 </h2>
                 <button class="btn-filter" style="background-color: var(--success-color);" onclick="exportTableToCSV('tabela-alarmes', 'alarmes_embrapac.csv')">
@@ -143,7 +141,7 @@
                         <td>Sistema</td>
                         <td>Automático</td> 
                         <td><span class="badge badge-active">ATIVO</span></td>
-                    </tr>                                                                
+                    </tr>                                                            
                 </tbody>
             </table>
         </div>
