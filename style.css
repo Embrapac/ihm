@@ -1,28 +1,23 @@
 /* ============================================================
-   STYLE.CSS - VERSÃO UNIFICADA (HISTÓRICO + SUPERVISOR)
+   STYLE.CSS - VERSÃO DEFINITIVA (HISTÓRICO PERFEITO + SUPERVISOR NATURAL)
    ============================================================ */
 
-/* --- 1. VARIÁVEIS GERAIS (ROOT) --- */
+/* --- 1. VARIÁVEIS GERAIS --- */
 :root {
-    /* Cores Institucionais */
     --primary-blue: #003B73;
     --secondary-blue: #4DA6E0;
     --accent-yellow: #FFD700;
-    
-    /* Cores de Estado */
     --success-color: #28a745;
     --danger-color: #dc3545;
     --warning-color: #f39c12;
-    
-    /* Cores Neutras e Fundo */
+    --gray-btn: #6c757d;
     --bg-color: #F4F7F6;
     --card-bg: #ffffff;
     --text-main: #333333;
     --text-light: #ffffff;
-    --gray-btn: #6c757d;
 }
 
-/* --- 2. CONFIGURAÇÕES GERAIS E BODY --- */
+/* --- 2. GERAL --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0; padding: 0;
@@ -32,16 +27,14 @@ body {
     position: relative;
 }
 
-/* Marca d'água de fundo */
 body::before {
     content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    /* Ajuste o caminho da imagem conforme sua pasta (ex: '243186829.jpeg' ou 'img/logo.jpeg') */
     background-image: url('img/logo-embrapac.jpeg'); 
     background-repeat: no-repeat; background-position: center; background-size: 600px;
     opacity: 0.08; z-index: -1; pointer-events: none; filter: grayscale(100%);
 }
 
-/* --- 3. HEADER E NAVEGAÇÃO (COMUM) --- */
+/* --- 3. HEADER E NAVEGAÇÃO --- */
 header {
     background-color: var(--primary-blue); color: var(--text-light);
     padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
@@ -52,225 +45,184 @@ header {
 .logo-img { height: 50px; background-color: #fff; padding: 2px; border-radius: 4px; display: block; margin-right: 10px; }
 .user-info { font-size: 0.9rem; opacity: 0.9; }
 
-nav a {
+nav a, nav button {
     text-decoration: none; color: rgba(255, 255, 255, 0.7);
-    padding: 10px 15px; font-size: 1rem; transition: all 0.3s; border-radius: 4px; display: inline-block;
+    padding: 10px 15px; font-size: 1rem; transition: all 0.3s; 
+    border-radius: 4px; display: inline-block;
+    background: none; border: none; cursor: pointer;
 }
-nav a.active, nav a:hover { 
+
+nav a.active, nav button.active,
+nav a:hover, nav button:hover { 
     color: var(--text-light); background-color: rgba(255, 255, 255, 0.15); font-weight: 600; 
 }
 
-/* --- 4. LAYOUT PRINCIPAL (ESTRATÉGIA DE FUSÃO) --- */
+/* --- 4. LAYOUTS (A CORREÇÃO ESTÁ AQUI) --- */
+main { flex: 1; padding: 25px; overflow-y: auto; }
 
-/* Estilo Padrão (Usado no HISTÓRICO) */
-/* Permite que o conteúdo cresça e tenha rolagem vertical normal */
-main { 
-    flex: 1; 
-    padding: 25px; 
-    overflow-y: auto; 
-}
-
-/* Estilo Grid (Usado no SUPERVISOR) */
-/* Ativado apenas quando a tag <main> tem a classe "dashboard-grid" */
+/* Grid Supervisor: ALTERADO DE 'STRETCH' PARA 'START' */
+/* Isso faz os cards terem altura automática (natural) e ficarem no topo */
 main.dashboard-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3 Colunas */
+    grid-template-columns: 1fr 1fr 1fr; 
     gap: 25px;
-    align-items: start;
-    overflow-y: visible; /* O Grid gerencia o layout */
+    align-items: start; /* CORREÇÃO: Alinha ao topo, sem esticar */
+    overflow-y: visible; 
 }
 
-/* Responsividade do Grid */
+/* Grid Operador */
+main.operator-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+    gap: 25px;
+    align-content: start;
+    overflow-y: visible;
+}
+
 @media (max-width: 1000px) {
-    main.dashboard-grid { grid-template-columns: 1fr; }
+    main.dashboard-grid, main.operator-grid { grid-template-columns: 1fr; }
 }
 
-/* Helper para empilhar cards no Supervisor */
+/* Pilha de Cards (Supervisor) */
+/* Removido o height: 100% para não forçar a coluna inteira */
 .col-stack { display: flex; flex-direction: column; gap: 25px; }
 
-
-/* --- 5. TÍTULOS (H2) --- */
+/* --- 5. CARDS --- */
 h2 {
     margin-top: 0; color: var(--primary-blue); font-size: 1.2rem;
     margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;
 }
-/* H2 no Supervisor (com linha separadora) */
 .supervisor-card h2, .card h2 { border-bottom: 1px solid #eee; padding-bottom: 10px; }
-/* H2 no Histórico (sem linha, alinhado flex para ícones) */
+/* H2 no Histórico (sem linha, alinhado com botão) */
 .card-header h2 { border-bottom: none; display: flex; align-items: center; gap: 10px; margin-bottom: 0; }
 
-
-/* --- 6. CARDS (TIPOS DIFERENTES) --- */
-
-/* Card Pequeno (Supervisor) */
 .card {
     background: var(--card-bg); border-radius: 10px; padding: 25px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;
     border-top: 3px solid var(--secondary-blue); position: relative;
+    display: flex; flex-direction: column; justify-content: center;
+    /* REMOVIDO o flex: 1 que esticava os cards */
 }
-/* Card Destaque Amarelo (Supervisor) */
+
 .card.supervisor-card { border-top-color: var(--accent-yellow); }
 
-/* Card Largo/Cheio (Histórico) */
+/* Card Largo (Histórico) */
 .card-full {
     background: var(--card-bg); border-radius: 10px; padding: 25px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 3px solid var(--secondary-blue);
     margin-bottom: 25px;
 }
-/* Card Transparente/Vidro (Histórico) */
+/* Card Transparente (Histórico) */
 .card-full.transparent-bg {
     background: rgba(255, 255, 255, 0.4) !important; 
     backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
     box-shadow: 0 4px 15px rgba(0, 59, 115, 0.05);
 }
 
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; width: 100%; }
 
+/* --- 6. ELEMENTOS DIVERSOS --- */
+.big-number { font-size: 3.5rem; font-weight: bold; color: var(--primary-blue); margin: 15px 0; }
+.progress-container { width: 100%; background: #e9ecef; height: 12px; border-radius: 6px; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--secondary-blue); border-radius: 6px; transition: width 0.5s ease-in-out; }
 
-/* --- 7. ELEMENTOS DO HISTÓRICO (TABELAS E FILTROS) --- */
-.separator {
-    border: 0; height: 1px; margin: 30px 0;
-    background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,59,115,0.4), rgba(0,0,0,0));
-}
-
-.filters {
-    display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; 
-    border-bottom: 1px solid #eee; align-items: center; flex-wrap: wrap;
-}
-
-/* Inputs de Filtro (Histórico) */
+.separator { border: 0; height: 1px; margin: 30px 0; background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,59,115,0.4), rgba(0,0,0,0)); }
+.filters { display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; align-items: center; flex-wrap: wrap; }
 select, input[type="date"] { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; }
 
-/* Botões de Filtro (Pequenos) */
-.btn-filter {
-    background-color: var(--primary-blue); color: white; cursor: pointer; border: none; font-weight: bold;
-    display: flex; align-items: center; gap: 5px; padding: 8px 12px; border-radius: 4px;
-}
+/* Botões Filtro */
+.btn-filter { background-color: var(--primary-blue); color: white; cursor: pointer; border: none; font-weight: bold; display: flex; align-items: center; gap: 5px; padding: 8px 12px; border-radius: 4px; }
 .btn-filter:hover { opacity: 0.9; }
 .btn-reset { background-color: var(--gray-btn); }
 .btn-reset:hover { background-color: #5a6268; }
 
-/* Tabelas */
+/* --- 7. TABELAS (ESTILO RESTAURADO PARA O HISTÓRICO) --- */
 table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
 th { 
     background-color: rgba(248, 249, 250, 0.6); color: var(--primary-blue); 
-    text-align: left; padding: 12px; border-bottom: 2px solid var(--secondary-blue);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
+    text-align: left; padding: 12px; border-bottom: 2px solid var(--secondary-blue); 
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
 td { 
-    padding: 12px; border-bottom: 1px solid rgba(238, 238, 238, 0.5); 
-    color: #333; vertical-align: middle; overflow: hidden; text-overflow: ellipsis; 
+    padding: 12px; border-bottom: 1px solid rgba(238, 238, 238, 0.5); color: #333; 
+    vertical-align: middle; overflow: hidden; text-overflow: ellipsis; 
 }
-tr:hover { background-color: rgba(255, 255, 255, 0.3); }
-td:last-child { text-align: center; }
+/* Efeito de Hover nas linhas */
+tr:hover { background-color: rgba(255, 255, 255, 0.5); }
 
-/* Colunas (Histórico) */
-.col-data { width: 18%; } .col-desc { width: 35%; } .col-user { width: 15%; } 
-.col-attr { width: 15%; } .col-source { width: 15%; } .col-workflow { width: 15%; } .col-status { width: 17%; text-align: center; }
+/* Alinhamento da última coluna (Status) */
+td:last-child, th:last-child { text-align: center; }
 
-/* Badges (Histórico) */
+/* LARGURAS FIXAS DAS COLUNAS (CRUCIAL PARA O HISTÓRICO) */
+.col-data { width: 18%; } 
+.col-desc { width: 35%; } 
+.col-user { width: 15%; } 
+.col-attr { width: 15%; } 
+.col-source { width: 15%; } 
+.col-workflow { width: 15%; } 
+.col-status { width: 17%; text-align: center; }
+
+/* Badges e Status */
 .badge { padding: 6px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; display: inline-block; min-width: 110px; text-align: center; }
 .badge-active { background-color: #ffebee; color: var(--danger-color); }
 .badge-ack { background-color: #fff3cd; color: #856404; }
 .badge-norm { background-color: #d4edda; color: var(--success-color); }
 .badge-info { background-color: #e2e3e5; color: #383d41; }
 
-
-/* --- 8. ELEMENTOS DO SUPERVISOR (CONTROLES E KPIS) --- */
-
-/* Status Badges (Supervisor) */
-.status-badge {
-    display: block; width: 100%; padding: 15px 0;
-    border-radius: 50px; color: var(--text-light); font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); font-size: 1.2rem; transition: all 0.3s;
-}
+.status-badge { display: block; width: 100%; padding: 15px 0; border-radius: 50px; color: var(--text-light); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); font-size: 1.2rem; transition: all 0.3s; }
 .status-running { background-color: var(--success-color); border: 2px solid #218838; }
+.status-pulsing { background-color: var(--success-color); border: 2px solid #218838; animation: pulse-green 2s infinite; }
 .status-stopped { background-color: #7f8c8d; border: 2px solid #6c757d; }
 .status-error { background-color: var(--danger-color); border: 2px solid #bd2130; animation: pulse 1s infinite; }
 
-/* Botões de Ação Grandes (Supervisor) */
-.btn-action {
-    display: flex; justify-content: center; align-items: center; gap: 10px;
-    width: 100%; padding: 12px; margin-top: 10px;
-    border: none; border-radius: 6px; font-size: 0.95rem; cursor: pointer;
-    font-weight: bold; color: white; transition: transform 0.1s, opacity 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-.btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
-.btn-action:active { transform: translateY(0); }
-
+/* Botões de Ação */
+.btn, .btn-action { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 6px; font-size: 0.95rem; cursor: pointer; font-weight: bold; color: white; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.btn:hover, .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn:active, .btn-action:active { transform: translateY(0); }
+.btn-start, .btn-green { background-color: var(--success-color); }
+.btn-stop, .btn-red { background-color: var(--danger-color); }
 .btn-blue { background-color: var(--primary-blue); }
-.btn-green { background-color: var(--success-color); }
-.btn-red { background-color: var(--danger-color); }
 .btn-warning { background-color: var(--warning-color); color: #fff; }
-.btn-orange { background-color: #d35400; color: white; } /* Cor Laranja Específica */
+.btn-orange { background-color: #d35400; color: white; }
 .btn-orange:hover { background-color: #e67e22; }
+.btn-disabled, .btn:disabled { background-color: #ccc; color: #666; cursor: not-allowed; opacity: 0.6; pointer-events: none; box-shadow: none; transform: none; }
 
-.btn-disabled { background-color: #ccc; color: #666; cursor: not-allowed; opacity: 0.6; pointer-events: none; box-shadow: none; }
-
-/* Inputs Grandes (Supervisor) */
+/* Inputs Corrigidos (Supervisor) */
 .input-std {
-    width: 100%; padding: 10px; margin: 5px 0 15px 0;
-    border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;
-    font-size: 1rem; text-align: center; font-weight: bold; color: var(--primary-blue);
+    width: 100%; height: 45px; 
+    padding: 5px 35px 5px 5px; margin: 5px 0 15px 0;
+    border: 2px solid #ccc; border-radius: 6px; 
+    box-sizing: border-box; font-size: 1.2rem; 
+    color: var(--primary-blue); font-weight: bold; text-align: center; 
+    position: relative; z-index: 10;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: inner-spin-button !important; opacity: 1 !important; cursor: pointer !important;
+    display: block !important; width: 25px; height: 100%;
 }
 
-/* KPIs Grid */
+/* KPIs */
 .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .kpi-box { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
 .kpi-val { font-size: 1.5rem; font-weight: 800; color: var(--primary-blue); }
 .kpi-label { font-size: 0.75rem; color: #666; text-transform: uppercase; margin-top: 5px; }
 
-
-/* --- 9. MODAIS E ALARMES (OVERLAYS) --- */
-
-/* Painel de Alarme Rodapé (Supervisor) */
-#alarm-panel {
-    background-color: var(--danger-color); color: var(--text-light);
-    padding: 20px 30px; display: none; 
-    justify-content: space-between; align-items: center;
-    position: fixed; bottom: 0; left: 0; width: 100%;
-    box-sizing: border-box; border-top: 5px solid #b71c1c; z-index: 1000;
-    box-shadow: 0 -4px 20px rgba(220, 53, 69, 0.3);
-}
+/* Alarm Panel */
+#alarm-panel { background-color: var(--danger-color); color: var(--text-light); padding: 20px 30px; display: none; justify-content: space-between; align-items: center; position: fixed; bottom: 0; left: 0; width: 100%; box-sizing: border-box; border-top: 5px solid #b71c1c; z-index: 1000; box-shadow: 0 -4px 20px rgba(220, 53, 69, 0.3); }
 #alarm-panel.active { display: flex; animation: slideUp 0.3s ease-out; }
 .alarm-text { font-size: 1.3rem; font-weight: bold; display: flex; align-items: center; gap: 15px; }
-
-.btn-ack { 
-    background-color: var(--accent-yellow); color: var(--primary-blue); 
-    border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px;
-}
+.btn-ack { background-color: var(--accent-yellow); color: var(--primary-blue); border: none; padding: 10px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; width: auto; margin: 0; }
 .btn-ack:hover { background-color: #e0be00; }
 
-/* Login Modal (Comum) */
-#login-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 59, 115, 0.95); backdrop-filter: blur(4px);
-    z-index: 2000; display: flex; justify-content: center; align-items: center;
-    transition: opacity 0.5s;
-}
-.login-box {
-    background: white; padding: 40px; border-radius: 12px; width: 100%; max-width: 350px; text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
-
-/* Ferramentas Dev */
-.dev-tools {
-    position: fixed; bottom: 10px; right: 10px; opacity: 0.6; font-size: 0.8rem;
-    background: rgba(255,255,255,0.8); padding: 5px; border-radius: 4px; z-index: 2000;
-}
+/* Modal e Dev Tools */
+#login-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 59, 115, 0.95); backdrop-filter: blur(4px); z-index: 2000; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
+.login-box { background: white; padding: 40px; border-radius: 12px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.dev-tools { position: fixed; bottom: 10px; right: 10px; opacity: 0.6; font-size: 0.8rem; background: rgba(255,255,255,0.8); padding: 5px; border-radius: 4px; z-index: 2000; }
 .dev-tools:hover { opacity: 1; }
 
-/* --- 10. ANIMAÇÕES --- */
-@keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
-    70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
-}
-
-@keyframes slideUp { 
-    from { transform: translateY(100%); } 
-    to { transform: translateY(0); } 
-}
+/* Animações */
+@keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); } 70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); } }
+/* Pulso Verde Amigável */
+@keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
