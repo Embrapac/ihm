@@ -229,3 +229,14 @@ function atualizarIconeTema(modo) {
         }
     }
 }
+
+// --- Sincronização de Tema entre Abas (Tempo Real) ---
+window.addEventListener('storage', (event) => {
+    if (event.key === 'embrapac_theme') {
+        const novoTema = event.newValue || 'light'; // Pega o novo tema ou volta pro claro        
+        // Aplica a nova cor no fundo da tela instantaneamente
+        document.documentElement.setAttribute('data-theme', novoTema);        
+        // Atualiza o ícone (Lua/Sol) para bater com a cor
+        atualizarIconeTema(novoTema);
+    }
+});
