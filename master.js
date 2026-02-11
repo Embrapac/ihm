@@ -130,8 +130,10 @@ const Sessao = {
                 `;
             }
                         
-            const temaAtual = localStorage.getItem('embrapac_theme') || 'light';
-            atualizarIconeTema(temaAtual);
+            // Garante que o tema e o ícone sejam os corretos PARA ESTE USUÁRIO
+            if (typeof aplicarTemaDoUsuario === 'function') {
+                aplicarTemaDoUsuario();
+            }
         }
     }
     
@@ -196,47 +198,63 @@ const Maquina = {
 };
 
 /* ============================================================
-   CONTROLE DE TEMA (CLARO / ESCURO)
+   CONTROLE DE TEMA (CLARO / ESCURO) - INDIVIDUAL POR USUÁRIO
    ============================================================ */
+// 1. Descobre qual é a chave do banco de dados baseada em quem está logado
+function obterChaveTema() {
+    const sessaoStr = sessionStorage.getItem('embrapac_user_session');
+    if (sessaoStr) {
+        const user = JSON.parse(sessaoStr);
+        return 'embrapac_theme_' + user.cargo; // Ex: embrapac_theme_Operador ou embrapac_theme_Supervisor
+    }
+    return 'embrapac_theme_visitante'; // Para quem ainda não fez login
+}
 
-// 1. Aplica o tema salvo assim que carregar
-document.addEventListener('DOMContentLoaded', () => {
-    const temaSalvo = localStorage.getItem('embrapac_theme') || 'light';
+// 2. Aplica o tema específico daquele usuário na tela
+function aplicarTemaDoUsuario() {
+    const chave = obterChaveTema();
+    const temaSalvo = localStorage.getItem(chave) || 'light';
     document.documentElement.setAttribute('data-theme', temaSalvo);
     atualizarIconeTema(temaSalvo);
+}
+
+// 3. Chama a função assim que a página carrega
+document.addEventListener('DOMContentLoaded', () => {
+    aplicarTemaDoUsuario();
 });
 
-// 2. Função para alternar (chamada pelo botão)
+// 4. Função para alternar (chamada pelo botão)
 function alternarTema() {
     const atual = document.documentElement.getAttribute('data-theme');
     const novo = atual === 'dark' ? 'light' : 'dark';
+    const chave = obterChaveTema(); // Pega a gaveta do usuário logado
     
     document.documentElement.setAttribute('data-theme', novo);
-    localStorage.setItem('embrapac_theme', novo);
+    localStorage.setItem(chave, novo); // Salva apenas na gaveta dele
     atualizarIconeTema(novo);
 }
 
-// 3. Atualiza o ícone do botão (Lua ou Sol)
+// 5. Atualiza o ícone do botão (Lua ou Sol)
 function atualizarIconeTema(modo) {
     const btnIcon = document.getElementById('theme-icon');
     if (btnIcon) {
         if (modo === 'dark') {
-            btnIcon.className = "fas fa-sun"; // Mostra Sol para voltar ao claro
+            btnIcon.className = "fas fa-sun";
             btnIcon.style.color = "var(--accent-yellow)";
         } else {
-            btnIcon.className = "fas fa-moon"; // Mostra Lua para ir ao escuro
-            btnIcon.style.color = "white"; // Ou a cor que preferir no header
+            btnIcon.className = "fas fa-moon";
+            btnIcon.style.color = "white";
         }
     }
 }
 
-// --- Sincronização de Tema entre Abas (Tempo Real) ---
+// 6. Sincronização Inteligente entre Abas
 window.addEventListener('storage', (event) => {
-    if (event.key === 'embrapac_theme') {
-        const novoTema = event.newValue || 'light'; // Pega o novo tema ou volta pro claro        
-        // Aplica a nova cor no fundo da tela instantaneamente
-        document.documentElement.setAttribute('data-theme', novoTema);        
-        // Atualiza o ícone (Lua/Sol) para bater com a cor
+    const chaveAtual = obterChaveTema();
+    // Só muda a cor da aba se a alteração for do MESMO perfil de usuário
+    if (event.key === chaveAtual) {
+        const novoTema = event.newValue || 'light';
+        document.documentElement.setAttribute('data-theme', novoTema);
         atualizarIconeTema(novoTema);
     }
 });
