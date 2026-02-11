@@ -5,15 +5,19 @@
 
 /* --- 1. CONFIGURAÇÕES --- */
 const CONFIG = {
-    AUTH_TIMEOUT: 15,
+    AUTH_TIMEOUT: {
+    'operador': 480, // 8 horas (duração do turno)
+    'admin': 15      // 15 minutos (por segurança)
+},
     USUARIOS: {
         'operador': { pass: 'operador', nome: 'Sr. Agenor', cargo: 'Operador', nivel: 1 },
-        'admin':    { pass: 'admin',    nome: 'Sr. Carlos', cargo: 'Supervisor', nivel: 2 }
+        'admin':    { pass: 'admin',    nome: 'Sr. Carlos', cargo: 'Supervisor', nivel: 2 },
+        'manutencao': { pass: 'manu123', nome: 'Equipa Técnica', cargo: 'Manutenção', nivel: 3 }
     }
 };
 
 const ESTADO_PADRAO = {
-    producao: 0, refugo: 0, meta: 1500, ciclo: 1, status: 'OPERANDO', 
+    producao: 0, refugo: 0, meta: 5000, ciclo: 3, status: 'OPERANDO', 
     ultimoUpdate: Date.now(), turnoAtivo: false, horaInicioTurno: '--:--', 
     horaFimTurno: '--:--', horaFalha: '--:--', downtime: 0, oee: 0
 };
@@ -154,10 +158,10 @@ const Maquina = {
             if (agora - estado.ultimoUpdate >= cicloMs) {
                 const delta = agora - estado.ultimoUpdate;
 
-                // Se o tempo decorrido for maior que 10 minutos (600.000ms),
+                // Se o tempo decorrido for maior que 30 minutos (1800.000ms),
                 // o sistema entende que a fábrica (navegador) estava fechada.
-                if (delta > 600000) {
-                    console.warn("Salto de tempo detectado (Sistema Offline). Ajustando relógio...");
+                if (delta > 1800000) { 
+                    console.warn("Salto de tempo > 30min detectado. Ajustando relógio...");
                     
                     // Pula o tempo perdido e sincroniza com o momento atual
                     estado.ultimoUpdate = agora; 
