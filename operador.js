@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- COMANDOS ---
 function startLine() {
+    estadoLocal = Maquina.ler(); 
     if (estadoLocal.status === 'FALHA') return;
     estadoLocal.status = 'OPERANDO';
     estadoLocal.ultimoUpdate = Date.now();
@@ -77,10 +78,25 @@ function startLine() {
 }
 
 function stopLine() {
+    estadoLocal = Maquina.ler();
     estadoLocal.status = 'PARADO';
     Maquina.escrever(estadoLocal);
     Logger.registrar("Parada Manual", "NORMAL");
     renderizar();
+}
+
+function registrarRefugo() {
+    estadoLocal = Maquina.ler();
+    
+    if (estadoLocal.producao > 0) {
+        estadoLocal.producao--;
+        estadoLocal.refugo++;
+        Maquina.escrever(estadoLocal);
+        Logger.registrar("Apontamento Manual de Refugo (Operador)", "ALERTA"); 
+        renderizar();
+    } else {
+        alert("Não há produção suficiente para registrar refugo.");
+    }
 }
 
 function simulateFault() {
@@ -144,50 +160,141 @@ function acknowledgeAlarm() {
 }
 
 function renderizar() {
-    // Verifica se os elementos existem antes de tentar escrever neles
-    const elCounter = document.getElementById('counter');
-    if(elCounter) elCounter.innerText = estadoLocal.producao;
-    
-    const elMeta = document.getElementById('meta-text');
-    if(elMeta) elMeta.innerText = `Meta de Produção: ${estadoLocal.meta} (un)`;
-    
-    const elBar = document.getElementById('progress-bar');
-    if(elBar) {
-        const pct = (estadoLocal.producao > 0 && estadoLocal.meta > 0) ? (estadoLocal.producao / estadoLocal.meta) * 100 : 0;
-        elBar.style.width = (pct > 100 ? 100 : pct) + "%";
-    }
-    
+    // Atualiza Status Badge
     const display = document.getElementById('status-display');
     const detail = document.getElementById('status-detail');
+    
+    // Captura os botões
     const btnStart = document.getElementById('btn-start');
     const btnStop = document.getElementById('btn-stop');
 
-    if(!display) return; // Se não estiver na tela correta, sai.
+    if (display) {
+        display.className = "status-badge";
+        
+        // --- ESTADO: OPERANDO ---
+        if (estadoLocal.status === 'OPERANDO') {
+            display.classList.add('status-pulsing');
+            display.innerText = "OPERANDO";
+            
+            // Texto detalhado
+            if(detail) detail.innerText = `Tempo do Ciclo: ${estadoLocal.ciclo} (s)`;
+            
+            // Botões: Start Cinza (Desativado) / Stop Vermelho (Ativo)
+            if(btnStart) { 
+                btnStart.disabled = true; 
+                btnStart.className = "btn-action btn-disabled"; 
+            }
+            if(btnStop) { 
+                btnStop.disabled = false; 
+                btnStop.className = "btn-action btn-red"; 
+            }
 
-    display.className = "status-badge";
-    
-    if (estadoLocal.status === 'OPERANDO') {
-        display.classList.add('status-pulsing'); display.innerText = "OPERANDO";
-        if(detail) detail.innerText = `Tempo do Ciclo: ${estadoLocal.ciclo} (s)`;
-        if(btnStart) btnStart.disabled = true; 
-        if(btnStop) btnStop.disabled = false;
+        // --- ESTADO: PARADO ---
+        } else if (estadoLocal.status === 'PARADO') {
+            display.classList.add('status-stopped');
+            display.innerText = "PARADO";
+            
+            // Texto detalhado
+            if(detail) detail.innerText = "Linha parada. Aguardando comando.";
+            
+            // Botões: Start Verde (Ativo) / Stop Cinza (Desativado)
+            if(btnStart) { 
+                btnStart.disabled = false; 
+                btnStart.className = "btn-action btn-green"; 
+            }
+            if(btnStop) { 
+                btnStop.disabled = true; 
+                btnStop.className = "btn-action btn-disabled"; 
+            }
 
-    } else if (estadoLocal.status === 'PARADO') {
-        display.classList.add('status-stopped'); display.innerText = "PARADO";
-        if(detail) detail.innerText = "Linha parada. Aguardando comando.";
-        if(btnStart) btnStart.disabled = false; 
-        if(btnStop) btnStop.disabled = true;
+        // --- ESTADO: FALHA ---
+        } else if (estadoLocal.status === 'FALHA') {
+            display.classList.add('status-error');
+            display.innerText = "FALHA";
+            
+            // Texto detalhado
+            if(detail) detail.innerText = "Erro #502: Motor M2 Travado";
+            
+            // Botões: Ambos Cinzas (Travados)
+            if(btnStart) { 
+                btnStart.disabled = true; 
+                btnStart.className = "btn-action btn-disabled"; 
+            }
+            if(btnStop) { 
+                btnStop.disabled = true; 
+                btnStop.className = "btn-action btn-disabled"; 
+            }
 
-    } else if (estadoLocal.status === 'FALHA') {
-        display.classList.add('status-error'); display.innerText = "FALHA";
-        if(detail) detail.innerText = "Erro #502: Motor M2 Travado";
-        if(btnStart) btnStart.disabled = true; 
-        if(btnStop) btnStop.disabled = true;
+        // --- ESTADO: PRONTO (Default) ---
+        } else { 
+            display.classList.add('status-stopped');
+            display.innerText = estadoLocal.status;
+            
+            if(detail) detail.innerText = "Falha normalizada. Pronto para iniciar.";
+            
+            // Botões: Start Verde / Stop Cinza
+            if(btnStart) { 
+                btnStart.disabled = false; 
+                btnStart.className = "btn-action btn-green"; 
+            }
+            if(btnStop) { 
+                btnStop.disabled = true; 
+                btnStop.className = "btn-action btn-disabled"; 
+            }
+        }
+    }
 
-    } else { // PRONTO
-        display.classList.add('status-stopped'); display.innerText = estadoLocal.status;
-        if(detail) detail.innerText = "Falha normalizada. Pronto para iniciar.";
-        if(btnStart) btnStart.disabled = false; 
-        if(btnStop) btnStop.disabled = true;
+    // 1. Atualiza Produção
+    const kpiProduction = document.getElementById('kpi-production');
+    if (kpiProduction) kpiProduction.innerText = estadoLocal.producao;
+
+    // 2. Atualiza Taxa de Refugo (%)
+    const kpiRefugo = document.getElementById('kpi-refugo');
+    if (kpiRefugo) {
+        let total = estadoLocal.producao + estadoLocal.refugo;
+        let taxa = (total > 0) ? (estadoLocal.refugo / total) * 100 : 0;
+        kpiRefugo.innerText = taxa.toFixed(1) + "%";
+    }
+
+    // Atualiza Meta Texto
+    const metaText = document.getElementById('meta-text');
+    if (metaText) metaText.innerText = `Meta de Produção: ${estadoLocal.meta} (un)`;
+
+    // Atualiza Barra de Progresso
+    const progressBar = document.getElementById('progress-bar');
+    if (progressBar) {
+        let percent = (estadoLocal.meta > 0) ? (estadoLocal.producao / estadoLocal.meta) * 100 : 0;
+        if (percent > 100) percent = 100;
+        progressBar.style.width = percent + "%";
+        
+        // Muda cor da barra se completar
+        if (percent >= 100) {
+            progressBar.style.backgroundColor = "var(--success-color)";
+        } else {
+            progressBar.style.backgroundColor = "var(--primary-blue)";
+        }
+    }
+
+    // Verifica Alarme
+    if (estadoLocal.status === 'FALHA' && !alarmActive) {
+        mostrarAlarmeUI();
+    } else if (estadoLocal.status !== 'FALHA' && alarmActive) {
+        esconderAlarmeUI();
     }
 }
+
+// --- Sincronização entre Abas ---
+window.addEventListener('storage', (event) => {
+    if (event.key === 'embrapac_estado') {
+        estadoLocal = JSON.parse(event.newValue);
+        if (typeof gerenciarAlarmesUI === 'function') gerenciarAlarmesUI();
+        renderizar();
+    }
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        estadoLocal = Maquina.ler();
+        renderizar();
+    }
+});

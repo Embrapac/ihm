@@ -101,22 +101,37 @@ const Sessao = {
 
     atualizarHeader: function() {
         const sessao = this.validar();
-        const divInfo = document.querySelector('.user-info');
+        const divInfo = document.querySelector('.user-info');      
+        
+        const btnTema = `
+            <button onclick="alternarTema()" style="background: none; border: none; cursor: pointer; margin-left: 15px;" title="Alternar Tema">
+                <i id="theme-icon" class="fas fa-moon" style="font-size: 1.2rem; color: white;"></i>
+            </button>
+        `;
+
         if (divInfo) {
-            if (sessao) {
+            if (sessao) {                            
                 divInfo.innerHTML = `
                     <span><i class="fas fa-user-circle"></i> ${sessao.nome} (${sessao.cargo})</span>
+                    ${btnTema}
                     <button onclick="Sessao.sair()" style="margin-left:10px; background:none; border:none; color:white; cursor:pointer; font-size:0.9rem;">
                         <i class="fas fa-sign-out-alt"></i> Sair
                     </button>
                 `;
-            } else {
-                divInfo.innerHTML = `<span><i class="fas fa-lock"></i> Acesso Restrito</span>`;
+                    
+            } else {                     
+                divInfo.innerHTML = `
+                    <span><i class="fas fa-lock"></i> Acesso Restrito</span>
+                    ${btnTema}
+                `;
             }
+                        
+            const temaAtual = localStorage.getItem('embrapac_theme') || 'light';
+            atualizarIconeTema(temaAtual);
         }
     }
+    
 };
-
 /* --- 4. CLASSE MÁQUINA (PLC Virtual Real-Time) --- */
 const Maquina = {
     ler: () => {
@@ -138,6 +153,19 @@ const Maquina = {
             // Verifica se passou tempo suficiente (Delta Time)
             if (agora - estado.ultimoUpdate >= cicloMs) {
                 const delta = agora - estado.ultimoUpdate;
+
+                // Se o tempo decorrido for maior que 10 minutos (600.000ms),
+                // o sistema entende que a fábrica (navegador) estava fechada.
+                if (delta > 600000) {
+                    console.warn("Salto de tempo detectado (Sistema Offline). Ajustando relógio...");
+                    
+                    // Pula o tempo perdido e sincroniza com o momento atual
+                    estado.ultimoUpdate = agora; 
+                    
+                    this.escrever(estado); // Salva a correção
+                    return estado; // Sai da função SEM somar produção falsa
+                }
+
                 const qtd = Math.floor(delta / cicloMs);
                 
                 if (qtd > 0) {
@@ -162,3 +190,38 @@ const Maquina = {
         return estado;
     }
 };
+
+/* ============================================================
+   CONTROLE DE TEMA (CLARO / ESCURO)
+   ============================================================ */
+
+// 1. Aplica o tema salvo assim que carregar
+document.addEventListener('DOMContentLoaded', () => {
+    const temaSalvo = localStorage.getItem('embrapac_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', temaSalvo);
+    atualizarIconeTema(temaSalvo);
+});
+
+// 2. Função para alternar (chamada pelo botão)
+function alternarTema() {
+    const atual = document.documentElement.getAttribute('data-theme');
+    const novo = atual === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', novo);
+    localStorage.setItem('embrapac_theme', novo);
+    atualizarIconeTema(novo);
+}
+
+// 3. Atualiza o ícone do botão (Lua ou Sol)
+function atualizarIconeTema(modo) {
+    const btnIcon = document.getElementById('theme-icon');
+    if (btnIcon) {
+        if (modo === 'dark') {
+            btnIcon.className = "fas fa-sun"; // Mostra Sol para voltar ao claro
+            btnIcon.style.color = "var(--accent-yellow)";
+        } else {
+            btnIcon.className = "fas fa-moon"; // Mostra Lua para ir ao escuro
+            btnIcon.style.color = "white"; // Ou a cor que preferir no header
+        }
+    }
+}

@@ -193,3 +193,15 @@ function exportTableToCSV(tableId, filename) {
     link.click();
     document.body.removeChild(link);
 }
+
+/* --- SINCRONIZAÇÃO DE HISTÓRICO --- */
+window.addEventListener('storage', (event) => {
+    // Se o banco de dados de logs mudou em outra aba...
+    if (event.key === 'embrapac_logs') {
+        // ... e se a função de renderizar tabela existe nesta página
+        if (typeof renderizarHistoricoCompleto === 'function') {
+            console.log("Novos logs detectados. Atualizando tabela...");
+            renderizarHistoricoCompleto();
+        }
+    }
+});

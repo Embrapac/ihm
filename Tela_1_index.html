@@ -40,7 +40,8 @@
             <a href="Tela_3_supervisor.html"><i class="fas fa-lock"></i> Supervisor</a>
         </nav>
         <div class="user-info">
-            </div>
+        
+        </div>
     </header>
 
     <main class="operator-grid">
@@ -52,22 +53,42 @@
             <p id="status-detail" style="color: #666;"></p>
         </div>
 
-        <div class="card">
-            <h2><i class="fas fa-chart-line"></i> PRODUÇÃO (TURNO)</h2>
-            <div class="big-number" id="counter">0</div>
-            <p id="meta-text" style="color: #666;"></p>
+        <div class="col-stack">
+            <div class="card">
+                <h2><i class="fas fa-chart-line"></i> KPIs DA LINHA (TEMPO REAL)</h2>
+                <div class="kpi-grid">                    
+                    <div class="kpi-box">
+                        <div class="kpi-val" id="kpi-production">0</div>
+                        <div class="kpi-label">Produção (Turno)</div>
+                    </div>
+                    <div class="kpi-box">
+                        <div class="kpi-val" id="kpi-refugo" style="color: var(--danger-color);">0%</div>
+                        <div class="kpi-label">Taxa de Refugo</div>
+                    </div>                   
+                </div>
+                <p id="meta-text" style="color: #666;"></p>
             <div class="progress-container">
                 <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
             </div>
+                <p style="font-size: 0.75rem; color: #999; margin-top: 15px; text-align: right;">
+                    <i class="fas fa-wifi"></i> Conexão IoT: Estável
+                </p>
+            </div>
         </div>
+
 
         <div class="card">
             <h2><i class="fas fa-cogs"></i> CONTROLE MANUAL</h2>
-            <button id="btn-start" class="btn btn-start" onclick="startLine()" disabled>
-                <i class="fas fa-play"></i> INICIAR
-            </button>
-            <button id="btn-stop" class="btn btn-stop" onclick="stopLine()">
-                <i class="fas fa-stop"></i> PARAR
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button id="btn-start" class="btn-action btn-green" onclick="startLine()" disabled style="flex: 1; margin: 0;">
+                    <i class="fas fa-play"></i> INICIAR
+                </button>
+                <button id="btn-stop" class="btn-action btn-red" onclick="stopLine()" style="flex: 1; margin: 0;">
+                    <i class="fas fa-stop"></i> PARAR
+                </button>
+            </div>
+            <button id="btn-refugo" class="btn-action btn-orange" onclick="registrarRefugo()" style="margin-top: 15px;">
+                <i class="fas fa-trash-alt"></i> APONTAR REFUGO (+1)
             </button>
         </div>
     </main>

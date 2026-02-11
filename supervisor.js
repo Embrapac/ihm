@@ -82,15 +82,24 @@ function salvarParametros() {
 }
 
 function toggleTurno(iniciar) {
+    estado = Maquina.ler();
     if (iniciar) {
         estado.turnoAtivo = true;
-        estado.horaInicioTurno = new Date().toLocaleString('pt-BR');
+              
+        estado.horaInicioTurno = new Date().toLocaleString('pt-BR');       
+        estado.tsInicio = Date.now(); 
+        // ------------------------------------------------
+        
         estado.relatorioPendente = false;
         Logger.registrar("Turno Iniciado", "NORMAL"); 
     } else {
         if (!confirm('Tem certeza que deseja ENCERRAR o turno atual?')) return;
         estado.turnoAtivo = false;
-        estado.horaFimTurno = new Date().toLocaleString('pt-BR'); 
+                
+        estado.horaFimTurno = new Date().toLocaleString('pt-BR');    
+        estado.tsFim = Date.now();
+        // ------------------------------------------------
+        
         estado.relatorioPendente = true;
         Logger.registrar("Turno Encerrado", "NORMAL"); 
     }
@@ -113,6 +122,7 @@ function zerarTurno() {
 }
 
 function startLine() {
+    estado = Maquina.ler();
     if (estado.status === 'FALHA') { alert("Sistema em Falha. Realize o reset."); return; }
     if (estado.producao >= estado.meta) { alert("Meta atingida! Aumente a meta para continuar."); return; }
     
@@ -124,6 +134,7 @@ function startLine() {
 }
 
 function stopLine() {
+    estado = Maquina.ler();
     estado.status = 'PARADO';
     Maquina.escrever(estado);
     Logger.registrar("Comando Remoto: Parar", "NORMAL");
@@ -172,20 +183,65 @@ function resetarFalhas() {
 }
 
 function exportarRelatorio() {
-    const msg = `RELATÓRIO DE TURNO ENVIADO!\n\n` +
-                `Período: ${estado.horaInicioTurno} - ${estado.horaFimTurno}\n` +
-                `Produção Total: ${estado.producao}\n` +
-                `Tempo Parado: ${formatTime(estado.downtime)}\n` +
-                `Refugo: ${estado.refugo}`;
+    // 1. Cálculos Finais (Duração e OEE)
+    let duracaoTotal = "00h 00m 00s";
+    if (estado.tsFim && estado.tsInicio) {
+        duracaoTotal = msParaTempo(estado.tsFim - estado.tsInicio);
+    }
+
+    let oeeVal = (estado.meta > 0) ? ((estado.producao / estado.meta) * 100).toFixed(1) : "0.0";
+    let refugoVal = (estado.producao + estado.refugo > 0) 
+        ? ((estado.refugo / (estado.producao + estado.refugo)) * 100).toFixed(1) 
+        : "0.0";
+
+    // 2. Montagem do Conteúdo CSV
+    // Usamos ponto-e-vírgula (;) que é o padrão do Excel no Brasil
+    const csvHeader = "DATA;INICIO;FIM;DURACAO;PRODUCAO;REFUGO (un);REFUGO (%);OEE;PARADAS\n";
+    const csvData   = [
+        new Date().toLocaleDateString('pt-BR'), // Data do dia
+        estado.horaInicioTurno,
+        estado.horaFimTurno,
+        duracaoTotal,
+        estado.producao,
+        estado.refugo,
+        refugoVal.replace('.', ',') + "%", // Troca ponto por vírgula pro Excel BR
+        oeeVal.replace('.', ',') + "%",
+        formatTime(estado.downtime)
+    ].join(";");
+
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csvHeader + csvData;
+
+    // 3. Feedback Visual (Alerta rápido)
+    const msg = `RELATÓRIO GERADO!\n\n` +
+                `Duração: ${duracaoTotal}\n` +
+                `Produção: ${estado.producao} un\n` +
+                `OEE: ${oeeVal}%\n\n` +
+                `O download do arquivo CSV iniciará automaticamente.`;
     alert(msg);
+
+    // 4. Disparar Download
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    
+    // Nome do arquivo com data e hora para não sobrescrever
+    const nomeArquivo = `Relatorio_Turno_${new Date().toISOString().slice(0,10)}.csv`;
+    link.setAttribute("download", nomeArquivo);
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // 5. Finalizar Turno no Sistema
     estado.relatorioPendente = false;
     Maquina.escrever(estado);
-    Logger.registrar("Relatório de Turno Enviado", "INFORME"); 
+    Logger.registrar("Relatório CSV Exportado", "INFORME"); 
     atualizarInterface();
 }
 
 function atualizarInterface() {
     const display = document.getElementById('status-display');
+    const detail = document.getElementById('status-detail');
     const btnStart = document.getElementById('btn-man-start');
     const btnStop = document.getElementById('btn-man-stop');
     const btnZerar = document.getElementById('btn-zerar-turno');
@@ -199,41 +255,68 @@ function atualizarInterface() {
 
     // Status Badge
     display.className = "status-badge";
+
     if (estado.status === 'OPERANDO') {
-        display.classList.add('status-pulsing'); display.innerText = "OPERANDO";
+        display.classList.add('status-pulsing'); 
+        display.innerText = "OPERANDO";
+        if(detail) detail.innerText = `Tempo do Ciclo: ${estado.ciclo} (s)`;        
         if(btnStart) { btnStart.disabled = true; btnStart.className = "btn-action btn-disabled"; }
         if(btnStop) { btnStop.disabled = false; btnStop.className = "btn-action btn-red"; }
-    } else {
-        display.classList.add(estado.status === 'FALHA' ? 'status-error' : 'status-stopped');
-        display.innerText = estado.status === 'FALHA' ? "FALHA" : estado.status;
-        
-        if(btnStart) {
-            btnStart.disabled = (estado.status === 'FALHA'); 
-            btnStart.className = (estado.status === 'FALHA') ? "btn-action btn-disabled" : "btn-action btn-green";
-        }
-        if(btnStop) {
-            btnStop.disabled = true;
-            btnStop.className = "btn-action btn-disabled";
-        }
-    }
 
+    } else if (estado.status === 'PARADO') {
+        display.classList.add('status-stopped'); 
+        display.innerText = "PARADO";        
+        if(detail) detail.innerText = "Linha parada. Aguardando comando."; 
+        if(btnStart) { btnStart.disabled = false; btnStart.className = "btn-action btn-green"; }
+        if(btnStop) { btnStop.disabled = true; btnStop.className = "btn-action btn-disabled"; }
+
+    } else if (estado.status === 'FALHA') {
+        display.classList.add('status-error'); 
+        display.innerText = "FALHA";        
+        if(detail) detail.innerText = "Erro #502: Motor M2 Travado";        
+        if(btnStart) { btnStart.disabled = true; btnStart.className = "btn-action btn-disabled"; }
+        if(btnStop) { btnStop.disabled = true; btnStop.className = "btn-action btn-disabled"; }
+
+    } else { // PRONTO (Resetado)
+        display.classList.add('status-stopped'); 
+        display.innerText = estado.status;        
+        if(detail) detail.innerText = "Falha normalizada. Pronto para iniciar.";        
+        if(btnStart) { btnStart.disabled = false; btnStart.className = "btn-action btn-green"; }
+        if(btnStop) { btnStop.disabled = true; btnStop.className = "btn-action btn-disabled"; }
+    }
+    
     // --- BLOCO DO RELÓGIO (MOVIDO PARA CÁ) ---
-    // Agora ele roda sempre, independente do if/else abaixo
     const elTime = document.getElementById('shift-time');
     if (elTime) {
         if (estado.turnoAtivo) {
-            // Relógio rodando ao vivo
-            elTime.innerHTML = '<i class="fas fa-clock"></i> ' + new Date().toLocaleString('pt-BR');
+            // CÁLCULO AO VIVO: Agora - Inicio
+            const duracaoAtual = Date.now() - (estado.tsInicio || Date.now());
+            
+            elTime.innerHTML = `
+                <i class="fas fa-clock"></i> ${new Date().toLocaleString('pt-BR')}<br>
+                <span style="font-size: 0.9em; color: var(--secondary-blue);">
+                    Duração: ${msParaTempo(duracaoAtual)}
+                </span>
+            `;
             elTime.style.color = "var(--primary-blue)";
             elTime.style.fontWeight = "bold";
         } else {
-            // Data estática do encerramento
-            elTime.innerHTML = '<i class="fas fa-history"></i> Encerrado em: ' + (estado.horaFimTurno || "--");
+            // CÁLCULO ESTÁTICO: Fim - Inicio
+            let textoDuracao = "--";
+            if (estado.tsFim && estado.tsInicio) {
+                textoDuracao = msParaTempo(estado.tsFim - estado.tsInicio);
+            }
+
+            elTime.innerHTML = `
+                <i class="fas fa-history"></i> Encerrado em: ${estado.horaFimTurno || "--"}<br>
+                <span style="font-size: 0.9em;">
+                    Duração Total: ${textoDuracao}
+                </span>
+            `;
             elTime.style.color = "#7f8c8d";
             elTime.style.fontWeight = "normal";
         }
     }
-    // ------------------------------------------
 
     // Controles de Turno (Visibilidade dos Botões)
     if (estado.turnoAtivo) {
@@ -269,6 +352,25 @@ function atualizarInterface() {
     let taxa = (total > 0) ? (estado.refugo / total) * 100 : 0;
     document.getElementById('kpi-refugo').innerText = taxa.toFixed(1) + "%";
     
+    // Atualiza Meta Texto (Adaptado para o Supervisor)
+    const metaText = document.getElementById('meta-text');
+    if (metaText) metaText.innerText = `Meta de Produção: ${estado.meta} (un)`;
+
+    // Atualiza Barra de Progresso (Adaptado para o Supervisor)
+    const progressBar = document.getElementById('progress-bar');
+    if (progressBar) {
+        let percent = (estado.meta > 0) ? (estado.producao / estado.meta) * 100 : 0;
+        if (percent > 100) percent = 100;
+        progressBar.style.width = percent + "%";
+        
+        // Muda cor da barra se completar
+        if (percent >= 100) {
+            progressBar.style.backgroundColor = "var(--success-color)";
+        } else {
+            progressBar.style.backgroundColor = "var(--primary-blue)";
+        }
+    }
+
     // --- UI ALARME INTELIGENTE (2 PASSOS) ---
     const alarmPanel = document.getElementById('alarm-panel');
     const alarmTime = document.getElementById('alarm-time');
@@ -290,4 +392,34 @@ function atualizarInterface() {
     } else {
         if(alarmPanel) alarmPanel.classList.remove('active');
     }
+}
+
+// --- Sincronização entre Abas ---
+window.addEventListener('storage', (event) => {
+    if (event.key === 'embrapac_estado') {
+        estado = JSON.parse(event.newValue);
+        atualizarInterface();
+    }
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        estado = Maquina.ler();
+        atualizarInterface();
+    }
+});
+
+// --- Converte Milissegundos em Texto ---
+function msParaTempo(duration) {
+    if (!duration || duration < 0) return "00h 00m 00s";
+    
+    let seconds = Math.floor((duration / 1000) % 60);
+    let minutes = Math.floor((duration / (1000 * 60)) % 60);
+    let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    return hours + "h " + minutes + "m " + seconds + "s";
 }

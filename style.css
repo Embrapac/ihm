@@ -17,6 +17,30 @@
     --text-light: #ffffff;
 }
 
+    /* --- TEMA ESCURO (Dark Mode) --- */
+[data-theme="dark"] {
+    --bg-color: #121212;         /* Fundo da página quase preto */
+    --card-bg: #1e1e1e;          /* Fundo dos cartões cinza escuro */
+    --text-main: #e0e0e0;        /* Texto claro */
+    --text-light: #aaaaaa;       /* Texto secundário */
+    
+    /* Ajustes finos para inputs e bordas no modo escuro */
+    --gray-btn: #444444;
+    color-scheme: dark;          /* Ajusta barras de rolagem nativas */
+}
+
+/* Ajuste adicional para Inputs no modo escuro */
+[data-theme="dark"] .input-std {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+[data-theme="dark"] .login-box {
+    background-color: #1e1e1e;
+    color: #fff;
+}
+
 /* --- 2. GERAL --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

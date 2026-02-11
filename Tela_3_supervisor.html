@@ -38,7 +38,7 @@
             <a href="Tela_3_supervisor.html" class="active"><i class="fas fa-lock"></i> Supervisor</a>
         </nav>
         <div class="user-info">
-            <i class="fas fa-spinner fa-spin"></i> Carregando...
+            <i class="fas fa-spinner fa-spin"></i> Carregando...           
         </div>
     </header>
 
@@ -50,6 +50,7 @@
                 <div id="status-display" class="status-badge status-stopped">
                     AGUARDANDO...
                 </div>
+                <p id="status-detail" style="color: #666; margin-top: 10px; font-size: 0.9rem;"></p>
             </div>
 
             <div class="card supervisor-card">
@@ -96,9 +97,13 @@
                         <div class="kpi-label">Tempo Parado (s)</div>
                     </div>
                 </div>
+                <p id="meta-text" style="color: #666;"></p>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+            </div>
                 <button id="btn-zerar-turno" class="btn-action btn-disabled" onclick="zerarTurno()" disabled style="margin-top: 20px;">
                     <i class="fas fa-eraser"></i> REINICIAR INFORMAÇÕES
-                </button>
+                </button>               
                 <p style="font-size: 0.75rem; color: #999; margin-top: 15px; text-align: right;">
                     <i class="fas fa-wifi"></i> Conexão IoT: Estável
                 </p>
