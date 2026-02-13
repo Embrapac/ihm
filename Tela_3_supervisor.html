@@ -14,7 +14,9 @@
             <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" style="height: 60px; margin-bottom: 20px;">
             <h3 style="color: var(--primary-blue);">Acesso Restrito</h3>
             <p style="color: #666; margin-bottom: 20px;">Área exclusiva para Supervisores.</p>
+            
             <input type="password" id="admin-pass" class="input-std" placeholder="Senha (admin)" autofocus>
+            
             <button class="btn-action btn-blue" onclick="attemptLogin()">
                 <i class="fas fa-sign-in-alt"></i> ENTRAR
             </button>
@@ -36,7 +38,7 @@
             <a href="Tela_3_supervisor.html" class="active"><i class="fas fa-lock"></i> Supervisor</a>
         </nav>
         <div class="user-info">
-            <i class="fas fa-user-tie"></i> Olá, Sr. Carlos (Supervisor) | <a href="Tela_3_supervisor.html" style="color: var(--accent-yellow)">Sair</a>
+            <i class="fas fa-spinner fa-spin"></i> Carregando...           
         </div>
     </header>
 
@@ -45,24 +47,25 @@
         <div class="col-stack">
             <div class="card">
                 <h2><i class="fas fa-traffic-light"></i> STATUS DA LINHA</h2>
-                <div id="status-display" class="status-badge status-pulsing">
-                    OPERANDO
+                <div id="status-display" class="status-badge status-stopped">
+                    AGUARDANDO...
                 </div>
+                <p id="status-detail" style="color: #666; margin-top: 10px; font-size: 0.9rem;"></p>
             </div>
 
             <div class="card supervisor-card">
                 <h2><i class="fas fa-clock"></i> GESTÃO DE TURNO</h2>
                 <div style="margin-bottom: 15px;">
-                    <p style="margin:5px 0;"><strong>Turno:</strong> <span id="shift-status" style="color: #7f8c8d;"></span></p>
-                    <p id="shift-time" style="font-size: 0.85rem; color:#999;"></p>
-                    
+                    <p style="margin:5px 0;"><strong>Status:</strong> <span id="shift-status" style="color: #7f8c8d;">TURNO ENCERRADO</span></p>
+
+                    <p id="shift-time" style="font-size: 0.85rem; color:#999; margin-top:5px; min-height: 20px;"></p>
                     <button id="btn-start-shift" class="btn-action btn-green" onclick="toggleTurno(true)" style="padding: 8px;">
                         <i class="fas fa-play"></i> Iniciar Turno
                     </button>
 
                     <div id="active-shift-controls" style="display: none;">
                         <button class="btn-action btn-red" onclick="toggleTurno(false)" style="padding: 8px;">
-                            <i class="fas fa-stop"></i> Encerrar Turno
+                            <i class="fas fa-stop-circle"></i> Encerrar Turno
                         </button>
                     </div>
                     
@@ -79,24 +82,28 @@
                 <div class="kpi-grid">
                     <div class="kpi-box">
                         <div class="kpi-val" id="kpi-oee">0%</div>
-                        <div class="kpi-label">OEE (Meta)</div>
+                        <div class="kpi-label">OEE Global</div>
                     </div>
                     <div class="kpi-box">
                         <div class="kpi-val" id="kpi-production">0</div>
-                        <div class="kpi-label">Produção</div>
+                        <div class="kpi-label">Produção (Turno)</div>
                     </div>
                     <div class="kpi-box">
-                        <div class="kpi-val" id="kpi-refugo" style="color: var(--danger-color);">0.0%</div>
-                        <div class="kpi-label">Refugo</div>
+                        <div class="kpi-val" id="kpi-refugo" style="color: var(--danger-color);">0%</div>
+                        <div class="kpi-label">Taxa de Refugo</div>
                     </div>
                     <div class="kpi-box">
                         <div class="kpi-val" id="kpi-downtime">00:00</div>
-                        <div class="kpi-label">Tempo Parado</div>
+                        <div class="kpi-label">Tempo Parado (s)</div>
                     </div>
                 </div>
+                <p id="meta-text" style="color: #666;"></p>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+            </div>
                 <button id="btn-zerar-turno" class="btn-action btn-disabled" onclick="zerarTurno()" disabled style="margin-top: 20px;">
-                    <i class="fas fa-eraser"></i> ZERAR DADOS DO TURNO
-                </button>
+                    <i class="fas fa-eraser"></i> REINICIAR INFORMAÇÕES
+                </button>               
                 <p style="font-size: 0.75rem; color: #999; margin-top: 15px; text-align: right;">
                     <i class="fas fa-wifi"></i> Conexão IoT: Estável
                 </p>
@@ -122,18 +129,16 @@
             <div class="card supervisor-card">
                 <h2><i class="fas fa-sliders-h"></i> PARÂMETROS DA LINHA</h2>
 
-                <label style="font-weight: bold; font-size: 0.9rem; display:block; text-align:left; margin-top:10px;">Meta de Produção (un):</label>
+                <label style="font-weight: bold; font-size: 0.8rem; display:block; text-align:left; margin-top:10px;">Meta de Produção (un):</label>
                 <input type="number" id="meta-input" class="input-std" 
-                       value="1500" min="1" step="1" autocomplete="off"
-                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                       value="1500" min="1" step="1" autocomplete="off">
                 
-                <label style="font-weight: bold; font-size: 0.9rem; display:block; text-align:left;">Tempo de Ciclo (1s a 60s):</label>
+                <label style="font-weight: bold; font-size: 0.8rem; display:block; text-align:left;">Tempo de Ciclo (seg):</label>
                 <input type="number" id="ciclo-input" class="input-std" 
-                       value="1" min="1" max="60" step="1" autocomplete="off"
-                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                       value="1" min="1" max="60" step="1" autocomplete="off">
                 
-                <button id="btn-save-params" class="btn-action btn-blue" onclick="salvarParametros()" style="margin-top: 20px;">
-                    <i class="fas fa-save"></i> SALVAR ALTERAÇÕES
+                <button id="btn-save-params" class="btn-action btn-blue" onclick="salvarParametros()" style="margin-top: 15px;">
+                    <i class="fas fa-save"></i> SALVAR
                 </button>
             </div>
         </div>
@@ -145,12 +150,12 @@
             <i class="fas fa-exclamation-triangle fa-2x"></i>
             <div>
                 <span id="alarm-msg">ALARME: MOTOR DA ESTEIRA TRAVADO</span><br>
-                <small id="alarm-time" style="opacity: 0.8;">Ocorrido às: --:--</small>
+                <small id="alarm-time" style="opacity: 0.8;">Atualizado às: --:--</small>
             </div>
         </div>
         <button id="btn-reset" class="btn-ack" onclick="resetarFalhas()">
             <i class="fas fa-wrench"></i> 
-            <span id="btn-reset-text">RESETAR FALHAS</span>
+            <span id="btn-reset-text">RECONHECER ALARME</span>
         </button>
     </div>
 
@@ -158,6 +163,7 @@
         <button onclick="simularFalha()">[DEV] Simular Falha</button>
     </div>
 
+    <script src="master.js"></script>
     <script src="supervisor.js"></script>
 </body>
 </html>
