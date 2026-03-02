@@ -22,60 +22,85 @@ const ESTADO_PADRAO = {
     horaFimTurno: '--:--', horaFalha: '--:--', downtime: 0, oee: 0
 };
 
-/* --- 2. LOGGER (Movido para cima para estar disponível na Sessão) --- */
+/* --- 2. LOGGER --- */
 const Logger = {
     registrar: (evento, tipo = 'NORMAL') => {
-        // Tenta pegar usuário logado, senão assume Sistema
-        const sessaoStr = sessionStorage.getItem('embrapac_user_session');
-        const user = sessaoStr ? JSON.parse(sessaoStr) : { nome: 'Sistema', cargo: 'Automático' };
+        let user = { nome: 'Sistema', cargo: 'Automático' };
+        
+        // Identifica com precisão quem está apertando o botão nesta aba
+        if (typeof Sessao !== 'undefined') {
+            const role = Sessao.obterPapelDestaAba();
+            if (role) {
+                const sessoes = Sessao._getSessoes();
+                if (sessoes[role]) user = sessoes[role];
+            }
+        }
         
         const logs = JSON.parse(localStorage.getItem('embrapac_logs') || '[]');
         
         logs.unshift({
-            data: new Date().toLocaleString('pt-BR'),
+            timestamp: Date.now(), 
+            data: new Date().toISOString(), // PADRÃO ISO
             evento: evento, 
             tipo: tipo, 
             usuario: user.nome, 
             cargo: user.cargo
         });
         
-        // Limita a 300 logs para performance
         if (logs.length > 300) logs.pop();
-        
         localStorage.setItem('embrapac_logs', JSON.stringify(logs));
         
-        // Se estiver na tela de histórico, atualiza na hora
         if (typeof renderizarHistoricoCompleto === 'function') {
             renderizarHistoricoCompleto();
         }
     }
 };
 
-/* --- 3. SISTEMA DE SESSÃO (Logs Automáticos de Acesso) --- */
+/* --- 3. SISTEMA DE SESSÃO (Cofre Multi-Usuário) --- */
 const Sessao = {
+    _getSessoes: function() {
+        return JSON.parse(localStorage.getItem('embrapac_sessions') || '{}');
+    },
+    _setSessoes: function(sessoes) {
+        localStorage.setItem('embrapac_sessions', JSON.stringify(sessoes));
+    },
+
     iniciar: function(usuarioKey) {
         const dados = CONFIG.USUARIOS[usuarioKey];
         if (!dados) return false;
         
-        const sessao = { ...dados, id: usuarioKey, ultimoAcesso: Date.now() };
-        sessionStorage.setItem('embrapac_user_session', JSON.stringify(sessao));
+        const sessoes = this._getSessoes();
+        sessoes[usuarioKey] = { ...dados, id: usuarioKey, ultimoAcesso: Date.now() };
+        this._setSessoes(sessoes);
         
-        // --- LOG AUTOMÁTICO DE LOGIN ---
+        // Remove a trava de deslogado ao fazer um novo login bem-sucedido
+        sessionStorage.removeItem('embrapac_aba_deslogada');
+        sessionStorage.setItem('embrapac_active_role', usuarioKey);
+        localStorage.setItem('embrapac_last_role', usuarioKey); 
+        
         Logger.registrar(`Login realizado: ${dados.nome}`, "INFORME");
         return true;
     },
 
     sair: function() {
-        const sessaoAntiga = JSON.parse(sessionStorage.getItem('embrapac_user_session'));
-        const nome = sessaoAntiga ? sessaoAntiga.nome : 'Usuário';
+        const role = this.obterPapelDestaAba();
+        if (!role) return;
 
-        sessionStorage.removeItem('embrapac_user_session');
+        const sessoes = this._getSessoes();
+        const user = sessoes[role];
+        const nome = user ? user.nome : 'Usuário';
+
+        delete sessoes[role];
+        this._setSessoes(sessoes);
         
-        // --- LOG AUTOMÁTICO DE LOGOUT ---
-        // Forçamos o registro lendo o banco atualizado
+        // Coloca a etiqueta nesta aba para ela não puxar outro login ao recarregar
+        sessionStorage.removeItem('embrapac_active_role');
+        sessionStorage.setItem('embrapac_aba_deslogada', 'true');
+        
         const logs = JSON.parse(localStorage.getItem('embrapac_logs') || '[]');
         logs.unshift({
-            data: new Date().toLocaleString('pt-BR'),
+            timestamp: Date.now(), 
+            data: new Date().toISOString(), 
             evento: `Logout realizado: ${nome}`,
             tipo: 'INFORME',
             usuario: nome,
@@ -88,18 +113,59 @@ const Sessao = {
         }
     },
 
+    obterPapelDestaAba: function() {       
+        if (sessionStorage.getItem('embrapac_aba_deslogada') === 'true') {
+            return null;
+        }
+
+        let role = sessionStorage.getItem('embrapac_active_role');
+        if (role) return role;
+
+        const pathname = window.location.pathname;
+        const sessoes = this._getSessoes();
+
+        if (pathname.includes('Tela_1_operador')) {
+            if (sessoes['operador']) role = 'operador';
+            else if (sessoes['admin']) role = 'admin';
+        } 
+        else if (pathname.includes('Tela_3_supervisor')) {
+            if (sessoes['admin']) role = 'admin';
+        }
+        else {
+            const lastRole = localStorage.getItem('embrapac_last_role');
+            if (lastRole && sessoes[lastRole]) role = lastRole;
+        }
+
+        if (role) sessionStorage.setItem('embrapac_active_role', role);
+        return role;
+    },
+
     validar: function() {
-        const sessao = JSON.parse(sessionStorage.getItem('embrapac_user_session'));
-        if (!sessao) return false;
+        const role = this.obterPapelDestaAba();
+        if (!role) return false;
+
+        const sessoes = this._getSessoes();
+        const sessao = sessoes[role];
         
+        if (!sessao) {
+            sessionStorage.removeItem('embrapac_active_role');
+            return false;
+        }
+
         const minutos = (Date.now() - sessao.ultimoAcesso) / 60000;
-        if (minutos > CONFIG.AUTH_TIMEOUT) {
+        const tempoLimite = CONFIG.AUTH_TIMEOUT[sessao.id] || 15;
+
+        if (minutos > tempoLimite) {
             this.sair();
             return false;
         }
-        
-        sessao.ultimoAcesso = Date.now();
-        sessionStorage.setItem('embrapac_user_session', JSON.stringify(sessao));
+       
+        if (Date.now() - sessao.ultimoAcesso > 60000) {
+            sessao.ultimoAcesso = Date.now();
+            sessoes[role] = sessao;
+            this._setSessoes(sessoes);
+        }
+
         return sessao;
     },
 
@@ -118,11 +184,10 @@ const Sessao = {
                 divInfo.innerHTML = `
                     <span><i class="fas fa-user-circle"></i> ${sessao.nome} (${sessao.cargo})</span>
                     ${btnTema}
-                    <button onclick="Sessao.sair()" style="margin-left:10px; background:none; border:none; color:white; cursor:pointer; font-size:0.9rem;">
+                    <button onclick="Sessao.sair()" style="margin-left:10px; background:none; border:none; color:white; cursor:pointer; font-size:1.1rem;">
                         <i class="fas fa-sign-out-alt"></i> Sair
                     </button>
                 `;
-                    
             } else {                     
                 divInfo.innerHTML = `
                     <span><i class="fas fa-lock"></i> Acesso Restrito</span>
@@ -130,14 +195,21 @@ const Sessao = {
                 `;
             }
                         
-            // Garante que o tema e o ícone sejam os corretos PARA ESTE USUÁRIO
-            if (typeof aplicarTemaDoUsuario === 'function') {
-                aplicarTemaDoUsuario();
+            if (typeof aplicarTemaDoUsuario === 'function') aplicarTemaDoUsuario();
+        }
+    },
+
+    autenticar: function(senhaDigitada) {
+        for (const [idPerfil, dados] of Object.entries(CONFIG.USUARIOS)) {
+            if (senhaDigitada === dados.pass) {
+                this.iniciar(idPerfil);
+                return idPerfil; 
             }
         }
+        return null;
     }
-    
 };
+
 /* --- 4. CLASSE MÁQUINA (PLC Virtual Real-Time) --- */
 const Maquina = {
     ler: () => {
@@ -201,13 +273,15 @@ const Maquina = {
    CONTROLE DE TEMA (CLARO / ESCURO) - INDIVIDUAL POR USUÁRIO
    ============================================================ */
 // 1. Descobre qual é a chave do banco de dados baseada em quem está logado
-function obterChaveTema() {
-    const sessaoStr = sessionStorage.getItem('embrapac_user_session');
-    if (sessaoStr) {
-        const user = JSON.parse(sessaoStr);
-        return 'embrapac_theme_' + user.cargo; // Ex: embrapac_theme_Operador ou embrapac_theme_Supervisor
+function obterChaveTema() {    
+    if (typeof Sessao !== 'undefined') {
+        const role = Sessao.obterPapelDestaAba();
+        if (role) {
+            const sessoes = Sessao._getSessoes();
+            if (sessoes[role]) return 'embrapac_theme_' + sessoes[role].cargo; 
+        }
     }
-    return 'embrapac_theme_visitante'; // Para quem ainda não fez login
+    return 'embrapac_theme_visitante'; 
 }
 
 // 2. Aplica o tema específico daquele usuário na tela
@@ -218,12 +292,7 @@ function aplicarTemaDoUsuario() {
     atualizarIconeTema(temaSalvo);
 }
 
-// 3. Chama a função assim que a página carrega
-document.addEventListener('DOMContentLoaded', () => {
-    aplicarTemaDoUsuario();
-});
-
-// 4. Função para alternar (chamada pelo botão)
+// 3. Função para alternar (chamada pelo botão)
 function alternarTema() {
     const atual = document.documentElement.getAttribute('data-theme');
     const novo = atual === 'dark' ? 'light' : 'dark';
@@ -234,7 +303,7 @@ function alternarTema() {
     atualizarIconeTema(novo);
 }
 
-// 5. Atualiza o ícone do botão (Lua ou Sol)
+// 4. Atualiza o ícone do botão (Lua ou Sol)
 function atualizarIconeTema(modo) {
     const btnIcon = document.getElementById('theme-icon');
     if (btnIcon) {
@@ -248,13 +317,25 @@ function atualizarIconeTema(modo) {
     }
 }
 
-// 6. Sincronização Inteligente entre Abas
+// 5. Sincronização Inteligente entre Abas (Múltiplos Usuários)
 window.addEventListener('storage', (event) => {
-    const chaveAtual = obterChaveTema();
-    // Só muda a cor da aba se a alteração for do MESMO perfil de usuário
-    if (event.key === chaveAtual) {
-        const novoTema = event.newValue || 'light';
-        document.documentElement.setAttribute('data-theme', novoTema);
-        atualizarIconeTema(novoTema);
+    if (event.key === 'embrapac_sessions') {
+        if (typeof Sessao !== 'undefined') Sessao.atualizarHeader();
+    }
+
+    if (typeof obterChaveTema === 'function') {
+        const chaveAtual = obterChaveTema();
+        if (event.key === chaveAtual) {
+            const novoTema = event.newValue || 'light';
+            document.documentElement.setAttribute('data-theme', novoTema);
+            if (typeof atualizarIconeTema === 'function') atualizarIconeTema(novoTema);
+        }
+    }
+});
+
+// 6. Correção de Sincronia para Arquivos Locais (file:///)
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && typeof Sessao !== 'undefined') {
+        Sessao.atualizarHeader(); 
     }
 });

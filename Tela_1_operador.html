@@ -4,27 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmbraPac - IHM Operacional</title>
+    
+    <link rel="preload" href="img/logo-embrapac.jpeg" as="image">
+
+    <script src="theme-init.js"></script>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
     <div id="login-modal">
         <div class="login-box">
-            <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" style="height: 60px; margin-bottom: 20px;">
+            <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" style="height: 100px; margin-bottom: 20px;">
             <h3 style="color: var(--primary-blue);">Acesso Operador</h3>
             <p style="color: #666; margin-bottom: 20px;">Identifique-se para iniciar a operação.</p>
             
             <input type="password" id="operador-pass" class="input-std" placeholder="Senha (operador)" autofocus>
             
             <button class="btn-action btn-blue" onclick="attemptLoginOperator()">
-                <i class="fas fa-sign-in-alt"></i> ENTRAR
+                <i class="fas fa-sign-in-alt" aria-hidden="true"></i> ENTRAR
             </button>
             
             <br>
             
             <button class="btn-action btn-warning" onclick="window.location.href='Tela_3_supervisor.html'" style="margin-top: 10px;">
-                <i class="fas fa-user-shield"></i> Área do Supervisor
+                <i class="fas fa-user-shield" aria-hidden="true"></i> Área do Supervisor
             </button>
         </div>
     </div>
@@ -35,27 +40,29 @@
             IHM Operacional
         </div>
         <nav>
-            <a href="Tela_1_index.html" class="active">Painel de Operações</a>
+            <a href="Tela_1_operador.html" class="active">Painel de Operações</a>
             <a href="Tela_2_historico.html">Histórico</a>
-            <a href="Tela_3_supervisor.html"><i class="fas fa-lock"></i> Supervisor</a>
+            <a href="Tela_3_supervisor.html"><i class="fas fa-lock" aria-hidden="true"></i> Supervisor</a>
         </nav>
         <div class="user-info">
         
         </div>
     </header>
 
-    <main class="operator-grid">
+    <main class="dashboard-grid">
+        <div class="col-stack">
         <div class="card">
-            <h2><i class="fas fa-traffic-light"></i> STATUS DA LINHA</h2>
+            <h2><i class="fas fa-traffic-light" aria-hidden="true"></i> STATUS DA LINHA</h2>
             <div id="status-display" class="status-badge status-pulsing">
                 OPERANDO
             </div>
             <p id="status-detail" style="color: #666;"></p>
         </div>
+        </div>
 
         <div class="col-stack">
             <div class="card">
-                <h2><i class="fas fa-chart-line"></i> KPIs DA LINHA (TEMPO REAL)</h2>
+                <h2><i class="fas fa-chart-line" aria-hidden="true"></i> KPIs DA LINHA (TEMPO REAL)</h2>
                 <div class="kpi-grid">                    
                     <div class="kpi-box">
                         <div class="kpi-val" id="kpi-production">0</div>
@@ -71,38 +78,39 @@
                 <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
             </div>
                 <p style="font-size: 0.75rem; color: #999; margin-top: 15px; text-align: right;">
-                    <i class="fas fa-wifi"></i> Conexão IoT: Estável
+                    <i class="fas fa-wifi" aria-hidden="true"></i> Conexão IoT: Estável
                 </p>
             </div>
         </div>
 
-
+        <div class="col-stack">
         <div class="card">
-            <h2><i class="fas fa-cogs"></i> CONTROLE MANUAL</h2>
+            <h2><i class="fas fa-cogs" aria-hidden="true"></i> CONTROLE MANUAL</h2>
             <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button id="btn-start" class="btn-action btn-green" onclick="startLine()" disabled style="flex: 1; margin: 0;">
-                    <i class="fas fa-play"></i> INICIAR
+                    <i class="fas fa-play" aria-hidden="true"></i> INICIAR
                 </button>
                 <button id="btn-stop" class="btn-action btn-red" onclick="stopLine()" style="flex: 1; margin: 0;">
-                    <i class="fas fa-stop"></i> PARAR
+                    <i class="fas fa-stop" aria-hidden="true"></i> PARAR
                 </button>
             </div>
             <button id="btn-refugo" class="btn-action btn-orange" onclick="registrarRefugo()" style="margin-top: 15px;">
-                <i class="fas fa-trash-alt"></i> APONTAR REFUGO (+1)
+                <i class="fas fa-trash-alt" aria-hidden="true"></i> APONTAR REFUGO (+1)
             </button>
+        </div>
         </div>
     </main>
 
     <div id="alarm-panel">
         <div class="alarm-text">
-            <i class="fas fa-exclamation-triangle fa-2x"></i>
+            <i class="fas fa-exclamation-triangle fa-2x" aria-hidden="true"></i>
             <div>
                 <span id="alarm-msg">ALARME: MOTOR DA ESTEIRA TRAVADO</span><br>
                 <small id="alarm-time" style="opacity: 0.8;">Ocorrido às: --:--</small>
             </div>
         </div>
         <button class="btn btn-ack" onclick="acknowledgeAlarm()">
-            <i class="fas fa-bell-slash"></i> 
+            <i class="fas fa-bell-slash" aria-hidden="true"></i> 
             <span id="btn-ack-text">RECONHECER ALARME</span>
         </button>
     </div>
