@@ -1,32 +1,25 @@
 /* ============================================================
    OPERADOR.JS - INTERFACE (Conectado ao Master)
-   * Com mensagens detalhadas recuperadas do código antigo *
    ============================================================ */
 
 let estadoLocal = {}; 
 let alarmActive = false;
 let stepFalha = 0;
 
-// --- LOGIN (Mantém supervisor na tela) ---
+// --- LÓGICA DE LOGIN ---
 function attemptLoginOperator() {
     const passInput = document.getElementById('operador-pass');
-    
     if (typeof CONFIG === 'undefined') {
         alert("Erro Crítico: master.js não encontrado!");
         return;
     }
 
-    const senhaDigitada = passInput.value;
+    const perfilLogado = Sessao.autenticar(passInput.value);
 
-    if (senhaDigitada === CONFIG.USUARIOS['operador'].pass) {
-        Sessao.iniciar('operador');
+    // O Operador aceita login tanto do nível 1 quanto do nível 2
+    if (perfilLogado === 'operador' || perfilLogado === 'admin') {
         fecharModalLogin();
-    } 
-    else if (senhaDigitada === CONFIG.USUARIOS['admin'].pass) {
-        Sessao.iniciar('admin'); 
-        fecharModalLogin(); 
-    } 
-    else {
+    } else {
         alert('Senha Incorreta!');
     }
 }
@@ -41,7 +34,7 @@ function fecharModalLogin() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- CORREÇÃO APLICADA: ATUALIZA CABEÇALHO AO CARREGAR ---
+    // --- ATUALIZA CABEÇALHO AO CARREGAR ---
     Sessao.atualizarHeader(); 
     // ---------------------------------------------------------
 
@@ -273,13 +266,6 @@ function renderizar() {
         } else {
             progressBar.style.backgroundColor = "var(--primary-blue)";
         }
-    }
-
-    // Verifica Alarme
-    if (estadoLocal.status === 'FALHA' && !alarmActive) {
-        mostrarAlarmeUI();
-    } else if (estadoLocal.status !== 'FALHA' && alarmActive) {
-        esconderAlarmeUI();
     }
 }
 

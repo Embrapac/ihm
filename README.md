@@ -29,11 +29,15 @@ A arquitetura utiliza o navegador como um "PLC Virtual", garantindo que a produ�
 
 ### 1. Painel do Operador
 Focado na execução. Interface limpa com controles grandes, feedback visual de status e barra   de progresso da meta.
-<img src="img/Captura de tela de 2026-02-08 11-18-04.png" ></img>
+<img src="img/Captura de tela de 2026-03-02 20-25-55.png" ></img>
 
-### 2. Painel do Supervisor (Dashboard)
+### 2. Historico de Ações
+Focado na segurança. Demonstração de logs, eventos e alarmes do sistema, pesquisa direta das ações por filtro de buscas por data e hora.
+<img src="img/Captura de tela de 2026-03-03 09-46-24.png" ></img>
+
+### 3. Painel do Supervisor (Dashboard)
 Focado na gestão. Apresenta KPIs detalhados, controle de turnos, alteração de parâmetros (Meta/Ciclo) e ferramentas de teste.
-<img src="img/Captura de tela de 2026-02-08 11-19-07.png" ></img>
+<img src="img/Captura de tela de 2026-03-02 20-27-26.png" ></img>
 
 ---
 
@@ -45,17 +49,19 @@ O projeto segue uma arquitetura **Client-Side State Management**:
 2.  **supervisor.js & operador.js (Views):** Controlam a interface do usuário e a lógica específica de permissão de cada perfil.
 3.  **Persistência:** Utiliza `localStorage` como barramento de dados, permitindo que múltiplas abas do navegador compartilhem o mesmo "estado de máquina" instantaneamente.
 
+> **⚠️ Arquitetura e Evolução (Roadmap):** Atualmente, esta aplicação opera com o Front-End consolidado, utilizando `LocalStorage` como barramento para simulação e persistência de estado em tempo real. A próxima fase do projeto (em desenvolvimento) contempla a implementação de um **Back-End dedicado e Banco de Dados**. Essa evolução transferirá a validação de segurança, autenticação e cálculos de OEE para a camada do servidor, além de permitir a comunicação remota real com os sensores e atuadores da linha de produção.
+
 ### Estrutura de Arquivos
 ```bash
 /
-├── Tela_1_index.html      # Interface Operador
+├── Tela_1_operador.html   # Interface Operador
 ├── Tela_2_historico.html  # Logs e Exportação CSV
 ├── Tela_3_supervisor.html # Dashboard de Gestão
 ├── style.css              # Estilização Responsiva
 ├── master.js              # Núcleo Lógico (PLC Virtual)
 ├── operador.js            # Lógica da UI Operador
 ├── supervisor.js          # Lógica da UI Supervisor
-└── script.js              # Utilitários Globais (Sanitização/Filtros)
+└── historico.js           # Utilitários Globais (Sanitização/Filtros/Paginação)
 ```
 
 ---
@@ -66,7 +72,7 @@ O sistema é estático e não requer instalação de dependências ou servidores
 
 1.  Clone o repositório ou baixe os arquivos.
 
-2.  Abra o arquivo Tela_1_index.html em uma aba do navegador (Visão Operador).
+2.  Abra o arquivo Tela_1_operador.html em uma aba do navegador (Visão Operador).
 
 3.  Abra o arquivo Tela_3_supervisor.html em outra aba (Visão Supervisor).
 

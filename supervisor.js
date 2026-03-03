@@ -1,20 +1,26 @@
 /* ============================================================
-   SUPERVISOR.JS - GESTÃO RICA (Conectado ao Master)
+   SUPERVISOR.JS (Conectado ao Master)
    ============================================================ */
 
 let estado = {}; 
 let stepFalha = 0; // Variável de controle (Igual ao Operador)
 
+// --- LÓGICA DE LOGIN ---
 function attemptLogin() {
-    const pass = document.getElementById('admin-pass').value;
-    if (typeof CONFIG === 'undefined') { alert("Erro: master.js ausente."); return; }
+    const passInput = document.getElementById('admin-pass');
+    if (typeof CONFIG === 'undefined') {
+        alert("Erro Crítico: master.js não encontrado!");
+        return;
+    }
 
-    if (pass === CONFIG.USUARIOS['admin'].pass) {
-        Sessao.iniciar('admin');
+    const perfilLogado = Sessao.autenticar(passInput.value);
+
+    // O Supervisor só aceita login de nível 2 (admin)
+    if (perfilLogado === 'admin') {
         document.getElementById('login-modal').style.display = 'none';
         Sessao.atualizarHeader();
     } else {
-        alert('Senha Incorreta!');
+        alert('Senha Incorreta ou Acesso Negado!');
     }
 }
 
@@ -43,7 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
         atualizarInterface();
     }, 500);
 
-    setInterval(contarDowntime, 1000);
+    setInterval(() => {
+    contarDowntime();
+    atualizarRelogio(); 
+    }, 1000);
 
     // Atalho de Enter no Login
     const passInput = document.getElementById('admin-pass');
@@ -51,18 +60,43 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function contarDowntime() {
-    if (estado.turnoAtivo && (estado.status === 'PARADO' || estado.status === 'FALHA')) {
-        estado.downtime++;
-        Maquina.escrever(estado);
-        const kpi = document.getElementById('kpi-downtime');
-        if(kpi) kpi.innerText = formatTime(estado.downtime);
+    const kpiDowntime = document.getElementById('kpi-downtime');
+    if (!kpiDowntime) return;
+
+    // Conta o tempo parado SEMPRE que o turno estiver rodando
+    // e a máquina não estiver produzindo (seja FALHA, PARADO ou PRONTO).
+    if (estado.turnoAtivo && estado.status !== 'OPERANDO') {
+        
+        // Marca o exato milissegundo em que a parada começou
+        if (!estado.inicioDowntimeMs) {
+            estado.inicioDowntimeMs = Date.now();
+            localStorage.setItem('embrapac_estado', JSON.stringify(estado));
+        }
+        
+        // Calcula "Ao Vivo" para mostrar na tela
+        const tempoParadoAgora = Math.floor((Date.now() - estado.inicioDowntimeMs) / 1000);
+        kpiDowntime.innerText = formatTime((estado.downtime || 0) + tempoParadoAgora);
+
+    } else {
+        // Quando a máquina volta a OPERAR (ou se o turno for fechado)
+        if (estado.inicioDowntimeMs) {
+            // Consolida o tempo exato dessa parada no acumulado do turno
+            estado.downtime += Math.floor((Date.now() - estado.inicioDowntimeMs) / 1000);
+            estado.inicioDowntimeMs = null; 
+            localStorage.setItem('embrapac_estado', JSON.stringify(estado));
+        }
+        
+        // Garante que a tela exiba o valor final congelado
+        kpiDowntime.innerText = formatTime(estado.downtime || 0);
     }
 }
 
 function formatTime(s) {
-    const m = Math.floor(s / 60).toString().padStart(2, '0');
+    const h = Math.floor(s / 3600).toString().padStart(2, '0');
+    const m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
     const sec = (s % 60).toString().padStart(2, '0');
-    return `${m}:${sec}`;
+    // Só mostra as horas se tiver passado de 60 minutos
+    return h === '00' ? `${m}:${sec}` : `${h}:${m}:${sec}`;
 }
 
 function salvarParametros() {
@@ -343,7 +377,6 @@ function atualizarInterface() {
 
     // KPIs
     document.getElementById('kpi-production').innerText = estado.producao;
-    document.getElementById('kpi-downtime').innerText = formatTime(estado.downtime);
     
     let oee = (estado.meta > 0) ? (estado.producao / estado.meta) * 100 : 0;
     document.getElementById('kpi-oee').innerText = (oee > 100 ? 100 : oee).toFixed(1) + "%";
@@ -422,4 +455,35 @@ function msParaTempo(duration) {
     seconds = (seconds < 10) ? "0" + seconds : seconds;
 
     return hours + "h " + minutes + "m " + seconds + "s";
+}
+function atualizarRelogio() {
+    const elTime = document.getElementById('shift-time');
+    if (!elTime) return;
+
+    if (estado.turnoAtivo) {
+        const duracaoAtual = Date.now() - (estado.tsInicio || Date.now());
+        
+        elTime.innerHTML = `
+            <i class="fas fa-clock"></i> ${new Date().toLocaleString('pt-BR')}<br>
+            <span style="font-size: 0.9em; color: var(--secondary-blue);">
+                Duração: ${msParaTempo(duracaoAtual)}
+            </span>
+        `;
+        elTime.style.color = "var(--primary-blue)";
+        elTime.style.fontWeight = "bold";
+    } else {
+        let textoDuracao = "--";
+        if (estado.tsFim && estado.tsInicio) {
+            textoDuracao = msParaTempo(estado.tsFim - estado.tsInicio);
+        }
+
+        elTime.innerHTML = `
+            <i class="fas fa-history"></i> Encerrado em: ${estado.horaFimTurno || "--"}<br>
+            <span style="font-size: 0.9em;">
+                Duração Total: ${textoDuracao}
+            </span>
+        `;
+        elTime.style.color = "#7f8c8d";
+        elTime.style.fontWeight = "normal";
+    }
 }

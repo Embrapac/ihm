@@ -4,25 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supervisor - EmbraPac</title>
+    <link rel="preload" href="img/logo-embrapac.jpeg" as="image">
+
+    <script src="theme-init.js"></script>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
     <div id="login-modal">
         <div class="login-box">
-            <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" style="height: 60px; margin-bottom: 20px;">
+            <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" style="height: 100px; margin-bottom: 20px;">
             <h3 style="color: var(--primary-blue);">Acesso Restrito</h3>
             <p style="color: #666; margin-bottom: 20px;">Área exclusiva para Supervisores.</p>
             
             <input type="password" id="admin-pass" class="input-std" placeholder="Senha (admin)" autofocus>
             
             <button class="btn-action btn-blue" onclick="attemptLogin()">
-                <i class="fas fa-sign-in-alt"></i> ENTRAR
+                <i class="fas fa-sign-in-alt" aria-hidden="true"></i> ENTRAR
             </button>
             <br>
-            <a href="Tela_1_index.html" style="color: #999; font-size: 0.9rem; text-decoration: none;">
-                <i class="fas fa-arrow-left"></i> Voltar para Operação
+            <a href="Tela_1_operador.html" style="color: #999; font-size: 0.9rem; text-decoration: none;">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar para Operação
             </a>
         </div>
     </div>
@@ -30,15 +34,15 @@
     <header>
         <div class="logo-container">
             <img src="img/logo-embrapac.jpeg" alt="Logo Embrapac" class="logo-img">
-            <span>Módulo de Supervisão</span>
+            <span>Setor Supervisão</span>
         </div>
         <nav>
-            <a href="Tela_1_index.html">Painel de Operações</a>
+            <a href="Tela_1_operador.html">Painel de Operações</a>
             <a href="Tela_2_historico.html">Histórico</a>
-            <a href="Tela_3_supervisor.html" class="active"><i class="fas fa-lock"></i> Supervisor</a>
+            <a href="Tela_3_supervisor.html" class="active"><i class="fas fa-lock" aria-hidden="true"></i> Supervisor</a>
         </nav>
         <div class="user-info">
-            <i class="fas fa-spinner fa-spin"></i> Carregando...           
+            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Carregando...           
         </div>
     </header>
 
@@ -46,31 +50,31 @@
         
         <div class="col-stack">
             <div class="card">
-                <h2><i class="fas fa-traffic-light"></i> STATUS DA LINHA</h2>
+                <h2><i class="fas fa-traffic-light" aria-hidden="true"></i> STATUS DA LINHA</h2>
                 <div id="status-display" class="status-badge status-stopped">
                     AGUARDANDO...
                 </div>
-                <p id="status-detail" style="color: #666; margin-top: 10px; font-size: 0.9rem;"></p>
+                <p id="status-detail" style="color: #666; margin-top: 10px; font-size: 1rem;"></p>
             </div>
 
             <div class="card supervisor-card">
-                <h2><i class="fas fa-clock"></i> GESTÃO DE TURNO</h2>
+                <h2><i class="fas fa-clock" aria-hidden="true"></i> GESTÃO DE TURNO</h2>
                 <div style="margin-bottom: 15px;">
                     <p style="margin:5px 0;"><strong>Status:</strong> <span id="shift-status" style="color: #7f8c8d;">TURNO ENCERRADO</span></p>
 
                     <p id="shift-time" style="font-size: 0.85rem; color:#999; margin-top:5px; min-height: 20px;"></p>
                     <button id="btn-start-shift" class="btn-action btn-green" onclick="toggleTurno(true)" style="padding: 8px;">
-                        <i class="fas fa-play"></i> Iniciar Turno
+                        <i class="fas fa-play" aria-hidden="true"></i> Iniciar Turno
                     </button>
 
                     <div id="active-shift-controls" style="display: none;">
                         <button class="btn-action btn-red" onclick="toggleTurno(false)" style="padding: 8px;">
-                            <i class="fas fa-stop-circle"></i> Encerrar Turno
+                            <i class="fas fa-stop-circle" aria-hidden="true"></i> Encerrar Turno
                         </button>
                     </div>
                     
                     <button id="btn-export" class="btn-action btn-blue" onclick="exportarRelatorio()" style="display: none; padding: 12px;">
-                        <i class="fas fa-file-csv"></i> ENVIAR RELATÓRIO
+                        <i class="fas fa-file-csv" aria-hidden="true"></i> ENVIAR RELATÓRIO
                     </button>
                 </div>
             </div>
@@ -78,7 +82,7 @@
 
         <div class="col-stack">
             <div class="card supervisor-card">
-                <h2><i class="fas fa-chart-line"></i> KPIs DA LINHA (TEMPO REAL)</h2>
+                <h2><i class="fas fa-chart-line" aria-hidden="true"></i> KPIs DA LINHA (TEMPO REAL)</h2>
                 <div class="kpi-grid">
                     <div class="kpi-box">
                         <div class="kpi-val" id="kpi-oee">0%</div>
@@ -102,32 +106,32 @@
                 <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
             </div>
                 <button id="btn-zerar-turno" class="btn-action btn-disabled" onclick="zerarTurno()" disabled style="margin-top: 20px;">
-                    <i class="fas fa-eraser"></i> REINICIAR INFORMAÇÕES
+                    <i class="fas fa-eraser" aria-hidden="true"></i> REINICIAR INFORMAÇÕES
                 </button>               
                 <p style="font-size: 0.75rem; color: #999; margin-top: 15px; text-align: right;">
-                    <i class="fas fa-wifi"></i> Conexão IoT: Estável
+                    <i class="fas fa-wifi" aria-hidden="true"></i> Conexão IoT: Estável
                 </p>
             </div>
         </div>
 
         <div class="col-stack">
             <div class="card">
-                <h2><i class="fas fa-cogs"></i> CONTROLE MANUAL</h2>
+                <h2><i class="fas fa-cogs" aria-hidden="true"></i> CONTROLE MANUAL</h2>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button id="btn-man-start" class="btn-action btn-disabled" onclick="startLine()" disabled style="flex: 1; margin: 0;">
-                        <i class="fas fa-play"></i> INICIAR
+                        <i class="fas fa-play" aria-hidden="true"></i> INICIAR
                     </button>
                     <button id="btn-man-stop" class="btn-action btn-red" onclick="stopLine()" style="flex: 1; margin: 0;">
-                        <i class="fas fa-stop"></i> PARAR
+                        <i class="fas fa-stop" aria-hidden="true"></i> PARAR
                     </button>
                 </div>
                 <button id="btn-refugo" class="btn-action btn-orange" onclick="registrarRefugo()" style="margin-top: 15px;">
-                    <i class="fas fa-trash-alt"></i> APONTAR REFUGO (+1)
+                    <i class="fas fa-trash-alt" aria-hidden="true"></i> APONTAR REFUGO (+1)
                 </button>
             </div>
             
             <div class="card supervisor-card">
-                <h2><i class="fas fa-sliders-h"></i> PARÂMETROS DA LINHA</h2>
+                <h2><i class="fas fa-sliders-h" aria-hidden="true"></i> PARÂMETROS DA LINHA</h2>
 
                 <label style="font-weight: bold; font-size: 0.8rem; display:block; text-align:left; margin-top:10px;">Meta de Produção (un):</label>
                 <input type="number" id="meta-input" class="input-std" 
@@ -138,7 +142,7 @@
                        value="1" min="1" max="60" step="1" autocomplete="off">
                 
                 <button id="btn-save-params" class="btn-action btn-blue" onclick="salvarParametros()" style="margin-top: 15px;">
-                    <i class="fas fa-save"></i> SALVAR
+                    <i class="fas fa-save" aria-hidden="true"></i> SALVAR
                 </button>
             </div>
         </div>
@@ -147,14 +151,14 @@
 
     <div id="alarm-panel">
         <div class="alarm-text">
-            <i class="fas fa-exclamation-triangle fa-2x"></i>
+            <i class="fas fa-exclamation-triangle fa-2x" aria-hidden="true"></i>
             <div>
                 <span id="alarm-msg">ALARME: MOTOR DA ESTEIRA TRAVADO</span><br>
                 <small id="alarm-time" style="opacity: 0.8;">Atualizado às: --:--</small>
             </div>
         </div>
         <button id="btn-reset" class="btn-ack" onclick="resetarFalhas()">
-            <i class="fas fa-wrench"></i> 
+            <i class="fas fa-wrench" aria-hidden="true"></i> 
             <span id="btn-reset-text">RECONHECER ALARME</span>
         </button>
     </div>
