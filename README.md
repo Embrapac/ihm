@@ -29,11 +29,15 @@ A arquitetura utiliza o navegador como um "PLC Virtual", garantindo que a produ�
 
 ### 1. Painel do Operador
 Focado na execução. Interface limpa com controles grandes, feedback visual de status e barra   de progresso da meta.
-<img src="img/Captura de tela de 2026-02-08 11-18-04.png" ></img>
+<img src="img/Captura de tela de 2026-03-02 20-25-55.png" ></img>
 
-### 2. Painel do Supervisor (Dashboard)
+### 2. Historico de Ações
+Focado na segurança. Demonstração de logs, eventos e alarmes do sistema, pesquisa direta das ações por filtro de buscas por data e hora.
+<img src="img/Captura de tela de 2026-03-03 09-46-24.png" ></img>
+
+### 3. Painel do Supervisor (Dashboard)
 Focado na gestão. Apresenta KPIs detalhados, controle de turnos, alteração de parâmetros (Meta/Ciclo) e ferramentas de teste.
-<img src="img/Captura de tela de 2026-02-08 11-19-07.png" ></img>
+<img src="img/Captura de tela de 2026-03-02 20-27-26.png" ></img>
 
 ---
 
