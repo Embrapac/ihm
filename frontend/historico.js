@@ -278,13 +278,20 @@ function exportTableToCSV(filename) {
         return;
     }
 
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+    // Mantém o BOM para compatibilidade de acentuação no Excel
+    let csvContent = "\uFEFF"; 
     csvContent += "Data/Hora;Descrição do Evento;Usuário;Cargo;Status\r\n"; 
     
     logsFiltradosParaExportacao.forEach(l => {
+        // 1. Formata a data igual à tabela visual antes de enviar para o CSV
+        let dataFormatada = l.data || '';
+        if (dataFormatada.includes('T')) {
+            dataFormatada = new Date(dataFormatada).toLocaleString('pt-BR');
+        }
+
         let row = [
-            l.data || '',
-            (l.evento || '').replace(/;/g, ","), 
+            dataFormatada,
+            (l.evento || '').replace(/;/g, ",").replace(/\n/g, " "), // Proteção extra contra quebra de linha
             l.usuario || '',
             l.cargo || '',
             l.tipo || 'INFORME' 
@@ -292,13 +299,20 @@ function exportTableToCSV(filename) {
         csvContent += row.join(";") + "\r\n";
     });
 
-    const encodedUri = encodeURI(csvContent);
+    // 2. Método Blob: Seguro para arquivos grandes e não trava o navegador
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", filename);
+    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    // Libera a memória alocada pelo objeto URL após o download
+    setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 window.addEventListener('storage', (event) => {

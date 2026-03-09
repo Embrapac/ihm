@@ -218,30 +218,39 @@ const Maquina = {
     escrever: (novoEstado) => {
         localStorage.setItem('embrapac_estado', JSON.stringify(novoEstado));
     },
-    processarCiclo: function(origem) {
+    processarCiclo: function() {
         let estado = this.ler();
         let houveMudanca = false;
+        const agora = Date.now();
 
-        // A produção é calculada pelo tempo decorrido.
-        // Qualquer tela aberta (Supervisor ou Operador) processa o estado corretamente.
+        // --- 1. LÓGICA DE DOWNTIME (CENTRALIZADA) ---
+        if (estado.turnoAtivo && estado.status !== 'OPERANDO') {
+            if (!estado.inicioDowntimeMs) {
+                estado.inicioDowntimeMs = agora;
+                houveMudanca = true;
+            }
+        } else {
+            if (estado.inicioDowntimeMs) {
+                estado.downtime += (agora - estado.inicioDowntimeMs) / 1000;
+                estado.inicioDowntimeMs = null;
+                
+                estado.ultimoUpdate = agora; 
+                houveMudanca = true;
+            }
+        }
+
+        // --- 2. LÓGICA DE PRODUÇÃO (BASEADA EM DELTA TIME) ---
         if (estado.status === 'OPERANDO') {
-            const agora = Date.now();
             const cicloMs = estado.ciclo * 1000;
             
-            // Verifica se passou tempo suficiente (Delta Time)
             if (agora - estado.ultimoUpdate >= cicloMs) {
                 const delta = agora - estado.ultimoUpdate;
 
-                // Se o tempo decorrido for maior que 30 minutos (1800.000ms),
-                // o sistema entende que a fábrica (navegador) estava fechada.
                 if (delta > 1800000) { 
                     console.warn("Salto de tempo > 30min detectado. Ajustando relógio...");
-                    
-                    // Pula o tempo perdido e sincroniza com o momento atual
                     estado.ultimoUpdate = agora; 
-                    
-                    this.escrever(estado); // Salva a correção
-                    return estado; // Sai da função SEM somar produção falsa
+                    this.escrever(estado); 
+                    return estado; 
                 }
 
                 const qtd = Math.floor(delta / cicloMs);
@@ -256,7 +265,6 @@ const Maquina = {
                         Logger.registrar("Meta de Produção Atingida", "NORMAL");
                     } else {
                         estado.producao = novaProducao;
-                        // Atualiza o relógio virtual da máquina para sincronizar
                         estado.ultimoUpdate += (qtd * cicloMs);
                     }
                     houveMudanca = true;
@@ -267,18 +275,17 @@ const Maquina = {
         if (houveMudanca) this.escrever(estado);
         return estado;
     }
-};
-
-/* ============================================================
-   CONTROLE DE TEMA (CLARO / ESCURO) - INDIVIDUAL POR USUÁRIO
-   ============================================================ */
-// 1. Descobre qual é a chave do banco de dados baseada em quem está logado
-function obterChaveTema() {    
+}; 
+// --- 3. SISTEMA DE TEMAS ---
+// 1. Obtém a chave de tema do usuário logado
+function obterChaveTema() {
     if (typeof Sessao !== 'undefined') {
         const role = Sessao.obterPapelDestaAba();
         if (role) {
             const sessoes = Sessao._getSessoes();
-            if (sessoes[role]) return 'embrapac_theme_' + sessoes[role].cargo; 
+            if (sessoes[role]) {
+                return 'embrapac_theme_' + sessoes[role].cargo;
+            }
         }
     }
     return 'embrapac_theme_visitante'; 
