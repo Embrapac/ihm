@@ -6,6 +6,9 @@ let estadoLocal = {};
 let alarmActive = false;
 let stepFalha = 0;
 
+let elDisplay, elDetail, elBtnStart, elBtnStop;
+let elKpiProd, elKpiRefugo, elMetaText, elProgressBar;
+
 // --- LÓGICA DE LOGIN ---
 function attemptLoginOperator() {
     const passInput = document.getElementById('operador-pass');
@@ -34,11 +37,19 @@ function fecharModalLogin() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ATUALIZA CABEÇALHO AO CARREGAR ---
     Sessao.atualizarHeader(); 
-    // ---------------------------------------------------------
+    
+    elDisplay = document.getElementById('status-display');
+    elDetail = document.getElementById('status-detail');
+    elBtnStart = document.getElementById('btn-start');
+    elBtnStop = document.getElementById('btn-stop');
+    elKpiProd = document.getElementById('kpi-production');
+    elKpiRefugo = document.getElementById('kpi-refugo');
+    elMetaText = document.getElementById('meta-text');
+    elProgressBar = document.getElementById('progress-bar');
+    // -----------------------------------------------
 
-    if (Sessao.validar()) {
+    if (Sessao.validar()) {    
         const modal = document.getElementById('login-modal');
         if(modal) modal.style.display = 'none';
     }
@@ -50,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Loop Principal
     setInterval(() => {
-        estadoLocal = Maquina.processarCiclo('MASTER'); // Mantemos compatibilidade
+        estadoLocal = Maquina.processarCiclo();
         if (typeof gerenciarAlarmesUI === 'function') gerenciarAlarmesUI();
         renderizar();
     }, 500);
@@ -66,6 +77,7 @@ function startLine() {
     estadoLocal.status = 'OPERANDO';
     estadoLocal.ultimoUpdate = Date.now();
     Maquina.escrever(estadoLocal);
+    estadoLocal = Maquina.processarCiclo();
     Logger.registrar("Produção Iniciada", "NORMAL");
     renderizar();
 }
@@ -74,6 +86,7 @@ function stopLine() {
     estadoLocal = Maquina.ler();
     estadoLocal.status = 'PARADO';
     Maquina.escrever(estadoLocal);
+    estadoLocal = Maquina.processarCiclo();
     Logger.registrar("Parada Manual", "NORMAL");
     renderizar();
 }
@@ -85,6 +98,7 @@ function registrarRefugo() {
         estadoLocal.producao--;
         estadoLocal.refugo++;
         Maquina.escrever(estadoLocal);
+        estadoLocal = Maquina.processarCiclo();
         Logger.registrar("Apontamento Manual de Refugo (Operador)", "ALERTA"); 
         renderizar();
     } else {
@@ -97,7 +111,7 @@ function simulateFault() {
     estadoLocal.status = 'FALHA';
     estadoLocal.horaFalha = new Date().toLocaleString('pt-BR');
     Maquina.escrever(estadoLocal);
-    
+    estadoLocal = Maquina.processarCiclo();    
     // Log correto na tabela de Alarmes (Vermelho)
     Logger.registrar("FALHA CRÍTICA: Motor M2", "FALHA");
     
@@ -143,6 +157,7 @@ function acknowledgeAlarm() {
         if (confirm("O técnico consertou o motor fisicamente?")) {
             estadoLocal.status = 'PRONTO';
             Maquina.escrever(estadoLocal);
+            estadoLocal = Maquina.processarCiclo();
             
             // Log de Reset (Vai para tabela de Alarmes - Verde)
             Logger.registrar("Manutenção OK / Reset", "NORMAL");
@@ -153,118 +168,109 @@ function acknowledgeAlarm() {
 }
 
 function renderizar() {
-    // Atualiza Status Badge
-    const display = document.getElementById('status-display');
-    const detail = document.getElementById('status-detail');
     
-    // Captura os botões
-    const btnStart = document.getElementById('btn-start');
-    const btnStop = document.getElementById('btn-stop');
-
-    if (display) {
-        display.className = "status-badge";
+    if (elDisplay) {
+        elDisplay.className = "status-badge";
         
         // --- ESTADO: OPERANDO ---
         if (estadoLocal.status === 'OPERANDO') {
-            display.classList.add('status-pulsing');
-            display.innerText = "OPERANDO";
+            elDisplay.classList.add('status-pulsing');
+            elDisplay.innerText = "OPERANDO";
             
             // Texto detalhado
-            if(detail) detail.innerText = `Tempo do Ciclo: ${estadoLocal.ciclo} (s)`;
+            if(elDetail) elDetail.innerText = `Tempo do Ciclo: ${estadoLocal.ciclo} (s)`;
             
             // Botões: Start Cinza (Desativado) / Stop Vermelho (Ativo)
-            if(btnStart) { 
-                btnStart.disabled = true; 
-                btnStart.className = "btn-action btn-disabled"; 
+            if(elBtnStart) { 
+                elBtnStart.disabled = true; 
+                elBtnStart.className = "btn-action btn-disabled"; 
             }
-            if(btnStop) { 
-                btnStop.disabled = false; 
-                btnStop.className = "btn-action btn-red"; 
+            if(elBtnStop) { 
+                elBtnStop.disabled = false; 
+                elBtnStop.className = "btn-action btn-red"; 
             }
 
         // --- ESTADO: PARADO ---
         } else if (estadoLocal.status === 'PARADO') {
-            display.classList.add('status-stopped');
-            display.innerText = "PARADO";
+            elDisplay.classList.add('status-stopped');
+            elDisplay.innerText = "PARADO";
             
             // Texto detalhado
-            if(detail) detail.innerText = "Linha parada. Aguardando comando.";
+            if(elDetail) elDetail.innerText = "Linha parada. Aguardando comando.";
             
             // Botões: Start Verde (Ativo) / Stop Cinza (Desativado)
-            if(btnStart) { 
-                btnStart.disabled = false; 
-                btnStart.className = "btn-action btn-green"; 
+            if(elBtnStart) { 
+                elBtnStart.disabled = false; 
+                elBtnStart.className = "btn-action btn-green"; 
             }
-            if(btnStop) { 
-                btnStop.disabled = true; 
-                btnStop.className = "btn-action btn-disabled"; 
+            if(elBtnStop) { 
+                elBtnStop.disabled = true; 
+                elBtnStop.className = "btn-action btn-disabled"; 
             }
 
         // --- ESTADO: FALHA ---
         } else if (estadoLocal.status === 'FALHA') {
-            display.classList.add('status-error');
-            display.innerText = "FALHA";
+            elDisplay.classList.add('status-error');
+            elDisplay.innerText = "FALHA";
             
             // Texto detalhado
-            if(detail) detail.innerText = "Erro #502: Motor M2 Travado";
+            if(elDetail) elDetail.innerText = "Erro #502: Motor M2 Travado";
             
             // Botões: Ambos Cinzas (Travados)
-            if(btnStart) { 
-                btnStart.disabled = true; 
-                btnStart.className = "btn-action btn-disabled"; 
+            if(elBtnStart) { 
+                elBtnStart.disabled = true; 
+                elBtnStart.className = "btn-action btn-disabled"; 
             }
-            if(btnStop) { 
-                btnStop.disabled = true; 
-                btnStop.className = "btn-action btn-disabled"; 
+            if(elBtnStop) { 
+                elBtnStop.disabled = true; 
+                elBtnStop.className = "btn-action btn-disabled"; 
             }
 
         // --- ESTADO: PRONTO (Default) ---
         } else { 
-            display.classList.add('status-stopped');
-            display.innerText = estadoLocal.status;
+            elDisplay.classList.add('status-stopped');
+            elDisplay.innerText = estadoLocal.status;
             
-            if(detail) detail.innerText = "Falha normalizada. Pronto para iniciar.";
+            if(elDetail) elDetail.innerText = "Falha normalizada. Pronto para iniciar.";
             
             // Botões: Start Verde / Stop Cinza
-            if(btnStart) { 
-                btnStart.disabled = false; 
-                btnStart.className = "btn-action btn-green"; 
+            if(elBtnStart) { 
+                elBtnStart.disabled = false; 
+                elBtnStart.className = "btn-action btn-green"; 
             }
-            if(btnStop) { 
-                btnStop.disabled = true; 
-                btnStop.className = "btn-action btn-disabled"; 
+            if(elBtnStop) { 
+                elBtnStop.disabled = true; 
+                elBtnStop.className = "btn-action btn-disabled"; 
             }
         }
     }
 
+    // --- ATUALIZAÇÃO DOS KPIS USANDO CACHE ---
+
     // 1. Atualiza Produção
-    const kpiProduction = document.getElementById('kpi-production');
-    if (kpiProduction) kpiProduction.innerText = estadoLocal.producao;
+    if (elKpiProd) elKpiProd.innerText = estadoLocal.producao;
 
     // 2. Atualiza Taxa de Refugo (%)
-    const kpiRefugo = document.getElementById('kpi-refugo');
-    if (kpiRefugo) {
+    if (elKpiRefugo) {
         let total = estadoLocal.producao + estadoLocal.refugo;
         let taxa = (total > 0) ? (estadoLocal.refugo / total) * 100 : 0;
-        kpiRefugo.innerText = taxa.toFixed(1) + "%";
+        elKpiRefugo.innerText = taxa.toFixed(1) + "%";
     }
 
-    // Atualiza Meta Texto
-    const metaText = document.getElementById('meta-text');
-    if (metaText) metaText.innerText = `Meta de Produção: ${estadoLocal.meta} (un)`;
+    // 3. Atualiza Meta Texto
+    if (elMetaText) elMetaText.innerText = `Meta de Produção: ${estadoLocal.meta} (un)`;
 
-    // Atualiza Barra de Progresso
-    const progressBar = document.getElementById('progress-bar');
-    if (progressBar) {
+    // 4. Atualiza Barra de Progresso
+    if (elProgressBar) {
         let percent = (estadoLocal.meta > 0) ? (estadoLocal.producao / estadoLocal.meta) * 100 : 0;
         if (percent > 100) percent = 100;
-        progressBar.style.width = percent + "%";
+        elProgressBar.style.width = percent + "%";
         
         // Muda cor da barra se completar
         if (percent >= 100) {
-            progressBar.style.backgroundColor = "var(--success-color)";
+            elProgressBar.style.backgroundColor = "var(--success-color)";
         } else {
-            progressBar.style.backgroundColor = "var(--primary-blue)";
+            elProgressBar.style.backgroundColor = "var(--primary-blue)";
         }
     }
 }
