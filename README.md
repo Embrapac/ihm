@@ -29,15 +29,15 @@ Na sua versão atual, o sistema evoluiu de uma simulação local para uma arquit
 
 ### 1. Painel do Operador
 Focado na execução. Interface limpa com controles grandes, feedback visual de status e barra de progresso da meta.
-<img src="frontend/img/Captura de tela de 2026-03-02 20-25-55.png" ></img>
+<img src="frontend/img/painel_de_operacoes.png" ></img>
 
 ### 2. Historico de Ações
 Focado na segurança. Demonstração de logs, eventos e alarmes do sistema, pesquisa direta das ações por filtro de buscas por data e hora.
-<img src="frontend/img/Captura de tela de 2026-03-03 09-46-24.png" ></img>
+<img src="frontend/img/tela_historico.png" ></img>
 
 ### 3. Painel do Supervisor (Dashboard)
 Focado na gestão. Apresenta KPIs detalhados, controle de turnos, alteração de parâmetros (Meta/Ciclo) e ferramentas de teste.
-<img src="frontend/img/Captura de tela de 2026-03-02 20-27-26.png" ></img>
+<img src="frontend/img/tela_supervisor.png" ></img>
 
 ---
 
