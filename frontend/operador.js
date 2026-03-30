@@ -275,13 +275,11 @@ function renderizar() {
     }
 }
 
-// --- Sincronização entre Abas ---
-window.addEventListener('storage', (event) => {
-    if (event.key === 'embrapac_estado') {
-        estadoLocal = JSON.parse(event.newValue);
-        if (typeof gerenciarAlarmesUI === 'function') gerenciarAlarmesUI();
-        renderizar();
-    }
+// --- Sincronização de abas via Servidor Node.js ---
+window.addEventListener('IHM_Update', (event) => {
+    estadoLocal = event.detail;
+    if (typeof gerenciarAlarmesUI === 'function') gerenciarAlarmesUI();
+    renderizar();
 });
 
 document.addEventListener('visibilitychange', () => {
