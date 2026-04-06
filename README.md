@@ -49,6 +49,50 @@ O projeto segue agora uma arquitetura **Client-Server**:
 2. **WebSockets (Socket.io):** Atua como o barramento central de eventos em tempo real. Recebe atualizações de estado de qualquer cliente e transmite (`broadcast`) a nova "fonte da verdade" instantaneamente.
 3. **Front-end (Vanilla JS):** A interface consome os dados do servidor e reage às mudanças de estado, garantindo sincronia perfeita entre todas as telas abertas.
 
+---
+
+## 🧪 Testes Unitários
+
+O projeto inclui uma **suíte completa de testes unitários** para validar e proteger as regras implementadas contra regressões futuras.
+
+### O que é testado?
+
+- ✅ **Estrutura HTML:** Elementos críticos, IDs únicos, carregamento de scripts na ordem correta
+- ✅ **Autenticação:** Validação por perfil (Operador, Supervisor, Manutenção) e controle de acesso
+- ✅ **Lógica de Máquina:** Parada automática ao atingir meta, proteção contra salto de relógio, cálculo de downtime
+- ✅ **Histórico e Filtros:** Segregação entre abas (alarmes/eventos), sincronização de dados, exportação CSV
+
+### Como rodar os testes
+
+```bash
+# primeira vez
+npm install --save-dev
+
+# rodar suíte completa
+npm test
+
+# modo watch (executa ao salvar arquivos)
+npm run test -- --watch
+
+# com detalhes
+npx jest --runInBand --verbose
+```
+
+### Cobertura atual
+
+| Módulo | Testes | Status |
+|--------|--------|--------|
+| `master.js` | 4 | ✅ PASS |
+| `operador.js` | 2 | ✅ PASS |
+| `supervisor.js` | 2 | ✅ PASS |
+| `historico.js` | 3 | ✅ PASS |
+| **HTML Structure** | 2 | ✅ PASS |
+| **Total** | **15 testes** | ✅ **100% PASS** |
+
+Para documentação detalhada sobre como estender os testes, veja [tests/README.md](./tests/README.md).
+
+---
+
 ### Estrutura de Arquivos
 ```text
 /
