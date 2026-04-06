@@ -395,11 +395,10 @@ function atualizarInterface() {
     }
 }
 
-window.addEventListener('storage', (event) => {
-    if (event.key === 'embrapac_estado') {
-        estado = JSON.parse(event.newValue);
-        atualizarInterface();
-    }
+// --- Sincronização via Servidor Node.js ---
+window.addEventListener('IHM_Update', (event) => {
+    estado = event.detail;
+    atualizarInterface();
 });
 
 document.addEventListener('visibilitychange', () => {

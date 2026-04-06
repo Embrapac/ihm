@@ -3,7 +3,38 @@
    Versão Final: Produção Contínua (PLC Real)
    ============================================================ */
 
-/* --- 1. CONFIGURAÇÕES --- */
+/* --- 1. CONEXÃO COM O SERVIDOR NODE.JS (TOLERÂNCIA A FALHAS) --- */
+let socket = null;
+
+// Verifica se a biblioteca do servidor conseguiu carregar
+if (typeof io !== 'undefined') {
+    socket = io('http://localhost:3000');
+
+    socket.on('connect', () => {
+        console.log('[+] Conectado ao Servidor Node.js:', socket.id);
+    });
+
+    socket.on('estadoAtualizado', (estadoServidor) => {
+        localStorage.setItem('embrapac_estado', JSON.stringify(estadoServidor));
+        window.dispatchEvent(new CustomEvent('IHM_Update', { detail: estadoServidor }));
+    });
+
+    // NOVO: Quando o servidor mandar a lista de logs nova, salva e atualiza a tela
+    socket.on('historicoAtualizado', (logsServidor) => {
+        localStorage.setItem('embrapac_logs', JSON.stringify(logsServidor));
+        
+        // Se a pessoa estiver na tela de Histórico, manda desenhar a tabela de novo
+        if (typeof renderizarHistoricoCompleto === 'function') {
+            renderizarHistoricoCompleto(false); // false = não reseta a paginação
+        }
+    });
+
+} else {
+    console.warn('[!] Servidor Node.js Offline. O Login e a navegação local continuarão funcionando.');
+}
+
+
+/* --- 2. CONFIGURAÇÕES --- */
 const CONFIG = {
     AUTH_TIMEOUT: {
     'operador': 480, // 8 horas (duração do turno)
@@ -36,27 +67,34 @@ const Logger = {
             }
         }
         
-        const logs = JSON.parse(localStorage.getItem('embrapac_logs') || '[]');
-        
-        logs.unshift({
+        // Cria o pacote do novo log
+        const novoLog = {
             timestamp: Date.now(), 
             data: new Date().toISOString(), // PADRÃO ISO
             evento: evento, 
             tipo: tipo, 
             usuario: user.nome, 
             cargo: user.cargo
-        });
-        
-        if (logs.length > 300) logs.pop();
-        localStorage.setItem('embrapac_logs', JSON.stringify(logs));
-        
-        if (typeof renderizarHistoricoCompleto === 'function') {
-            renderizarHistoricoCompleto();
+        };
+
+        // Se tem servidor conectado, manda o pacote pra ele!
+        if (socket && socket.connected) {
+            socket.emit('registrarLog', novoLog);
+        } else {
+            // MODO OFFLINE: Salva localmente se o servidor caiu
+            const logs = JSON.parse(localStorage.getItem('embrapac_logs') || '[]');
+            logs.unshift(novoLog);
+            if (logs.length > 300) logs.pop();
+            localStorage.setItem('embrapac_logs', JSON.stringify(logs));
+            
+            if (typeof renderizarHistoricoCompleto === 'function') {
+                renderizarHistoricoCompleto(false);
+            }
         }
     }
 };
 
-/* --- 3. SISTEMA DE SESSÃO (Cofre Multi-Usuário) --- */
+/* --- 4. SISTEMA DE SESSÃO (Cofre Multi-Usuário) --- */
 const Sessao = {
     _getSessoes: function() {
         return JSON.parse(localStorage.getItem('embrapac_sessions') || '{}');
@@ -113,27 +151,39 @@ const Sessao = {
         }
     },
 
-    obterPapelDestaAba: function() {       
+obterPapelDestaAba: function() {       
         if (sessionStorage.getItem('embrapac_aba_deslogada') === 'true') {
             return null;
         }
 
-        let role = sessionStorage.getItem('embrapac_active_role');
-        if (role) return role;
-
         const pathname = window.location.pathname;
         const sessoes = this._getSessoes();
+        let role = sessionStorage.getItem('embrapac_active_role');
 
-        if (pathname.includes('Tela_1_operador')) {
-            if (sessoes['operador']) role = 'operador';
-            else if (sessoes['admin']) role = 'admin';
+        // --- MURALHA DE SEGURANÇA (RBAC) ---
+        if (pathname.includes('Tela_3_supervisor')) {
+            // TELA 3: Exclusiva do Supervisor. Se não for ele, bloqueia o acesso.
+            if (sessoes['admin']) {
+                role = 'admin';
+            } else {
+                role = null; 
+            }
         } 
-        else if (pathname.includes('Tela_3_supervisor')) {
-            if (sessoes['admin']) role = 'admin';
+        else if (pathname.includes('Tela_1_operador')) {
+            // TELA 1: Aberta para Operador ou Supervisor
+            if (!role || !sessoes[role]) {
+                if (sessoes['operador']) role = 'operador';
+                else if (sessoes['admin']) role = 'admin';
+                else role = null;
+            }
         }
         else {
-            const lastRole = localStorage.getItem('embrapac_last_role');
-            if (lastRole && sessoes[lastRole]) role = lastRole;
+            // TELA 2 (Histórico) e outras: Usa o último login válido
+            if (!role || !sessoes[role]) {
+                const lastRole = localStorage.getItem('embrapac_last_role');
+                if (lastRole && sessoes[lastRole]) role = lastRole;
+                else role = null;
+            }
         }
 
         if (role) sessionStorage.setItem('embrapac_active_role', role);
@@ -188,11 +238,18 @@ const Sessao = {
                         <i class="fas fa-sign-out-alt"></i> Sair
                     </button>
                 `;
+                // Fecha a janela de login automaticamente se logar em outra aba!
+                const modal = document.getElementById('login-modal');
+                if (modal) modal.style.display = 'none';
+                
             } else {                     
                 divInfo.innerHTML = `
                     <span><i class="fas fa-lock"></i> Acesso Restrito</span>
                     ${btnTema}
                 `;
+                // Mostra a janela de login se o usuário clicar em "Sair" na outra aba!
+                const modal = document.getElementById('login-modal');
+                if (modal) modal.style.display = 'flex';
             }
                         
             if (typeof aplicarTemaDoUsuario === 'function') aplicarTemaDoUsuario();
@@ -210,70 +267,22 @@ const Sessao = {
     }
 };
 
-/* --- 4. CLASSE MÁQUINA (PLC Virtual Real-Time) --- */
+/* --- 5. CLASSE MÁQUINA (PLC Virtual Real-Time) --- */
 const Maquina = {
     ler: () => {
         return JSON.parse(localStorage.getItem('embrapac_estado') || JSON.stringify(ESTADO_PADRAO));
     },
     escrever: (novoEstado) => {
         localStorage.setItem('embrapac_estado', JSON.stringify(novoEstado));
+        if (socket && socket.connected) {
+            socket.emit('atualizarEstado', novoEstado);
+        }
     },
     processarCiclo: function() {
-        let estado = this.ler();
-        let houveMudanca = false;
-        const agora = Date.now();
-
-        // --- 1. LÓGICA DE DOWNTIME (CENTRALIZADA) ---
-        if (estado.turnoAtivo && estado.status !== 'OPERANDO') {
-            if (!estado.inicioDowntimeMs) {
-                estado.inicioDowntimeMs = agora;
-                houveMudanca = true;
-            }
-        } else {
-            if (estado.inicioDowntimeMs) {
-                estado.downtime += (agora - estado.inicioDowntimeMs) / 1000;
-                estado.inicioDowntimeMs = null;
-                
-                estado.ultimoUpdate = agora; 
-                houveMudanca = true;
-            }
-        }
-
-        // --- 2. LÓGICA DE PRODUÇÃO (BASEADA EM DELTA TIME) ---
-        if (estado.status === 'OPERANDO') {
-            const cicloMs = estado.ciclo * 1000;
-            
-            if (agora - estado.ultimoUpdate >= cicloMs) {
-                const delta = agora - estado.ultimoUpdate;
-
-                if (delta > 1800000) { 
-                    console.warn("Salto de tempo > 30min detectado. Ajustando relógio...");
-                    estado.ultimoUpdate = agora; 
-                    this.escrever(estado); 
-                    return estado; 
-                }
-
-                const qtd = Math.floor(delta / cicloMs);
-                
-                if (qtd > 0) {
-                    const novaProducao = estado.producao + qtd;
-                    
-                    if (novaProducao >= estado.meta && estado.meta > 0) {
-                        estado.producao = estado.meta;
-                        estado.status = 'PARADO';
-                        alert("META ATINGIDA! A linha parou automaticamente.");
-                        Logger.registrar("Meta de Produção Atingida", "NORMAL");
-                    } else {
-                        estado.producao = novaProducao;
-                        estado.ultimoUpdate += (qtd * cicloMs);
-                    }
-                    houveMudanca = true;
-                }
-            }
-        }
-        
-        if (houveMudanca) this.escrever(estado);
-        return estado;
+        // A MATEMÁTICA FOI MOVIDA PARA O SERVIDOR NODE.JS!
+        // O Front-end agora apenas retorna a leitura do estado atual, 
+        // atuando como uma verdadeira IHM (Interface Homem-Máquina) "burra".
+        return this.ler();
     }
 }; 
 // --- 3. SISTEMA DE TEMAS ---
