@@ -59,13 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof gerenciarAlarmesUI === 'function') gerenciarAlarmesUI(); // Segurança extra
     renderizar(); 
 
-    // Loop Principal
-    setInterval(() => {
-        estadoLocal = Maquina.processarCiclo();
-        if (typeof gerenciarAlarmesUI === 'function') gerenciarAlarmesUI();
-        renderizar();
-    }, 500);
-
     const passInput = document.getElementById('operador-pass');
     if(passInput) passInput.addEventListener('keypress', (e) => { if(e.key==='Enter') attemptLoginOperator(); });
 });
