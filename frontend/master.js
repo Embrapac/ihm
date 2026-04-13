@@ -120,6 +120,23 @@ const Sessao = {
         return true;
     },
 
+    iniciarComDados: function(userApi) {
+        const sessoes = this._getSessoes();
+        
+        // Define o papel interno do frontend baseado no nível que veio do MariaDB
+        const role = userApi.nivel === 2 ? 'admin' : 'operador';
+        
+        sessoes[role] = { ...userApi, id: role, ultimoAcesso: Date.now() };
+        this._setSessoes(sessoes);
+        
+        sessionStorage.removeItem('embrapac_aba_deslogada');
+        sessionStorage.setItem('embrapac_active_role', role);
+        localStorage.setItem('embrapac_last_role', role); 
+        
+        Logger.registrar(`Login realizado via API: ${userApi.nome}`, "INFORME");
+        return true;
+    },
+
     sair: function() {
         const role = this.obterPapelDestaAba();
         if (!role) return;
@@ -256,17 +273,33 @@ obterPapelDestaAba: function() {
         }
     },
 
-    autenticar: function(senhaDigitada) {
-        for (const [idPerfil, dados] of Object.entries(CONFIG.USUARIOS)) {
-            if (senhaDigitada === dados.pass) {
-                this.iniciar(idPerfil);
-                return idPerfil; 
+    autenticar: async function(login, senha) {
+        try {
+            const resposta = await fetch('http://localhost:3000/v1/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ login, senha })
+            });
+
+            const dados = await resposta.json();
+
+            if (dados.sucesso) {
+                // Guarda o Token e os dados no navegador
+                localStorage.setItem('embrapac_token', dados.token);
+                this.iniciarComDados(dados.user); 
+                return true;
+            } else {
+                alert(dados.erro);
+                return false;
             }
+        } catch (e) {
+            alert("Erro de conexão com o servidor de segurança.");
+            return false;
         }
-        return null;
     }
 };
 
+/* --- 5. CLASSE MÁQUINA (PLC Virtual Real-Time) --- */
 /* --- 5. CLASSE MÁQUINA (PLC Virtual Real-Time) --- */
 const Maquina = {
     ler: () => {
@@ -274,17 +307,20 @@ const Maquina = {
     },
     escrever: (novoEstado) => {
         localStorage.setItem('embrapac_estado', JSON.stringify(novoEstado));
+        
         if (socket && socket.connected) {
-            socket.emit('atualizarEstado', novoEstado);
+            // Pega o crachá que foi salvo na hora do Login
+            const meuToken = localStorage.getItem('embrapac_token');
+            
+            // Envia para o servidor o Estado + O Crachá
+            socket.emit('atualizarEstado', { estado: novoEstado, token: meuToken });
         }
     },
     processarCiclo: function() {
-        // A MATEMÁTICA FOI MOVIDA PARA O SERVIDOR NODE.JS!
-        // O Front-end agora apenas retorna a leitura do estado atual, 
-        // atuando como uma verdadeira IHM (Interface Homem-Máquina) "burra".
         return this.ler();
     }
-}; 
+};
+
 // --- 3. SISTEMA DE TEMAS ---
 // 1. Obtém a chave de tema do usuário logado
 function obterChaveTema() {
