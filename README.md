@@ -1,66 +1,102 @@
-# EmbraPac - Sistema de Supervisão e Controle (IHM)
+# EmbraPac - Sistema de Supervisão e Controle (IHM) & Edge Server
 
-![Status](https://img.shields.io/badge/Status-v2.0%20Client--Server-success)
-![Technology](https://img.shields.io/badge/Frontend-HTML5%20%7C%20CSS3%20%7C%20VanillaJS-blue)
-![Technology](https://img.shields.io/badge/Backend-Node.js%20%7C%20Socket.io-green)
-![Type](https://img.shields.io/badge/System-Industrial%20Simulation-orange)
+![Status](https://img.shields.io/badge/Status-v3.0%20Industrial%20Edge-success)
+![Frontend](https://img.shields.io/badge/Frontend-HTML5%20%7C%20CSS3%20%7C%20VanillaJS-blue)
+![Backend](https://img.shields.io/badge/Backend-Node.js%20%7C%20Socket.io-green)
+![IoT](https://img.shields.io/badge/IoT-MQTT%20%7C%20Mosquitto-red)
+![Database](https://img.shields.io/badge/Database-MariaDB-blueviolet)
+![Security](https://img.shields.io/badge/Security-JWT-orange)
 
-> Uma Interface Homem-Máquina (IHM) de alta fidelidade para controle de linhas de produção, com sincronização em tempo real entre Operação e Supervisão utilizando WebSockets.
+> Uma Interface Homem-Máquina (IHM) de alta fidelidade e um Edge Server robusto para controle de linhas de produção, integrando Inteligência Artificial (YOLO), hardware (ESP32) e sincronização em tempo real.
 
 ---
 
 ## Sobre o Projeto
 
-O **EmbraPac IHM** é uma aplicação web desenvolvida para simular o ecossistema de controle de uma linha de empacotamento industrial. O sistema foi projetado para demonstrar conceitos de **Indústria 4.0**, focando na integridade de dados, separação de responsabilidades (RBAC) e cálculo de eficiência (OEE) em tempo real.
+O **EmbraPac IHM** é uma aplicação web e um servidor de borda (Edge Server) desenvolvido para modernizar o ecossistema de controle de uma linha de empacotamento industrial. O sistema foi projetado para aplicar conceitos reais de **Indústria 4.0**.
 
-Na sua versão atual, o sistema evoluiu de uma simulação local para uma arquitetura **Client-Server**, contando com um Back-end dedicado em Node.js. Isso substitui o armazenamento do navegador por uma comunicação instantânea bidirecional verdadeira, preparando o terreno para a integração real com sensores e microcontroladores (IoT).
+O sistema evoluiu de uma simulação local para uma arquitetura **OT (Operation Technology) Bidirecional**. Conta com um back-end dedicado em Node.js que orquestra a base de dados relacional, a segurança corporativa e a comunicação IoT com o chão de fábrica, garantindo a integridade dos dados e o cálculo de eficiência (OEE) em tempo real.
 
 ### Principais Funcionalidades
 
-* **Sincronização em Tempo Real (IoT Like):** Comunicação instantânea entre a tela do Operador e do Supervisor via `Socket.io`, simulando o comportamento de telemetria industrial.
-* **Gestão de Turnos:** Controle de início e fim de expediente com logs auditáveis contendo data e hora precisas.
-* **Protocolo de Segurança de Falhas:** Sistema de tratativa de alarmes em **2 Etapas** (Reconhecimento seguido de Confirmação), obrigatório tanto para Operadores quanto Supervisores.
-* **Cálculo de OEE:** Monitoramento em tempo real de Disponibilidade, Performance e Qualidade.
-* **Histórico e Rastreabilidade:** Logs detalhados de todos os eventos operacionais, com funcionalidade de exportação para CSV.
-
----
-
-## Telas do Sistema
-
-### 1. Painel do Operador
-Focado na execução. Interface limpa com controles grandes, feedback visual de status e barra de progresso da meta.
-<img src="frontend/img/painel_de_operacoes.png" ></img>
-
-### 2. Historico de Ações
-Focado na segurança. Demonstração de logs, eventos e alarmes do sistema, pesquisa direta das ações por filtro de buscas por data e hora.
-<img src="frontend/img/tela_historico.png" ></img>
-
-### 3. Painel do Supervisor (Dashboard)
-Focado na gestão. Apresenta KPIs detalhados, controle de turnos, alteração de parâmetros (Meta/Ciclo) e ferramentas de teste.
-<img src="frontend/img/tela_supervisor.png" ></img>
+* **Integração IoT Bidirecional (MQTT):** Comunicação padronizada em JSON com microcontroladores (ESP32) e câmeras de Visão Computacional, suportando tolerância a falhas de rede.
+* **Segurança Zero Trust (JWT):** Autenticação corporativa baseada em JSON Web Tokens. As rotas da API e os comandos via WebSockets estão blindados contra acessos não autorizados.
+* **Persistência Industrial (MariaDB):** Registro auditável e seguro de todos os logs, alarmes e métricas de turnos em um banco de dados relacional de alto desempenho.
+* **Sincronização em Tempo Real:** Comunicação instantânea entre a tela do Operador e do Supervisor via `Socket.io`.
+* **Protocolo de Segurança de Falhas:** Sistema de tratamento de alarmes em **2 Etapas** (Reconhecimento seguido de Confirmação).
 
 ---
 
 ## Arquitetura Técnica
 
-O projeto segue agora uma arquitetura **Client-Server**:
+O projeto segue agora uma arquitetura **Edge Computing** completa:
 
-1. **Back-end (Node.js + Express):** Gerencia a estrutura do servidor HTTP e provê a base para a futura API REST e conexão com o Banco de Dados.
-2. **WebSockets (Socket.io):** Atua como o barramento central de eventos em tempo real. Recebe atualizações de estado de qualquer cliente e transmite (`broadcast`) a nova "fonte da verdade" instantaneamente.
-3. **Front-end (Vanilla JS):** A interface consome os dados do servidor e reage às mudanças de estado, garantindo sincronia perfeita entre todas as telas abertas.
+1. **Front-end (Vanilla JS):** A interface consome os dados do servidor e reage às mudanças de estado, garantindo sincronia perfeita.
+2. **Back-end (Node.js + Express):** O "cérebro" do sistema. Gerencia a lógica de negócio, a API REST e a validação de segurança.
+3. **WebSockets (Socket.io):** O barramento central para as interfaces web, transmitindo a nova "fonte da verdade" instantaneamente.
+4. **Broker MQTT (Mosquitto):** A ponte de comunicação com o mundo físico (sensores, motores, ESP32).
+5. **Base de Dados (MariaDB):** Armazenamento permanente da estrutura de usuários, histórico de produção e logs.
 
 ---
 
-## 🧪 Testes Unitários
+## Protocolo de Comunicação IoT (Contrato JSON)
 
-O projeto inclui uma **suíte completa de testes unitários** para validar e proteger as regras implementadas contra regressões futuras.
+Para garantir a simetria de dados entre a equipe de Software e a de Hardware (Visão Computacional), o sistema utiliza os seguintes pacotes JSON via MQTT:
 
-### O que é testado?
+### 1. Pacote de Comando (IHM ➔ Máquina)
 
-- ✅ **Estrutura HTML:** Elementos críticos, IDs únicos, carregamento de scripts na ordem correta
-- ✅ **Autenticação:** Validação por perfil (Operador, Supervisor, Manutenção) e controle de acesso
-- ✅ **Lógica de Máquina:** Parada automática ao atingir meta, proteção contra salto de relógio, cálculo de downtime
-- ✅ **Histórico e Filtros:** Segregação entre abas (alarmes/eventos), sincronização de dados, exportação CSV
+* **Tópico:** `embrapac/comando/esteira`
+* **Descrição:** Ordens de controle da interface web para atuar nos relés da esteira.
+
+```json
+{
+  "comando": "START",
+  "timestamp": 1713000000000,
+  "origem": "Sr. Carlos"
+}
+```
+
+### 2. Pacote de Telemetria (Máquina ➔ IHM)
+
+* **Tópico:** `embrapac/producao/sensor`
+* **Descrição:** Confirmação do sensor óptico/IA informando a passagem e a classificação de uma caixa.
+
+```json
+{
+  "tamanho": "G",
+  "confianca_ia": 98.5,
+  "timestamp": 1713000005000
+}
+```
+
+### 3. Pacote de Segurança (JWT)
+
+* **Descrição:** O "Crachá Digital" gerado pelo MariaDB + Node.js. Exigido pelo middleware para qualquer comando crítico na IHM ou na API. Contém privilégios de acesso (Nível 1, 2 ou 3) e expira a cada turno (8h).
+
+***
+
+## Telas do Sistema
+
+1. Painel do Operador
+
+Focado na execução. Interface limpa com controles grandes, feedback visual de status e barra de progresso da meta.
+<img src="frontend/img/painel_de_operacoes.png" ></img>
+
+2. Historico de Ações
+
+Focado na segurança e rastreabilidade. Demonstração de logs recuperados diretamente do MariaDB, com pesquisa dinâmica.
+<img src="frontend/img/tela_historico.png" ></img>
+
+3. Painel do Supervisor (Dashboard)
+
+Focado na gestão. Apresenta KPIs detalhados, exportação CSV e alteração de parâmetros de produção.
+<img src="frontend/img/tela_supervisor.png" ></img>
+
+***
+
+## Testes Unitários
+
+O projeto inclui uma suíte completa de testes unitários para validar e proteger as regras implementadas contra regressões.
 
 ### Como rodar os testes
 
@@ -71,103 +107,64 @@ npm install --save-dev
 # rodar suíte completa
 npm test
 
-# modo watch (executa ao salvar arquivos)
-npm run test -- --watch
-
 # com detalhes
 npx jest --runInBand --verbose
 ```
+### Cobertura Atual
 
-### Cobertura atual
+* 15 testes totais (100% PASS) abrangendo autenticação, lógica de máquina, estrutura HTML e filtros de histórico.
 
-| Módulo | Testes | Status |
-|--------|--------|--------|
-| `master.js` | 4 | ✅ PASS |
-| `operador.js` | 2 | ✅ PASS |
-| `supervisor.js` | 2 | ✅ PASS |
-| `historico.js` | 3 | ✅ PASS |
-| **HTML Structure** | 2 | ✅ PASS |
-| **Total** | **15 testes** | ✅ **100% PASS** |
-
-Para documentação detalhada sobre como estender os testes, veja [tests/README.md](./tests/README.md).
-
----
-
-### Estrutura de Arquivos
-```text
-/
-├── 📁 frontend/
-│   ├── Tela_1_operador.html   # Interface Operador
-│   ├── Tela_2_historico.html  # Logs e Exportação CSV
-│   ├── Tela_3_supervisor.html # Dashboard de Gestão
-│   ├── style.css              # Estilização Responsiva
-│   ├── master.js              # Núcleo Lógico e Auth
-│   ├── operador.js            # Lógica da UI Operador
-│   ├── supervisor.js          # Lógica da UI Supervisor
-│   └── historico.js           # Utilitários Globais
-│
-└── 📁 backend/
-    ├── package.json           # Dependências do Node.js
-    └── server.js              # Servidor Express + Socket.io
-```
----
+***
 
 ## Como Executar
 
-O sistema agora requer a execução do servidor Node.js em background para que a sincronização via WebSockets funcione.
+### Pré-requisitos do Sistema
 
-Clone o repositório ou baixe os arquivos, posterior:
+   1. Node.js (Obrigatório versão v18.0.0 ou superior)
 
-Passo 1: Iniciar o Servidor (Backend)
+   2. MariaDB (Rodando localmente com o banco de dados embrapac_db)
 
-   - Certifique-se de ter o Node.js instalado.
+   3. Eclipse Mosquitto (Serviço MQTT rodando na porta 1883)
 
-   - Abra o terminal e navegue até a pasta do servidor:
+### Passos de Instalação
 
-```bash
-    cd backend
-```
-  - Instale as dependências:
+1. Clone o repositório ou baixe os arquivos.
 
-```bash
-    npm install express cors socket.io
-```
-  - Inicie o servidor:
+2. Abra o terminal e navegue até a pasta do servidor:
 
 ```bash
-    node server.js
+cd backend
 ```
 
-Passo 2: Iniciar a Interface (Frontend)
+3. Instale todas as dependências do projeto automaticamente:
 
-1.  Clone o repositório ou baixe os arquivos.
+```bash
+    npm install
+```
 
-2.  Abra o arquivo Tela_1_operador.html em uma aba do navegador (Visão Operador).
+4. Inicie o servidor Edge:
+   
+```bash
+    npm start
+```
+### Acessar o Sistema
 
-3.  Abra o arquivo Tela_3_supervisor.html em outra aba (Visão Supervisor).
+Abra o seu navegador no endereço fornecido pelo servidor (ex: http://localhost:3000/Tela_1_operador.html).
+O sistema validará o login no banco de dados gerando um Token JWT válido.
 
-4.  Utilize as credenciais abaixo para acessar:
+| Perfil | Senha | Nível de Acesso |
+| :--- | :---: | ---: |
+| Operador | op123 | Nível 1 (Operacional) |
+| Supervisor | admin123 | Nível 2 (Gestão Completa) |
 
-| *Perfil* |*Senha* |    *Nível de Acesso*    |
-|----------|--------|-------------------------|
-| Operador |operador|  Nível 1 (Operacional)  |
-|Supervisor| admin  |Nível 2 (Gestão Completa)|
-|Manutenção| manu123|Nível 3 (Equipe Técnica) |
-
-
-    Nota de Teste: Posicione as janelas lado a lado. Inicie a produção no Operador e observe os indicadores reagirem no Supervisor. Simule uma falha no Supervisor e verifique o bloqueio imediato na tela do Operador. Tudo acontecendo via rede!
+(Nota: As senhas acima são os padrões inseridos automaticamente na primeira execução do banco de dados. Recomenda-se alterá-las em produção).
 
 ## Histórico de Versões
 
+ *   v3.0 - Industrial Edge Server (Atual): Migração para MariaDB, Implementação de MQTT bidirecional, payloads JSON e Segurança Zero Trust com JWT.
 
-    v1.0 - Gold Master:
+ *   v2.0 - Client-Server: Implementação do Node.js e WebSockets para sincronização de telas.
 
-        - Implementação do relógio de turno dinâmico com data e hora.
-
-        - Unificação do protocolo de segurança de falhas (2 etapas).
-
-        - Isolamento das ferramentas de desenvolvimento (Simulação).
-
-        - Sanitização automática de banco de dados no carregamento.
+ *   v1.0 - Gold Master: Simulação local, unificação do protocolo de alarmes e cálculo de OEE.
 
 <p align="center"> Desenvolvido pela Equipe Embarcados 1 - CPQD. </p>

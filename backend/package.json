@@ -1,18 +1,21 @@
 {
   "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "3.0.0",
+  "description": "Backend Node.js para o ecossistema IoT EmbraPac",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
     "jsonwebtoken": "^9.0.3",
-    "mariadb": "^3.5.2",
+    "mariadb": "3.2.3",
     "mqtt": "^5.15.1",
     "serialport": "^13.0.0",
     "socket.io": "^4.8.3"
