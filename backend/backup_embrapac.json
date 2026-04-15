@@ -23,6 +23,22 @@
   },
   "historicoLogs": [
     {
+      "timestamp": 1776254186289,
+      "data": "2026-04-15T11:56:26.289Z",
+      "evento": "Login realizado via API: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776254177494,
+      "data": "2026-04-15T11:56:17.494Z",
+      "evento": "Login realizado via API: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
       "timestamp": 1776252226793,
       "data": "2026-04-15T11:23:46.793Z",
       "evento": "Login realizado via API: Sr. Carlos",
@@ -2405,22 +2421,6 @@
       "tipo": "INFORME",
       "usuario": "Sr. Agenor",
       "cargo": "Operador"
-    },
-    {
-      "timestamp": 1775475290039,
-      "data": "2026-04-06T11:34:50.039Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475289645,
-      "data": "2026-04-06T11:34:49.645Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
     }
   ]
 }
