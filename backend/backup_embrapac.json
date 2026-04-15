@@ -23,6 +23,38 @@
   },
   "historicoLogs": [
     {
+      "timestamp": 1776252226793,
+      "data": "2026-04-15T11:23:46.793Z",
+      "evento": "Login realizado via API: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776252205372,
+      "data": "2026-04-15T11:23:25.372Z",
+      "evento": "Login realizado via API: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776221481232,
+      "data": "2026-04-15T02:51:21.232Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776221386169,
+      "data": "2026-04-15T02:49:46.169Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
       "timestamp": 1776103904092,
       "data": "2026-04-13T18:11:44.092Z",
       "evento": "Produção Iniciada",
@@ -2385,38 +2417,6 @@
     {
       "timestamp": 1775475289645,
       "data": "2026-04-06T11:34:49.645Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475289360,
-      "data": "2026-04-06T11:34:49.360Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475289256,
-      "data": "2026-04-06T11:34:49.256Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475286646,
-      "data": "2026-04-06T11:34:46.646Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475286645,
-      "data": "2026-04-06T11:34:46.645Z",
       "evento": "IHM Desconectada da Rede",
       "tipo": "INFORME",
       "usuario": "Sistema",

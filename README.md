@@ -147,6 +147,85 @@ cd backend
 ```bash
     npm start
 ```
+
+***
+
+### Acessar o Banco de Dados
+
+1. Instale o MariaDB:
+   
+```Bash
+sudo apt install mariadb-server -y
+```
+
+2. Ligue o motor do banco:
+
+```Bash
+sudo service mariadb start
+```
+Passo 1: Criar o ficheiro de referência
+
+Dentro da sua pasta backend (junto com o server.js e o .env), crie um novo arquivo chamado init_db.sql (ou database.sql).
+
+Passo 2: Colar o código
+
+Abra esse arquivo recém-criado e cole exatamente o código abaixo. Ele já está documentado para que qualquer desenvolvedor entenda:
+
+```SQL
+-- ========================================================
+-- SCRIPT DE INICIALIZAÇÃO - EMBRAPAC DB
+-- Execute este script no seu MariaDB local para criar 
+-- a estrutura básica antes de rodar o servidor Node.js
+-- ========================================================
+
+-- Cria o banco de dados se não existir e entra nele
+CREATE DATABASE IF NOT EXISTS embrapac_db;
+USE embrapac_db;
+
+-- 1. Cria a Tabela de Utilizadores
+CREATE TABLE IF NOT EXISTS Usuarios (
+    id_login VARCHAR(50) PRIMARY KEY,
+    senha VARCHAR(50) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    cargo VARCHAR(50),
+    nivel_acesso INT
+);
+
+-- 2. Insere os utilizadores padrão do sistema (Seed)
+INSERT INTO Usuarios (id_login, senha, nome, cargo, nivel_acesso) 
+VALUES 
+('operador', 'op123', 'Sr. Agenor', 'Operador', 1),
+('admin', 'admin123', 'Sr. Carlos', 'Supervisor', 2)
+ON DUPLICATE KEY UPDATE senha=VALUES(senha);
+
+-- (Opcional) 3. Cria a Tabela de Histórico de Logs para evitar erros se o Node tentar gravar antes da hora
+CREATE TABLE IF NOT EXISTS Historico_Logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    data_hora DATETIME,
+    evento VARCHAR(255),
+    tipo VARCHAR(50),
+    usuario_nome VARCHAR(100),
+    usuario_cargo VARCHAR(50)
+);
+
+-- (Opcional) 4. Cria a Tabela de Turnos
+CREATE TABLE IF NOT EXISTS Turno (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    maquina_id INT,
+    hora_inicio DATETIME,
+    hora_fim DATETIME,
+    producao_ok INT,
+    product_s_count INT,
+    product_m_count INT,
+    product_l_count INT,
+    refugo INT,
+    downtime_segundos INT,
+    oee_percentual FLOAT,
+    turno_ativo BOOLEAN
+);
+```
+***
+
 ### Acessar o Sistema
 
 Abra o seu navegador no endereço fornecido pelo servidor (ex: http://localhost:3000/Tela_1_operador.html).
