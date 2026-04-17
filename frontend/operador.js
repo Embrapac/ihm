@@ -9,21 +9,15 @@ let stepFalha = 0;
 let elDisplay, elDetail, elBtnStart, elBtnStop;
 let elKpiProd, elKpiRefugo, elMetaText, elProgressBar;
 
-// --- LÓGICA DE LOGIN ---
-function attemptLoginOperator() {
+// --- LÓGICA DE LOGIN (Atualizada para JWT/API) ---
+async function attemptLoginOperator() {
     const passInput = document.getElementById('operador-pass');
-    if (typeof CONFIG === 'undefined') {
-        alert("Erro Crítico: master.js não encontrado!");
-        return;
-    }
+    
+    // Forçamos o envio do ID do banco 'operador'
+    const sucesso = await Sessao.autenticar('operador', passInput.value);
 
-    const perfilLogado = Sessao.autenticar(passInput.value);
-
-    // O Operador aceita login tanto do nível 1 quanto do nível 2
-    if (perfilLogado === 'operador' || perfilLogado === 'admin') {
+    if (sucesso) {
         fecharModalLogin();
-    } else {
-        alert('Senha Incorreta!');
     }
 }
 
@@ -60,7 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
     renderizar(); 
 
     const passInput = document.getElementById('operador-pass');
-    if(passInput) passInput.addEventListener('keypress', (e) => { if(e.key==='Enter') attemptLoginOperator(); });
+    if(passInput) passInput.addEventListener('keypress', (e) => { 
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            attemptLoginOperator(); 
+        }
+    });
 });
 
 // --- COMANDOS ---

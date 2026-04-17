@@ -10,21 +10,16 @@ let elKpiProd, elKpiOee, elKpiRefugo, elMetaText, elProgressBar;
 let elAlarmPanel, elAlarmTime, elBtnResetText, elAlarmMsg;
 let elActiveShiftControls, elBtnStartShift, elBtnExport, elShiftStatus, elShiftTime, elKpiDowntime;
 
-// --- LÓGICA DE LOGIN ---
-function attemptLogin() {
+// --- LÓGICA DE LOGIN (Atualizada para JWT/API) ---
+async function attemptLogin() {
     const passInput = document.getElementById('admin-pass');
-    if (typeof CONFIG === 'undefined') {
-        alert("Erro Crítico: master.js não encontrado!");
-        return;
-    }
+    
+    // Como a tela não tem campo de "Usuário", forçamos o envio do ID do banco 'admin'
+    const sucesso = await Sessao.autenticar('admin', passInput.value);
 
-    const perfilLogado = Sessao.autenticar(passInput.value);
-
-    if (perfilLogado === 'admin') {
+    if (sucesso) {
         document.getElementById('login-modal').style.display = 'none';
         Sessao.atualizarHeader();
-    } else {
-        alert('Senha Incorreta ou Acesso Negado!');
     }
 }
 
@@ -76,7 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
 
     const passInput = document.getElementById('admin-pass');
-    if(passInput) passInput.addEventListener('keypress', (e) => { if(e.key==='Enter') attemptLogin(); });
+    if(passInput) passInput.addEventListener('keypress', (e) => { 
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            attemptLogin(); 
+        }
+    });
 });
 
 function formatTime(s) {
@@ -132,9 +132,17 @@ function zerarTurno() {
     }
     
     if (confirm("ATENÇÃO: Isso apagará toda a Produção, Refugo e OEE do turno.\n\nConfirmar zeramento?")) {
-        estado.producao = 0; estado.refugo = 0; estado.downtime = 0; estado.oee = 0;
+        // CORREÇÃO: Agora as caixas P, M e G também são zeradas!
+        estado.producao = 0; 
+        estado.producaoP = 0; 
+        estado.producaoM = 0; 
+        estado.producaoG = 0; 
+        estado.refugo = 0; 
+        estado.downtime = 0; 
+        estado.oee = 0;
+        
         Maquina.escrever(estado);
-        estado = Maquina.processarCiclo(); // ACELERAÇÃO DA UI
+        estado = Maquina.processarCiclo(); 
         Logger.registrar("Dados de Turno Zerados", "ALERTA"); 
         atualizarInterface();
     }
@@ -337,6 +345,13 @@ function atualizarInterface() {
     }
 
     if (elKpiProd) elKpiProd.innerText = estado.producao;
+    const elKpiP = document.getElementById('kpi-prod-p');
+    const elKpiM = document.getElementById('kpi-prod-m');
+    const elKpiG = document.getElementById('kpi-prod-g');
+
+    if (elKpiP) elKpiP.innerText = estado.producaoP || 0;
+    if (elKpiM) elKpiM.innerText = estado.producaoM || 0;
+    if (elKpiG) elKpiG.innerText = estado.producaoG || 0;
     let oee = 0;
     let tempoTotalSegundos = 0;
 

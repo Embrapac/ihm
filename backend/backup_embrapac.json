@@ -1,20 +1,1699 @@
 {
   "estadoMaquina": {
-    "producao": 3564,
+    "producao": 0,
     "refugo": 0,
-    "meta": 5000,
-    "ciclo": 3,
+    "meta": 4000,
+    "ciclo": 1,
     "status": "OPERANDO",
-    "ultimoUpdate": 1775482108329,
+    "ultimoUpdate": 1776411991936,
     "turnoAtivo": false,
-    "horaInicioTurno": "--:--",
-    "horaFimTurno": "--:--",
+    "horaInicioTurno": "13/04/2026, 11:08:17",
+    "horaFimTurno": "13/04/2026, 14:06:34",
     "horaFalha": "--:--",
     "downtime": 0,
     "oee": 0,
-    "motivoParada": ""
+    "motivoParada": "",
+    "tsInicio": 1776089297610,
+    "relatorioPendente": false,
+    "tsFim": 1776099994242,
+    "inicioDowntimeMs": null,
+    "producaoG": 0,
+    "producaoP": 0,
+    "producaoM": 0
   },
   "historicoLogs": [
+    {
+      "timestamp": 1776411991939,
+      "data": "2026-04-17T07:46:31.939Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776411990315,
+      "data": "2026-04-17T07:46:30.315Z",
+      "evento": "Parada Manual",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776411987378,
+      "data": "2026-04-17T07:46:27.378Z",
+      "evento": "Login realizado via API: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776411015717,
+      "data": "2026-04-17T07:30:15.717Z",
+      "evento": "Login realizado via API: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776254186289,
+      "data": "2026-04-15T11:56:26.289Z",
+      "evento": "Login realizado via API: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776254177494,
+      "data": "2026-04-15T11:56:17.494Z",
+      "evento": "Login realizado via API: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776252226793,
+      "data": "2026-04-15T11:23:46.793Z",
+      "evento": "Login realizado via API: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776252205372,
+      "data": "2026-04-15T11:23:25.372Z",
+      "evento": "Login realizado via API: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776221481232,
+      "data": "2026-04-15T02:51:21.232Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776221386169,
+      "data": "2026-04-15T02:49:46.169Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776103904092,
+      "data": "2026-04-13T18:11:44.092Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776103887074,
+      "data": "2026-04-13T18:11:27.074Z",
+      "evento": "Parada Manual",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776103863143,
+      "data": "2026-04-13T18:11:03.143Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776103826635,
+      "data": "2026-04-13T18:10:26.635Z",
+      "evento": "Parada Manual",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776103821955,
+      "data": "2026-04-13T18:10:21.955Z",
+      "evento": "Login realizado: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776103816947,
+      "data": "2026-04-13T18:10:16.947Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776102221298,
+      "data": "2026-04-13T17:43:41.298Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776102207499,
+      "data": "2026-04-13T17:43:27.499Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776102187341,
+      "data": "2026-04-13T17:43:07.341Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776102186563,
+      "data": "2026-04-13T17:43:06.563Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776102166319,
+      "data": "2026-04-13T17:42:46.319Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776102156804,
+      "data": "2026-04-13T17:42:36.804Z",
+      "evento": "Parâmetros Alterados (Meta: 4000, Ciclo: 1s)",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776102147709,
+      "data": "2026-04-13T17:42:27.709Z",
+      "evento": "Login realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776102144702,
+      "data": "2026-04-13T17:42:24.702Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776102142927,
+      "data": "2026-04-13T17:42:22.927Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776101689976,
+      "data": "2026-04-13T17:34:49.976Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776101667249,
+      "data": "2026-04-13T17:34:27.249Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776100031262,
+      "data": "2026-04-13T17:07:11.262Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776100002898,
+      "data": "2026-04-13T17:06:42.898Z",
+      "evento": "Relatório CSV Exportado",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776099998411,
+      "data": "2026-04-13T17:06:38.411Z",
+      "evento": "Dados de Turno Zerados",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776099996319,
+      "data": "2026-04-13T17:06:36.319Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776099994242,
+      "data": "2026-04-13T17:06:34.242Z",
+      "evento": "Turno Encerrado",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776099344442,
+      "data": "2026-04-13T16:55:44.442Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776099343908,
+      "data": "2026-04-13T16:55:43.908Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776099341723,
+      "data": "2026-04-13T16:55:41.723Z",
+      "evento": "Login realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776099337154,
+      "data": "2026-04-13T16:55:37.154Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776098135776,
+      "data": "2026-04-13T16:35:35.776Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776098134940,
+      "data": "2026-04-13T16:35:34.940Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776098133012,
+      "data": "2026-04-13T16:35:33.013Z",
+      "evento": "Login realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776098129710,
+      "data": "2026-04-13T16:35:29.710Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776090399933,
+      "data": "2026-04-13T14:26:39.933Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776090398647,
+      "data": "2026-04-13T14:26:38.647Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776090292307,
+      "data": "2026-04-13T14:24:52.307Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776090211900,
+      "data": "2026-04-13T14:23:31.900Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776090204783,
+      "data": "2026-04-13T14:23:24.783Z",
+      "evento": "Parada Manual",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776090203212,
+      "data": "2026-04-13T14:23:23.212Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776089814636,
+      "data": "2026-04-13T14:16:54.636Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089510012,
+      "data": "2026-04-13T14:11:50.012Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089499311,
+      "data": "2026-04-13T14:11:39.311Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089343993,
+      "data": "2026-04-13T14:09:03.993Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089336139,
+      "data": "2026-04-13T14:08:56.139Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089300302,
+      "data": "2026-04-13T14:08:20.302Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089298860,
+      "data": "2026-04-13T14:08:18.860Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089297610,
+      "data": "2026-04-13T14:08:17.610Z",
+      "evento": "Turno Iniciado",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089294255,
+      "data": "2026-04-13T14:08:14.255Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089292390,
+      "data": "2026-04-13T14:08:12.390Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776089282590,
+      "data": "2026-04-13T14:08:02.590Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089274303,
+      "data": "2026-04-13T14:07:54.303Z",
+      "evento": "Parada Manual",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776089014593,
+      "data": "2026-04-13T14:03:34.593Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776088450620,
+      "data": "2026-04-13T13:54:10.620Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776088449760,
+      "data": "2026-04-13T13:54:09.760Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776088443818,
+      "data": "2026-04-13T13:54:03.818Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776088127252,
+      "data": "2026-04-13T13:48:47.252Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776088126123,
+      "data": "2026-04-13T13:48:46.123Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776088125179,
+      "data": "2026-04-13T13:48:45.179Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776088101305,
+      "data": "2026-04-13T13:48:21.305Z",
+      "evento": "Dados de Turno Zerados",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776088097642,
+      "data": "2026-04-13T13:48:17.642Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776088096424,
+      "data": "2026-04-13T13:48:16.424Z",
+      "evento": "Relatório CSV Exportado",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776088091529,
+      "data": "2026-04-13T13:48:11.529Z",
+      "evento": "Turno Encerrado",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776087931504,
+      "data": "2026-04-13T13:45:31.504Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087929292,
+      "data": "2026-04-13T13:45:29.292Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087925955,
+      "data": "2026-04-13T13:45:25.955Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087480801,
+      "data": "2026-04-13T13:38:00.801Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087477994,
+      "data": "2026-04-13T13:37:57.994Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087243050,
+      "data": "2026-04-13T13:34:03.050Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087242227,
+      "data": "2026-04-13T13:34:02.227Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087237694,
+      "data": "2026-04-13T13:33:57.694Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776087237158,
+      "data": "2026-04-13T13:33:57.158Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776087233401,
+      "data": "2026-04-13T13:33:53.401Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087204947,
+      "data": "2026-04-13T13:33:24.947Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087203405,
+      "data": "2026-04-13T13:33:23.405Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776087201962,
+      "data": "2026-04-13T13:33:21.962Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086547181,
+      "data": "2026-04-13T13:22:27.181Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086543693,
+      "data": "2026-04-13T13:22:23.693Z",
+      "evento": "Login realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776086540112,
+      "data": "2026-04-13T13:22:20.112Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086533465,
+      "data": "2026-04-13T13:22:13.465Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086508951,
+      "data": "2026-04-13T13:21:48.951Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776086508471,
+      "data": "2026-04-13T13:21:48.471Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776086506080,
+      "data": "2026-04-13T13:21:46.080Z",
+      "evento": "Login realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776086269754,
+      "data": "2026-04-13T13:17:49.754Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086269650,
+      "data": "2026-04-13T13:17:49.650Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086246085,
+      "data": "2026-04-13T13:17:26.085Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086245981,
+      "data": "2026-04-13T13:17:25.981Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086243968,
+      "data": "2026-04-13T13:17:23.968Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086243864,
+      "data": "2026-04-13T13:17:23.864Z",
+      "evento": "Login realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776086238795,
+      "data": "2026-04-13T13:17:18.795Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086238692,
+      "data": "2026-04-13T13:17:18.692Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086224606,
+      "data": "2026-04-13T13:17:04.606Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776086224503,
+      "data": "2026-04-13T13:17:04.503Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085188413,
+      "data": "2026-04-13T12:59:48.413Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085188309,
+      "data": "2026-04-13T12:59:48.309Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085187404,
+      "data": "2026-04-13T12:59:47.404Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085187300,
+      "data": "2026-04-13T12:59:47.300Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085185183,
+      "data": "2026-04-13T12:59:45.183Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085185079,
+      "data": "2026-04-13T12:59:45.079Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085164985,
+      "data": "2026-04-13T12:59:24.985Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085164508,
+      "data": "2026-04-13T12:59:24.508Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085164405,
+      "data": "2026-04-13T12:59:24.405Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776085163965,
+      "data": "2026-04-13T12:59:23.965Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085163861,
+      "data": "2026-04-13T12:59:23.861Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776085104868,
+      "data": "2026-04-13T12:58:24.868Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085104765,
+      "data": "2026-04-13T12:58:24.765Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085074552,
+      "data": "2026-04-13T12:57:54.552Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085074447,
+      "data": "2026-04-13T12:57:54.447Z",
+      "evento": "Login realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776085071254,
+      "data": "2026-04-13T12:57:51.254Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085071178,
+      "data": "2026-04-13T12:57:51.178Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085065240,
+      "data": "2026-04-13T12:57:45.240Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776085065135,
+      "data": "2026-04-13T12:57:45.135Z",
+      "evento": "Login realizado: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776084416781,
+      "data": "2026-04-13T12:46:56.781Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776084412907,
+      "data": "2026-04-13T12:46:52.907Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776084412419,
+      "data": "2026-04-13T12:46:52.419Z",
+      "evento": "Parada Manual",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776084410673,
+      "data": "2026-04-13T12:46:50.673Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776084400775,
+      "data": "2026-04-13T12:46:40.775Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776084397573,
+      "data": "2026-04-13T12:46:37.573Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776084396842,
+      "data": "2026-04-13T12:46:36.842Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776084388095,
+      "data": "2026-04-13T12:46:28.095Z",
+      "evento": "Turno Iniciado",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776084383013,
+      "data": "2026-04-13T12:46:23.013Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776084378323,
+      "data": "2026-04-13T12:46:18.323Z",
+      "evento": "Parâmetros Alterados (Meta: 5000, Ciclo: 1s)",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776084372577,
+      "data": "2026-04-13T12:46:12.577Z",
+      "evento": "Dados de Turno Zerados",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776084370011,
+      "data": "2026-04-13T12:46:10.011Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776084366708,
+      "data": "2026-04-13T12:46:06.708Z",
+      "evento": "Relatório CSV Exportado",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776084364117,
+      "data": "2026-04-13T12:46:04.117Z",
+      "evento": "Turno Encerrado",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776083688613,
+      "data": "2026-04-13T12:34:48.613Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083683540,
+      "data": "2026-04-13T12:34:43.540Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083676541,
+      "data": "2026-04-13T12:34:36.541Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083673615,
+      "data": "2026-04-13T12:34:33.615Z",
+      "evento": "Turno Iniciado",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776083669114,
+      "data": "2026-04-13T12:34:29.114Z",
+      "evento": "Apontamento Manual de Refugo",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776083667367,
+      "data": "2026-04-13T12:34:27.367Z",
+      "evento": "Apontamento Manual de Refugo",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776083665700,
+      "data": "2026-04-13T12:34:25.700Z",
+      "evento": "Apontamento Manual de Refugo",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776083664845,
+      "data": "2026-04-13T12:34:24.845Z",
+      "evento": "Apontamento Manual de Refugo",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776083663407,
+      "data": "2026-04-13T12:34:23.407Z",
+      "evento": "Apontamento Manual de Refugo",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776083660195,
+      "data": "2026-04-13T12:34:20.195Z",
+      "evento": "Login realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1776083652172,
+      "data": "2026-04-13T12:34:12.172Z",
+      "evento": "Login realizado: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1776083641145,
+      "data": "2026-04-13T12:34:01.145Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083620011,
+      "data": "2026-04-13T12:33:40.011Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619907,
+      "data": "2026-04-13T12:33:39.907Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619805,
+      "data": "2026-04-13T12:33:39.805Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619702,
+      "data": "2026-04-13T12:33:39.702Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619599,
+      "data": "2026-04-13T12:33:39.599Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619496,
+      "data": "2026-04-13T12:33:39.496Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619392,
+      "data": "2026-04-13T12:33:39.392Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619290,
+      "data": "2026-04-13T12:33:39.290Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619186,
+      "data": "2026-04-13T12:33:39.186Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083619083,
+      "data": "2026-04-13T12:33:39.083Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618980,
+      "data": "2026-04-13T12:33:38.980Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618877,
+      "data": "2026-04-13T12:33:38.877Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618774,
+      "data": "2026-04-13T12:33:38.774Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618670,
+      "data": "2026-04-13T12:33:38.670Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618567,
+      "data": "2026-04-13T12:33:38.567Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618464,
+      "data": "2026-04-13T12:33:38.464Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618360,
+      "data": "2026-04-13T12:33:38.360Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618257,
+      "data": "2026-04-13T12:33:38.257Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618154,
+      "data": "2026-04-13T12:33:38.154Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083618049,
+      "data": "2026-04-13T12:33:38.049Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083617946,
+      "data": "2026-04-13T12:33:37.946Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083617843,
+      "data": "2026-04-13T12:33:37.843Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083617739,
+      "data": "2026-04-13T12:33:37.739Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616891,
+      "data": "2026-04-13T12:33:36.891Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616887,
+      "data": "2026-04-13T12:33:36.887Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616785,
+      "data": "2026-04-13T12:33:36.785Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616783,
+      "data": "2026-04-13T12:33:36.783Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616683,
+      "data": "2026-04-13T12:33:36.683Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616681,
+      "data": "2026-04-13T12:33:36.681Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616580,
+      "data": "2026-04-13T12:33:36.580Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616578,
+      "data": "2026-04-13T12:33:36.578Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616475,
+      "data": "2026-04-13T12:33:36.475Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616474,
+      "data": "2026-04-13T12:33:36.474Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616372,
+      "data": "2026-04-13T12:33:36.372Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616371,
+      "data": "2026-04-13T12:33:36.371Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616270,
+      "data": "2026-04-13T12:33:36.270Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616268,
+      "data": "2026-04-13T12:33:36.268Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616166,
+      "data": "2026-04-13T12:33:36.166Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616164,
+      "data": "2026-04-13T12:33:36.164Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616063,
+      "data": "2026-04-13T12:33:36.063Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083616061,
+      "data": "2026-04-13T12:33:36.061Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615959,
+      "data": "2026-04-13T12:33:35.959Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615957,
+      "data": "2026-04-13T12:33:35.957Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615854,
+      "data": "2026-04-13T12:33:35.854Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615853,
+      "data": "2026-04-13T12:33:35.853Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615751,
+      "data": "2026-04-13T12:33:35.751Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615749,
+      "data": "2026-04-13T12:33:35.749Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615647,
+      "data": "2026-04-13T12:33:35.647Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615646,
+      "data": "2026-04-13T12:33:35.646Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615544,
+      "data": "2026-04-13T12:33:35.544Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615542,
+      "data": "2026-04-13T12:33:35.542Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615440,
+      "data": "2026-04-13T12:33:35.440Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615439,
+      "data": "2026-04-13T12:33:35.439Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615336,
+      "data": "2026-04-13T12:33:35.336Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615335,
+      "data": "2026-04-13T12:33:35.335Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615233,
+      "data": "2026-04-13T12:33:35.233Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615232,
+      "data": "2026-04-13T12:33:35.232Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615129,
+      "data": "2026-04-13T12:33:35.129Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615127,
+      "data": "2026-04-13T12:33:35.127Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615023,
+      "data": "2026-04-13T12:33:35.023Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083615022,
+      "data": "2026-04-13T12:33:35.022Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083614919,
+      "data": "2026-04-13T12:33:34.919Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083614917,
+      "data": "2026-04-13T12:33:34.917Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083614814,
+      "data": "2026-04-13T12:33:34.814Z",
+      "evento": "IHM Desconectada da Rede",
+      "tipo": "INFORME",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1776083614708,
+      "data": "2026-04-13T12:33:34.708Z",
+      "evento": "Apontamento Manual de Refugo",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
     {
       "timestamp": 1775482091711,
       "data": "2026-04-06T13:28:11.711Z",
@@ -738,1678 +2417,6 @@
     {
       "timestamp": 1775476705674,
       "data": "2026-04-06T11:58:25.674Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775476702672,
-      "data": "2026-04-06T11:58:22.672Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475503575,
-      "data": "2026-04-06T11:38:23.575Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475499126,
-      "data": "2026-04-06T11:38:19.126Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475420198,
-      "data": "2026-04-06T11:37:00.198Z",
-      "evento": "Login realizado: Sr. Agenor",
-      "tipo": "INFORME",
-      "usuario": "Sr. Agenor",
-      "cargo": "Operador"
-    },
-    {
-      "timestamp": 1775475290039,
-      "data": "2026-04-06T11:34:50.039Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475289645,
-      "data": "2026-04-06T11:34:49.645Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475289360,
-      "data": "2026-04-06T11:34:49.360Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475289256,
-      "data": "2026-04-06T11:34:49.256Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475286646,
-      "data": "2026-04-06T11:34:46.646Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475286645,
-      "data": "2026-04-06T11:34:46.645Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475283642,
-      "data": "2026-04-06T11:34:43.642Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475283641,
-      "data": "2026-04-06T11:34:43.641Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475280643,
-      "data": "2026-04-06T11:34:40.643Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475280642,
-      "data": "2026-04-06T11:34:40.642Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475277634,
-      "data": "2026-04-06T11:34:37.634Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775475277633,
-      "data": "2026-04-06T11:34:37.633Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474077610,
-      "data": "2026-04-06T11:14:37.610Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474074608,
-      "data": "2026-04-06T11:14:34.608Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474071618,
-      "data": "2026-04-06T11:14:31.618Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474068601,
-      "data": "2026-04-06T11:14:28.601Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474065599,
-      "data": "2026-04-06T11:14:25.599Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474062598,
-      "data": "2026-04-06T11:14:22.598Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474059593,
-      "data": "2026-04-06T11:14:19.593Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474056591,
-      "data": "2026-04-06T11:14:16.591Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474053586,
-      "data": "2026-04-06T11:14:13.586Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474050584,
-      "data": "2026-04-06T11:14:10.584Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474047579,
-      "data": "2026-04-06T11:14:07.579Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474044577,
-      "data": "2026-04-06T11:14:04.577Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474041575,
-      "data": "2026-04-06T11:14:01.575Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474038571,
-      "data": "2026-04-06T11:13:58.571Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474035567,
-      "data": "2026-04-06T11:13:55.567Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474032564,
-      "data": "2026-04-06T11:13:52.564Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474029563,
-      "data": "2026-04-06T11:13:49.563Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474026559,
-      "data": "2026-04-06T11:13:46.559Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474023555,
-      "data": "2026-04-06T11:13:43.555Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474020552,
-      "data": "2026-04-06T11:13:40.552Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474017550,
-      "data": "2026-04-06T11:13:37.550Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474014546,
-      "data": "2026-04-06T11:13:34.546Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474011544,
-      "data": "2026-04-06T11:13:31.544Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474008541,
-      "data": "2026-04-06T11:13:28.541Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474005535,
-      "data": "2026-04-06T11:13:25.535Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775474002534,
-      "data": "2026-04-06T11:13:22.534Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473999530,
-      "data": "2026-04-06T11:13:19.530Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473996535,
-      "data": "2026-04-06T11:13:16.535Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473993526,
-      "data": "2026-04-06T11:13:13.526Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473990524,
-      "data": "2026-04-06T11:13:10.524Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473987522,
-      "data": "2026-04-06T11:13:07.522Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473984516,
-      "data": "2026-04-06T11:13:04.516Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473981510,
-      "data": "2026-04-06T11:13:01.510Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473978508,
-      "data": "2026-04-06T11:12:58.508Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473975502,
-      "data": "2026-04-06T11:12:55.502Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473972498,
-      "data": "2026-04-06T11:12:52.498Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473969492,
-      "data": "2026-04-06T11:12:49.492Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473966488,
-      "data": "2026-04-06T11:12:46.488Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473963483,
-      "data": "2026-04-06T11:12:43.483Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473960483,
-      "data": "2026-04-06T11:12:40.483Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473957472,
-      "data": "2026-04-06T11:12:37.472Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473954465,
-      "data": "2026-04-06T11:12:34.465Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473951460,
-      "data": "2026-04-06T11:12:31.460Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473948453,
-      "data": "2026-04-06T11:12:28.453Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473945450,
-      "data": "2026-04-06T11:12:25.450Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473942446,
-      "data": "2026-04-06T11:12:22.446Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473939441,
-      "data": "2026-04-06T11:12:19.441Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473936438,
-      "data": "2026-04-06T11:12:16.438Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473933434,
-      "data": "2026-04-06T11:12:13.434Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473930930,
-      "data": "2026-04-06T11:12:10.930Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473927925,
-      "data": "2026-04-06T11:12:07.925Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473924921,
-      "data": "2026-04-06T11:12:04.921Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473921918,
-      "data": "2026-04-06T11:12:01.918Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473918912,
-      "data": "2026-04-06T11:11:58.912Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473915909,
-      "data": "2026-04-06T11:11:55.909Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473912906,
-      "data": "2026-04-06T11:11:52.906Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473909903,
-      "data": "2026-04-06T11:11:49.903Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473906899,
-      "data": "2026-04-06T11:11:46.899Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473903893,
-      "data": "2026-04-06T11:11:43.893Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473900891,
-      "data": "2026-04-06T11:11:40.891Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473897885,
-      "data": "2026-04-06T11:11:37.885Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473894882,
-      "data": "2026-04-06T11:11:34.882Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473891878,
-      "data": "2026-04-06T11:11:31.878Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473888876,
-      "data": "2026-04-06T11:11:28.876Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473885874,
-      "data": "2026-04-06T11:11:25.874Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473882869,
-      "data": "2026-04-06T11:11:22.869Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473879866,
-      "data": "2026-04-06T11:11:19.866Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473876864,
-      "data": "2026-04-06T11:11:16.864Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473873861,
-      "data": "2026-04-06T11:11:13.861Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473870857,
-      "data": "2026-04-06T11:11:10.857Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473867855,
-      "data": "2026-04-06T11:11:07.855Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473864851,
-      "data": "2026-04-06T11:11:04.851Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473861849,
-      "data": "2026-04-06T11:11:01.849Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473858845,
-      "data": "2026-04-06T11:10:58.845Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473855842,
-      "data": "2026-04-06T11:10:55.842Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473852838,
-      "data": "2026-04-06T11:10:52.838Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775473849838,
-      "data": "2026-04-06T11:10:49.838Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463616740,
-      "data": "2026-04-06T08:20:16.740Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463615534,
-      "data": "2026-04-06T08:20:15.534Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463612528,
-      "data": "2026-04-06T08:20:12.528Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463609524,
-      "data": "2026-04-06T08:20:09.524Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463606520,
-      "data": "2026-04-06T08:20:06.520Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463603519,
-      "data": "2026-04-06T08:20:03.519Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463600517,
-      "data": "2026-04-06T08:20:00.517Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463597516,
-      "data": "2026-04-06T08:19:57.516Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463594511,
-      "data": "2026-04-06T08:19:54.511Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463591509,
-      "data": "2026-04-06T08:19:51.509Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463588504,
-      "data": "2026-04-06T08:19:48.504Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463585499,
-      "data": "2026-04-06T08:19:45.499Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463582496,
-      "data": "2026-04-06T08:19:42.496Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463579492,
-      "data": "2026-04-06T08:19:39.492Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463576489,
-      "data": "2026-04-06T08:19:36.489Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463573487,
-      "data": "2026-04-06T08:19:33.487Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463570486,
-      "data": "2026-04-06T08:19:30.486Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463567481,
-      "data": "2026-04-06T08:19:27.481Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463565284,
-      "data": "2026-04-06T08:19:25.284Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463565180,
-      "data": "2026-04-06T08:19:25.180Z",
-      "evento": "Acesso Bloqueado: Tentativa de Invasão na API",
-      "tipo": "FALHA",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463564478,
-      "data": "2026-04-06T08:19:24.478Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463561477,
-      "data": "2026-04-06T08:19:21.477Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463558476,
-      "data": "2026-04-06T08:19:18.476Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463555481,
-      "data": "2026-04-06T08:19:15.481Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463552469,
-      "data": "2026-04-06T08:19:12.469Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463549468,
-      "data": "2026-04-06T08:19:09.468Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463546463,
-      "data": "2026-04-06T08:19:06.463Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463543463,
-      "data": "2026-04-06T08:19:03.463Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463540459,
-      "data": "2026-04-06T08:19:00.459Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463537456,
-      "data": "2026-04-06T08:18:57.456Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463534453,
-      "data": "2026-04-06T08:18:54.453Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463531451,
-      "data": "2026-04-06T08:18:51.451Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463528448,
-      "data": "2026-04-06T08:18:48.448Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463525447,
-      "data": "2026-04-06T08:18:45.447Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463522442,
-      "data": "2026-04-06T08:18:42.442Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463519440,
-      "data": "2026-04-06T08:18:39.440Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463516437,
-      "data": "2026-04-06T08:18:36.437Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463513434,
-      "data": "2026-04-06T08:18:33.434Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463510430,
-      "data": "2026-04-06T08:18:30.430Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463507428,
-      "data": "2026-04-06T08:18:27.428Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463504426,
-      "data": "2026-04-06T08:18:24.426Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463501434,
-      "data": "2026-04-06T08:18:21.434Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463498421,
-      "data": "2026-04-06T08:18:18.421Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463496433,
-      "data": "2026-04-06T08:18:16.433Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463495418,
-      "data": "2026-04-06T08:18:15.418Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463492416,
-      "data": "2026-04-06T08:18:12.416Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463489412,
-      "data": "2026-04-06T08:18:09.412Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463486407,
-      "data": "2026-04-06T08:18:06.407Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463483404,
-      "data": "2026-04-06T08:18:03.404Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463309745,
-      "data": "2026-04-06T08:15:09.745Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463306738,
-      "data": "2026-04-06T08:15:06.738Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463303737,
-      "data": "2026-04-06T08:15:03.737Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463300732,
-      "data": "2026-04-06T08:15:00.732Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463297730,
-      "data": "2026-04-06T08:14:57.730Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463294726,
-      "data": "2026-04-06T08:14:54.726Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463291722,
-      "data": "2026-04-06T08:14:51.722Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463288721,
-      "data": "2026-04-06T08:14:48.721Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463285717,
-      "data": "2026-04-06T08:14:45.717Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463282715,
-      "data": "2026-04-06T08:14:42.715Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463279710,
-      "data": "2026-04-06T08:14:39.710Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463276708,
-      "data": "2026-04-06T08:14:36.708Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463273701,
-      "data": "2026-04-06T08:14:33.701Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463270696,
-      "data": "2026-04-06T08:14:30.696Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463267693,
-      "data": "2026-04-06T08:14:27.693Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463264688,
-      "data": "2026-04-06T08:14:24.688Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463261684,
-      "data": "2026-04-06T08:14:21.684Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463258680,
-      "data": "2026-04-06T08:14:18.680Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463255677,
-      "data": "2026-04-06T08:14:15.677Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463252671,
-      "data": "2026-04-06T08:14:12.671Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463249667,
-      "data": "2026-04-06T08:14:09.667Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463246662,
-      "data": "2026-04-06T08:14:06.662Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463243658,
-      "data": "2026-04-06T08:14:03.658Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463240655,
-      "data": "2026-04-06T08:14:00.655Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463237653,
-      "data": "2026-04-06T08:13:57.653Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463234650,
-      "data": "2026-04-06T08:13:54.650Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463231648,
-      "data": "2026-04-06T08:13:51.648Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463230034,
-      "data": "2026-04-06T08:13:50.034Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463228644,
-      "data": "2026-04-06T08:13:48.644Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463225640,
-      "data": "2026-04-06T08:13:45.640Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463222638,
-      "data": "2026-04-06T08:13:42.638Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463221790,
-      "data": "2026-04-06T08:13:41.790Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463219636,
-      "data": "2026-04-06T08:13:39.636Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463216632,
-      "data": "2026-04-06T08:13:36.632Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463213628,
-      "data": "2026-04-06T08:13:33.628Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463210624,
-      "data": "2026-04-06T08:13:30.624Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463207620,
-      "data": "2026-04-06T08:13:27.620Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463204619,
-      "data": "2026-04-06T08:13:24.619Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463201613,
-      "data": "2026-04-06T08:13:21.613Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463198611,
-      "data": "2026-04-06T08:13:18.611Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463196044,
-      "data": "2026-04-06T08:13:16.044Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463195608,
-      "data": "2026-04-06T08:13:15.608Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463194078,
-      "data": "2026-04-06T08:13:14.078Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463192498,
-      "data": "2026-04-06T08:13:12.498Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463189314,
-      "data": "2026-04-06T08:13:09.314Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463189212,
-      "data": "2026-04-06T08:13:09.212Z",
-      "evento": "Produção Iniciada",
-      "tipo": "NORMAL",
-      "usuario": "Sr. Carlos",
-      "cargo": "Supervisor"
-    },
-    {
-      "timestamp": 1775463188462,
-      "data": "2026-04-06T08:13:08.462Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463188359,
-      "data": "2026-04-06T08:13:08.359Z",
-      "evento": "Parada Manual",
-      "tipo": "NORMAL",
-      "usuario": "Sr. Carlos",
-      "cargo": "Supervisor"
-    },
-    {
-      "timestamp": 1775463186097,
-      "data": "2026-04-06T08:13:06.097Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463183100,
-      "data": "2026-04-06T08:13:03.100Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463180093,
-      "data": "2026-04-06T08:13:00.093Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463179263,
-      "data": "2026-04-06T08:12:59.263Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463177087,
-      "data": "2026-04-06T08:12:57.087Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463174085,
-      "data": "2026-04-06T08:12:54.085Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463171080,
-      "data": "2026-04-06T08:12:51.080Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463168077,
-      "data": "2026-04-06T08:12:48.077Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463165074,
-      "data": "2026-04-06T08:12:45.074Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463162067,
-      "data": "2026-04-06T08:12:42.067Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463159066,
-      "data": "2026-04-06T08:12:39.066Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463156062,
-      "data": "2026-04-06T08:12:36.062Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463153060,
-      "data": "2026-04-06T08:12:33.060Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463150055,
-      "data": "2026-04-06T08:12:30.055Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463147051,
-      "data": "2026-04-06T08:12:27.051Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463144049,
-      "data": "2026-04-06T08:12:24.049Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463141046,
-      "data": "2026-04-06T08:12:21.046Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463138040,
-      "data": "2026-04-06T08:12:18.040Z",
-      "evento": "IHM Desconectada da Rede",
-      "tipo": "INFORME",
-      "usuario": "Sistema",
-      "cargo": "Automático"
-    },
-    {
-      "timestamp": 1775463135039,
-      "data": "2026-04-06T08:12:15.039Z",
       "evento": "IHM Desconectada da Rede",
       "tipo": "INFORME",
       "usuario": "Sistema",
