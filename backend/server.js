@@ -109,7 +109,7 @@ const topicoComando = process.env.MQTT_TOPIC_COMMAND || 'embrapac/comando/esteir
 const clienteMqtt = mqtt.connect(brokerUrl, { reconnectPeriod: 5000 });
 
 clienteMqtt.on('connect', () => {
-    console.log('[🌐 MQTT] Conectado ao Broker! Aguardando Módulo ESP...');
+    console.log('[🌐 MQTT] Conectado ao Broker! Aguardando Módulo PIC32...');
     clienteMqtt.subscribe(topicoSensor); 
 });
 

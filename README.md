@@ -7,7 +7,7 @@
 ![Database](https://img.shields.io/badge/Database-MariaDB-blueviolet)
 ![Security](https://img.shields.io/badge/Security-JWT-orange)
 
-> Uma Interface Homem-Máquina (IHM) de alta fidelidade e um Edge Server robusto para controle de linhas de produção, integrando Inteligência Artificial (YOLO), hardware (ESP32) e sincronização em tempo real.
+> Uma Interface Homem-Máquina (IHM) de alta fidelidade e um Edge Server robusto para controle de linhas de produção, integrando Inteligência Artificial (YOLO), hardware (PIC32) e sincronização em tempo real.
 
 ---
 
@@ -19,7 +19,7 @@ O sistema evoluiu de uma simulação local para uma arquitetura **OT (Operation 
 
 ### Principais Funcionalidades
 
-* **Integração IoT Bidirecional (MQTT):** Comunicação padronizada em JSON com microcontroladores (ESP32) e câmeras de Visão Computacional, suportando tolerância a falhas de rede.
+* **Integração IoT Bidirecional (MQTT):** Comunicação padronizada em JSON com microcontroladores (PIC32) e câmeras de Visão Computacional, suportando tolerância a falhas de rede.
 * **Segurança Zero Trust (JWT):** Autenticação corporativa baseada em JSON Web Tokens. As rotas da API e os comandos via WebSockets estão blindados contra acessos não autorizados.
 * **Persistência Industrial (MariaDB):** Registro auditável e seguro de todos os logs, alarmes e métricas de turnos em um banco de dados relacional de alto desempenho.
 * **Sincronização em Tempo Real:** Comunicação instantânea entre a tela do Operador e do Supervisor via `Socket.io`.
@@ -34,7 +34,7 @@ O projeto segue agora uma arquitetura **Edge Computing** completa:
 1. **Front-end (Vanilla JS):** A interface consome os dados do servidor e reage às mudanças de estado, garantindo sincronia perfeita.
 2. **Back-end (Node.js + Express):** O "cérebro" do sistema. Gerencia a lógica de negócio, a API REST e a validação de segurança.
 3. **WebSockets (Socket.io):** O barramento central para as interfaces web, transmitindo a nova "fonte da verdade" instantaneamente.
-4. **Broker MQTT (Mosquitto):** A ponte de comunicação com o mundo físico (sensores, motores, ESP32).
+4. **Broker MQTT (Mosquitto):** A ponte de comunicação com o mundo físico (sensores, motores, PIC32).
 5. **Base de Dados (MariaDB):** Armazenamento permanente da estrutura de usuários, histórico de produção e logs.
 
 ---
@@ -160,12 +160,12 @@ cd backend
    sudo apt install mariadb-server -y
    sudo service mariadb start
    ```
-2. Crie a estrutura de tabelas e os utilizadores padrão executando o script de inicialização (init_db.sql) que se encontra na pasta backend:
+2. Crie a estrutura de tabelas utilizando as **Migrations** oficiais do projeto:
 
-* Pode abrir o seu gestor de base de dados (como DBeaver) e rodar o ficheiro backend/init_db.sql.
-
-*   Ou, se preferir o terminal, aceda ao MariaDB (sudo mariadb -u root -p) e cole o conteúdo do ficheiro lá dentro.
-
+* As migrations (V1, V2, V3, etc.) são a única fonte da verdade do banco de dados e encontram-se no repositório principal do backend (`/migrations`).
+* Aceda ao MariaDB local (`sudo mariadb -u root -p`) e execute o conteúdo dos ficheiros SQL na ordem correta para montar a infraestrutura.
+* Após aplicar as migrations, insira manualmente os usuários de teste (Seed) para conseguir fazer o login na IHM local.
+  
 3. Configure as variáveis de ambiente:
 
 *   Na pasta backend, crie um ficheiro chamado .env e configure as suas credenciais de acesso locais:
@@ -176,6 +176,8 @@ DB_USER=root
 DB_PASSWORD=sua_senha_do_banco
 DB_NAME=embrapac_db
 MQTT_BROKER_URL=mqtt://localhost:1883
+MQTT_TOPIC_SENSOR=embrapac/ihm/count
+MQTT_TOPIC_COMMAND=embrapac/comando/esteira
 ```
 ***
 
