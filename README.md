@@ -50,21 +50,21 @@ Para garantir a simetria de dados entre a equipe de Software e a de Hardware (Vi
 
 ```json
 {
-  "comando": "START",
+  "command": "START",
   "timestamp": 1713000000000,
-  "origem": "Sr. Carlos"
+  "source": "Sr. Carlos"
 }
 ```
 
 ### 2. Pacote de Telemetria (Máquina ➔ IHM)
 
-* **Tópico:** `embrapac/producao/sensor`
+* **Tópico:** `embrapac/ihm/count`
 * **Descrição:** Confirmação do sensor óptico/IA informando a passagem e a classificação de uma caixa.
 
 ```json
 {
-  "tamanho": "G",
-  "confianca_ia": 98.5,
+  "class": "Grande",
+  "confidence": 0.98,
   "timestamp": 1713000005000
 }
 ```

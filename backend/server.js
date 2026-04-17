@@ -102,13 +102,15 @@ function registrarLogServidor(evento, tipo, usuario_nome = 'Sistema', usuario_ca
 }
 
 // ===== 4. COMUNICAÇÃO IoT (MQTT) =====
-// A URL do broker agora vem do ficheiro .env. Se não existir, ele usa o localhost como padrão (fallback).
 const brokerUrl = process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883';
+const topicoSensor = process.env.MQTT_TOPIC_SENSOR || 'embrapac/producao/sensor';
+const topicoComando = process.env.MQTT_TOPIC_COMMAND || 'embrapac/comando/esteira';
+
 const clienteMqtt = mqtt.connect(brokerUrl, { reconnectPeriod: 5000 });
 
 clienteMqtt.on('connect', () => {
     console.log('[🌐 MQTT] Conectado ao Broker! Aguardando Módulo ESP...');
-    clienteMqtt.subscribe('embrapac/producao/sensor'); 
+    clienteMqtt.subscribe(topicoSensor); 
 });
 
 clienteMqtt.on('error', (erro) => {
@@ -119,27 +121,36 @@ clienteMqtt.on('message', (topico, mensagem) => {
     const payloadBruto = mensagem.toString().trim();
     try {
         const pacoteMqtt = JSON.parse(payloadBruto);
-        if (estadoMaquina.status === 'OPERANDO' && topico === 'embrapac/producao/sensor' && pacoteMqtt.tamanho) {
-            const tamanhoPeca = String(pacoteMqtt.tamanho).toUpperCase();
+
+        // Verifica se é o tópico do sensor e se contém a chave 'class'
+        if (estadoMaquina.status === 'OPERANDO' && topico === topicoSensor && pacoteMqtt.class) {
             
-            if (tamanhoPeca === 'P') estadoMaquina.producaoP++;
-            else if (tamanhoPeca === 'M') estadoMaquina.producaoM++;
-            else if (tamanhoPeca === 'G') estadoMaquina.producaoG++;
-            else return; 
+            const tipoCaixa = pacoteMqtt.class; // Ex: "Pequena", "Media" ou "Grande"
+            
+            if (tipoCaixa === 'Pequena') {
+                estadoMaquina.producaoP++;
+            } else if (tipoCaixa === 'Media') {
+                estadoMaquina.producaoM++;
+            } else if (tipoCaixa === 'Grande') {
+                estadoMaquina.producaoG++;
+            } else {
+                return; // Ignora se vier um valor inesperado
+            }
             
             estadoMaquina.producao++;
             estadoMaquina.ultimoUpdate = Date.now();
             
+            // Lógica de meta e emissão via Socket.io
             if (estadoMaquina.producao >= estadoMaquina.meta && estadoMaquina.meta > 0) {
                 estadoMaquina.producao = estadoMaquina.meta;
                 estadoMaquina.status = 'PARADO';
-                registrarLogServidor('Meta atingida pelo sensor óptico. Linha parada.', 'ALERTA');
+                registrarLogServidor('Meta atingida pela Inferência IA. Linha parada.', 'ALERTA');
             }
             io.emit('estadoAtualizado', estadoMaquina);
             salvarBackup(); 
         }
     } catch (erro) {
-        console.warn(`[!] Aviso: Lixo na rede ou JSON inválido recebido: ${payloadBruto}`);
+        console.warn(`[!] Erro ao processar payload da IA: ${payloadBruto}`);
     }
 });
 
@@ -156,18 +167,18 @@ io.on('connection', (socket) => {
         try {
             const usuarioAutenticado = jwt.verify(tokenEnviado, SECRET_KEY);
             
-            if (estadoMaquina.status !== novoEstado.status) {
-                let pacoteJson = { comando: "", timestamp: Date.now(), origem: usuarioAutenticado.nome };
+            if (estadoMaquina.status !== novoEstado.status) {   
+            let pacoteJson = { command: "", timestamp: Date.now(), source: usuarioAutenticado.nome };
 
-                if (novoEstado.status === 'OPERANDO') {
-                    pacoteJson.comando = "START";
-                    clienteMqtt.publish('embrapac/comando/esteira', JSON.stringify(pacoteJson));
+            if (novoEstado.status === 'OPERANDO') {
+                    pacoteJson.command = "START";
+                    clienteMqtt.publish(topicoComando, JSON.stringify(pacoteJson)); 
                 } 
-                else if (novoEstado.status === 'PARADO' || novoEstado.status === 'FALHA') {
-                    pacoteJson.comando = "STOP";
-                    clienteMqtt.publish('embrapac/comando/esteira', JSON.stringify(pacoteJson));
+            else if (novoEstado.status === 'PARADO' || novoEstado.status === 'FALHA') {
+                    pacoteJson.command = "STOP";
+                    clienteMqtt.publish(topicoComando, JSON.stringify(pacoteJson)); 
                 }
-            }
+}
 
             estadoMaquina = novoEstado;
             socket.broadcast.emit('estadoAtualizado', estadoMaquina);
@@ -206,13 +217,12 @@ app.post('/v1/auth/login', async (req, res) => {
     const { login, senha } = req.body;
     let conn;
     try {
-        conn = await pool.getConnection();
-        const rows = await conn.query("SELECT * FROM Usuarios WHERE id_login = ? AND senha = ?", [login, senha]);
-
+        conn = await pool.getConnection();       
+        const rows = await conn.query("SELECT * FROM worker WHERE login = ? AND passwd = ?", [login, senha]);
         if (rows.length > 0) {
             const user = rows[0];
-            const token = jwt.sign({ id: user.id_login, nivel: user.nivel_acesso, nome: user.nome }, SECRET_KEY, { expiresIn: '8h' });
-            res.json({ sucesso: true, token: token, user: { nome: user.nome, cargo: user.cargo, nivel: user.nivel_acesso } });
+            const token = jwt.sign({ id: user.login, nivel: user.access_level, nome: user.name }, SECRET_KEY, { expiresIn: '8h' });
+            res.json({ sucesso: true, token: token, user: { nome: user.name, cargo: user.role, nivel: user.access_level } });
         } else {
             res.status(401).json({ sucesso: false, erro: "Credenciais inválidas" });
         }
@@ -290,9 +300,16 @@ app.post('/v1/embrapac/turno/encerrar', async (req, res) => {
     try {
         conn = await pool.getConnection();
         await conn.query(`
-            INSERT INTO Turno (maquina_id, hora_inicio, hora_fim, producao_ok, product_s_count, product_m_count, product_l_count, refugo, downtime_segundos, oee_percentual, turno_ativo) 
-            VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
-            [new Date(estadoMaquina.tsInicio).toISOString().slice(0, 19).replace('T', ' '), new Date(estadoMaquina.tsFim).toISOString().slice(0, 19).replace('T', ' '), estadoMaquina.producao, estadoMaquina.producaoP, estadoMaquina.producaoM, estadoMaquina.producaoG, estadoMaquina.refugo, Math.floor(estadoMaquina.downtime), estadoMaquina.oee]
+            INSERT INTO workshift (
+                conveyorbelt_id, start_time, end_time, total_count, small_count, medium_count, large_count, 
+                stoppage_count, waste, downtime_seconds, oee_percentage, active_state
+            ) VALUES (1, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 0)`,
+            [
+                new Date(estadoMaquina.tsInicio).toISOString().slice(0, 19).replace('T', ' '), 
+                new Date(estadoMaquina.tsFim).toISOString().slice(0, 19).replace('T', ' '), 
+                estadoMaquina.producao, estadoMaquina.producaoP, estadoMaquina.producaoM, estadoMaquina.producaoG, 
+                estadoMaquina.refugo, Math.floor(estadoMaquina.downtime), estadoMaquina.oee
+            ]
         );
         registrarLogServidor("Turno Encerrado e Guardado no Banco", "NORMAL");
     } catch (err) {
