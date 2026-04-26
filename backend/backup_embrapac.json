@@ -1,27 +1,211 @@
 {
   "estadoMaquina": {
-    "producao": 1790,
-    "producaoP": 604,
-    "producaoM": 583,
-    "producaoG": 603,
+    "producao": 4094,
+    "producaoP": 1382,
+    "producaoM": 1340,
+    "producaoG": 1374,
     "refugo": 3,
-    "meta": 1790,
+    "meta": 5000,
     "ciclo": 1,
-    "status": "PARADO",
-    "ultimoUpdate": 1777182861995,
-    "turnoAtivo": false,
-    "horaInicioTurno": "26/04/2026, 01:37:22",
+    "status": "OPERANDO",
+    "ultimoUpdate": 1777192625646,
+    "turnoAtivo": true,
+    "horaInicioTurno": "26/04/2026, 04:42:57",
     "horaFimTurno": "26/04/2026, 02:04:59",
     "horaFalha": "--:--",
-    "downtime": 9.005999999999998,
-    "oee": 99.3,
+    "downtime": 61.038999999999994,
+    "oee": 98,
     "motivoParada": "",
-    "tsInicio": 1777178242453,
-    "relatorioPendente": true,
+    "tsInicio": 1777189377399,
+    "relatorioPendente": false,
     "inicioDowntimeMs": null,
     "tsFim": 1777179899862
   },
   "historicoLogs": [
+    {
+      "timestamp": 1777192531547,
+      "data": "2026-04-26T08:35:31.547Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777192510770,
+      "data": "2026-04-26T08:35:10.770Z",
+      "evento": "Parâmetros Alterados (Meta: 5000, Ciclo: 1s)",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777192498581,
+      "data": "2026-04-26T08:34:58.581Z",
+      "evento": "Meta atingida. Linha parada.",
+      "tipo": "ALERTA",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1777192497579,
+      "data": "2026-04-26T08:34:57.579Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777192016417,
+      "data": "2026-04-26T08:26:56.417Z",
+      "evento": "Meta atingida. Linha parada.",
+      "tipo": "ALERTA",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1777191081258,
+      "data": "2026-04-26T08:11:21.258Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777191080761,
+      "data": "2026-04-26T08:11:20.761Z",
+      "evento": "Comando Remoto: Parar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777190100453,
+      "data": "2026-04-26T07:55:00.453Z",
+      "evento": "Login API realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777190087370,
+      "data": "2026-04-26T07:54:47.370Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777190086764,
+      "data": "2026-04-26T07:54:46.764Z",
+      "evento": "Parada Manual",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777190083413,
+      "data": "2026-04-26T07:54:43.413Z",
+      "evento": "Login API realizado: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777190083205,
+      "data": "2026-04-26T07:54:43.205Z",
+      "evento": "Login API realizado: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777189871020,
+      "data": "2026-04-26T07:51:11.020Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777189870518,
+      "data": "2026-04-26T07:51:10.518Z",
+      "evento": "Parada Manual",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777189377399,
+      "data": "2026-04-26T07:42:57.399Z",
+      "evento": "Turno Iniciado",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777189376182,
+      "data": "2026-04-26T07:42:56.182Z",
+      "evento": "Relatório CSV Exportado",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777189370294,
+      "data": "2026-04-26T07:42:50.294Z",
+      "evento": "Comando Remoto: Iniciar",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777189364226,
+      "data": "2026-04-26T07:42:44.226Z",
+      "evento": "Parâmetros Alterados (Meta: 4000, Ciclo: 1s)",
+      "tipo": "ALERTA",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777189350414,
+      "data": "2026-04-26T07:42:30.414Z",
+      "evento": "Login API realizado: Sr. Carlos",
+      "tipo": "INFORME",
+      "usuario": "Sr. Carlos",
+      "cargo": "Supervisor"
+    },
+    {
+      "timestamp": 1777189343906,
+      "data": "2026-04-26T07:42:23.906Z",
+      "evento": "Meta atingida. Linha parada.",
+      "tipo": "ALERTA",
+      "usuario": "Sistema",
+      "cargo": "Automático"
+    },
+    {
+      "timestamp": 1777189342904,
+      "data": "2026-04-26T07:42:22.904Z",
+      "evento": "Produção Iniciada",
+      "tipo": "NORMAL",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777189340017,
+      "data": "2026-04-26T07:42:20.017Z",
+      "evento": "Login API realizado: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
+    {
+      "timestamp": 1777189339361,
+      "data": "2026-04-26T07:42:19.361Z",
+      "evento": "Login API realizado: Sr. Agenor",
+      "tipo": "INFORME",
+      "usuario": "Sr. Agenor",
+      "cargo": "Operador"
+    },
     {
       "timestamp": 1777185255381,
       "data": "2026-04-26T06:34:15.381Z",
