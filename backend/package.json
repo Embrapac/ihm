@@ -18,6 +18,7 @@
     "jsonwebtoken": "^9.0.3",
     "mariadb": "3.2.3",
     "mqtt": "^5.15.1",
+    "mysql2": "^3.22.2",
     "socket.io": "^4.8.3"
   }
 }

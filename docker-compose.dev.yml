@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # --- BANCO DE DADOS (MariaDB) ISOLADO ---
+  db:
+    image: mariadb:10.11
+    container_name: embrapac-db
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: quebra_gelo
+      MARIADB_DATABASE: embrapac
+    volumes:
+      - ./backend/migrations:/docker-entrypoint-initdb.d
+      - mariadb_data:/var/lib/mysql
+
+  # --- BROKER IOT (MQTT) ---
+  mqtt:
+    image: eclipse-mosquitto:1.6.15
+    container_name: embrapac-mqtt
+    restart: always
+    ports:
+      - "1883:1883"
+
+  # --- EDGE SERVER (Node.js) ---
+  app:
+    build:
+      context: ./backend
+    container_name: embrapac-app
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - mqtt
+    environment:
+      # Apontando para o banco de dados interno do Docker
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: quebra_gelo
+      DB_NAME: embrapac
+      MQTT_BROKER_URL: mqtt://mqtt:1883
+      MQTT_TOPIC_SENSOR: embrapac/ihm/count
+      MQTT_TOPIC_COMMAND: embrapac/comando/esteira
+    volumes:
+      - ./frontend:/app/../frontend
+      - ./backend/backup_embrapac.json:/app/backup_embrapac.json
+
+volumes:
+  mariadb_data:

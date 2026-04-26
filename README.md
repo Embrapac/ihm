@@ -19,11 +19,25 @@ O sistema evoluiu de uma simulação local para uma arquitetura **OT (Operation 
 
 ### Principais Funcionalidades
 
+* **Orquestração em Docker:** 
+O sistema agora opera totalmente em containers, garantindo que o servidor, o broker MQTT e o simulador de campo funcionem em harmonia com rede de baixa latência.
 * **Integração IoT Bidirecional (MQTT):** Comunicação padronizada em JSON com microcontroladores (PIC32) e câmeras de Visão Computacional, suportando tolerância a falhas de rede.
-* **Segurança Zero Trust (JWT):** Autenticação corporativa baseada em JSON Web Tokens. As rotas da API e os comandos via WebSockets estão blindados contra acessos não autorizados.
-* **Persistência Industrial (MariaDB):** Registro auditável e seguro de todos os logs, alarmes e métricas de turnos em um banco de dados relacional de alto desempenho.
-* **Sincronização em Tempo Real:** Comunicação instantânea entre a tela do Operador e do Supervisor via `Socket.io`.
-* **Protocolo de Segurança de Falhas:** Sistema de tratamento de alarmes em **2 Etapas** (Reconhecimento seguido de Confirmação).
+* **Classificação Cromática de Produção:** Padronização visual dos lotes conforme as metas de precisão da RFP:
+
+    Pequena (P): Identificada pela cor Amarela (#f1c40f).
+
+    Média (M): Identificada pela cor Azul (#3498db).
+
+    Grande (G): Identificada pela cor Vermelha (#e74c3c).
+* **Segurança Zero Trust (JWT):** 
+Autenticação corporativa baseada em JSON Web Tokens. As rotas da API e os comandos via WebSockets estão blindados contra acessos não autorizados.
+* **Persistência Industrial (MariaDB):** 
+Registro auditável e seguro de todos os logs, alarmes e métricas de turnos em um banco de dados relacional de alto desempenho.
+* **Sincronização em Tempo Real:** 
+Comunicação instantânea entre a tela do Operador e do Supervisor via `Socket.io`.
+* **Protocolo de Segurança de Falhas:** 
+Sistema de tratamento de alarmes em **2 Etapas** (Reconhecimento seguido de Confirmação).
+ Segurança NR-12: Implementação de lógica de parada de emergência com resposta inferior a 500ms e sistema de reconhecimento de alarmes auditável.
 
 ---
 
@@ -67,6 +81,24 @@ Para garantir a simetria de dados entre a equipe de Software e a de Hardware (Vi
   "confidence": 0.98,
   "timestamp": 1713000005000
 }
+```
+#### Como Executar (Modo Orquestrado)
+
+A partir da v4.0, a execução é simplificada via Docker, eliminando a necessidade de instalar manualmente o Node.js ou o MariaDB no sistema hospedeiro.
+
+* Passos de Instalação
+
+  1. Acesse a pasta raiz do projeto: ~/IHM/ihm.
+
+  2. Inicie toda a infraestrutura industrial:
+  
+```Bash
+    sudo docker compose down && sudo docker compose up -d --build
+```
+  3. Acompanhe o processamento das caixas em tempo real:
+    
+```Bash
+    sudo docker logs -f embrapac-simulador
 ```
 
 ### 3. Pacote de Segurança (JWT)
@@ -181,6 +213,19 @@ MQTT_TOPIC_COMMAND=embrapac/comando/esteira
 ```
 ***
 
+### 🗄️ Configuração do Ambiente (.env)
+
+* O sistema utiliza um arquivo .env mapeado via volume para as credenciais do banco e configurações de rede:
+
+```bash
+DB_HOST=10.7.202.10
+DB_USER=agenor
+DB_PASSWORD=admin123
+DB_NAME=embrapac
+MQTT_BROKER_URL=mqtt://localhost:1883
+```
+***
+
 ### Acessar o Sistema
 
 Abra o seu navegador no endereço fornecido pelo servidor (ex: http://localhost:3000/Tela_1_operador.html).
@@ -195,6 +240,8 @@ O sistema validará o login no banco de dados gerando um Token JWT válido.
 
 ## Histórico de Versões
 
+ *   v4.0 - Dockerized Edge Server (Atual): Orquestração completa em containers, comando UPDATE_SPEED em tempo real e conformidade técnica com a RFP.
+  
  *   v3.0 - Industrial Edge Server (Atual): Migração para MariaDB, Implementação de MQTT bidirecional, payloads JSON e Segurança Zero Trust com JWT.
 
  *   v2.0 - Client-Server: Implementação do Node.js e WebSockets para sincronização de telas.

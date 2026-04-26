@@ -1,27 +1,11 @@
 (function() {
     try {
-        let roleId = sessionStorage.getItem('embrapac_active_role');
         let cargo = 'visitante';
+        const userStr = sessionStorage.getItem('embrapac_user');
         
-        const sessoesStr = localStorage.getItem('embrapac_sessions');
-        const sessoes = sessoesStr ? JSON.parse(sessoesStr) : {};        
-       
-        const isDeslogada = sessionStorage.getItem('embrapac_aba_deslogada') === 'true';       
-   
-        if (!roleId && !isDeslogada) {
-            const pathname = window.location.pathname;
-            if (pathname.includes('Tela_1_operador')) {
-                if (sessoes['operador']) roleId = 'operador';
-                else if (sessoes['admin']) roleId = 'admin';
-            } else if (pathname.includes('Tela_3_supervisor')) {
-                if (sessoes['admin']) roleId = 'admin';
-            } else {
-                roleId = localStorage.getItem('embrapac_last_role');
-            }
-        }
-
-        if (roleId && sessoes[roleId]) {
-            cargo = sessoes[roleId].cargo;
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            cargo = user.cargo;
         }
 
         const key = 'embrapac_theme_' + cargo;

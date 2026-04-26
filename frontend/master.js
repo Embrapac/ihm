@@ -6,7 +6,6 @@
 /* --- 1. CONEXÃO COM O SERVIDOR NODE.JS (TOLERÂNCIA A FALHAS) --- */
 let socket = null;
 
-// Verifica se a biblioteca do servidor conseguiu carregar
 if (typeof io !== 'undefined') {
     socket = io('http://localhost:3000');
 
@@ -19,13 +18,10 @@ if (typeof io !== 'undefined') {
         window.dispatchEvent(new CustomEvent('IHM_Update', { detail: estadoServidor }));
     });
 
-    // NOVO: Quando o servidor mandar a lista de logs nova, salva e atualiza a tela
     socket.on('historicoAtualizado', (logsServidor) => {
         localStorage.setItem('embrapac_logs', JSON.stringify(logsServidor));
-        
-        // Se a pessoa estiver na tela de Histórico, manda desenhar a tabela de novo
         if (typeof renderizarHistoricoCompleto === 'function') {
-            renderizarHistoricoCompleto(false); // false = não reseta a paginação
+            renderizarHistoricoCompleto(false);
         }
     });
 
@@ -33,13 +29,12 @@ if (typeof io !== 'undefined') {
     console.warn('[!] Servidor Node.js Offline. O Login e a navegação local continuarão funcionando.');
 }
 
-
 /* --- 2. CONFIGURAÇÕES --- */
 const CONFIG = {
     AUTH_TIMEOUT: {
-    'operador': 480, // 8 horas (duração do turno)
-    'admin': 15      // 15 minutos (por segurança)
-},
+        'operador': 480, // 8 horas
+        'admin': 15      // 15 minutos
+    },
     USUARIOS: {
         'operador': { pass: 'operador', nome: 'Sr. Agenor', cargo: 'Operador', nivel: 1 },
         'admin':    { pass: 'admin',    nome: 'Sr. Carlos', cargo: 'Supervisor', nivel: 2 },
@@ -48,40 +43,36 @@ const CONFIG = {
 };
 
 const ESTADO_PADRAO = {
-    producao: 0, refugo: 0, meta: 5000, ciclo: 3, status: 'OPERANDO', 
+    producao: 0, producaoP: 0, producaoM: 0, producaoG: 0, 
+    refugo: 0, meta: 5000, ciclo: 3, status: 'PARADO',    
     ultimoUpdate: Date.now(), turnoAtivo: false, horaInicioTurno: '--:--', 
     horaFimTurno: '--:--', horaFalha: '--:--', downtime: 0, oee: 0
 };
 
-/* --- 2. LOGGER --- */
+/* --- 3. LOGGER --- */
 const Logger = {
     registrar: (evento, tipo = 'NORMAL') => {
         let user = { nome: 'Sistema', cargo: 'Automático' };
         
-        // Identifica com precisão quem está apertando o botão nesta aba
         if (typeof Sessao !== 'undefined') {
-            const role = Sessao.obterPapelDestaAba();
-            if (role) {
-                const sessoes = Sessao._getSessoes();
-                if (sessoes[role]) user = sessoes[role];
+            const sessaoAtual = Sessao.validar();
+            if (sessaoAtual) {
+                user = sessaoAtual;
             }
         }
         
-        // Cria o pacote do novo log
         const novoLog = {
             timestamp: Date.now(), 
-            data: new Date().toISOString(), // PADRÃO ISO
+            data: new Date().toISOString(),
             evento: evento, 
             tipo: tipo, 
             usuario: user.nome, 
             cargo: user.cargo
         };
 
-        // Se tem servidor conectado, manda o pacote pra ele!
         if (socket && socket.connected) {
             socket.emit('registrarLog', novoLog);
         } else {
-            // MODO OFFLINE: Salva localmente se o servidor caiu
             const logs = JSON.parse(localStorage.getItem('embrapac_logs') || '[]');
             logs.unshift(novoLog);
             if (logs.length > 300) logs.pop();
@@ -94,143 +85,74 @@ const Logger = {
     }
 };
 
-/* --- 4. SISTEMA DE SESSÃO (Cofre Multi-Usuário) --- */
+/* --- 4. SISTEMA DE SESSÃO (Isolamento Total + Timer + Modo Offline) --- */
 const Sessao = {
-    _getSessoes: function() {
-        return JSON.parse(localStorage.getItem('embrapac_sessions') || '{}');
-    },
-    _setSessoes: function(sessoes) {
-        localStorage.setItem('embrapac_sessions', JSON.stringify(sessoes));
-    },
-
     iniciar: function(usuarioKey) {
+        if (typeof CONFIG === 'undefined' || !CONFIG.USUARIOS[usuarioKey]) return false;
         const dados = CONFIG.USUARIOS[usuarioKey];
-        if (!dados) return false;
         
-        const sessoes = this._getSessoes();
-        sessoes[usuarioKey] = { ...dados, id: usuarioKey, ultimoAcesso: Date.now() };
-        this._setSessoes(sessoes);
+        const role = dados.nivel === 2 ? 'admin' : 'operador';
+        const userData = { ...dados, id: role, ultimoAcesso: Date.now() };
+
+        sessionStorage.setItem('embrapac_token', 'token_local_offline');
+        sessionStorage.setItem('embrapac_user', JSON.stringify(userData));
         
-        // Remove a trava de deslogado ao fazer um novo login bem-sucedido
-        sessionStorage.removeItem('embrapac_aba_deslogada');
-        sessionStorage.setItem('embrapac_active_role', usuarioKey);
-        localStorage.setItem('embrapac_last_role', usuarioKey); 
-        
-        Logger.registrar(`Login realizado: ${dados.nome}`, "INFORME");
+        Logger.registrar(`Login Local (Offline): ${dados.nome}`, "INFORME");
         return true;
     },
 
-    iniciarComDados: function(userApi) {
-        const sessoes = this._getSessoes();
-        
-        // Define o papel interno do frontend baseado no nível que veio do MariaDB
+    iniciarComDados: function(userApi, token) {
         const role = userApi.nivel === 2 ? 'admin' : 'operador';
+        const userData = { ...userApi, id: role, ultimoAcesso: Date.now() };
+
+        sessionStorage.setItem('embrapac_token', token);
+        sessionStorage.setItem('embrapac_user', JSON.stringify(userData));
         
-        sessoes[role] = { ...userApi, id: role, ultimoAcesso: Date.now() };
-        this._setSessoes(sessoes);
-        
-        sessionStorage.removeItem('embrapac_aba_deslogada');
-        sessionStorage.setItem('embrapac_active_role', role);
-        localStorage.setItem('embrapac_last_role', role); 
-        
-        Logger.registrar(`Login realizado via API: ${userApi.nome}`, "INFORME");
+        Logger.registrar(`Login API realizado: ${userApi.nome}`, "INFORME");
         return true;
     },
 
     sair: function() {
-        const role = this.obterPapelDestaAba();
-        if (!role) return;
-
-        const sessoes = this._getSessoes();
-        const user = sessoes[role];
-        const nome = user ? user.nome : 'Usuário';
-
-        delete sessoes[role];
-        this._setSessoes(sessoes);
+        const userStr = sessionStorage.getItem('embrapac_user');
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            Logger.registrar(`Logout realizado: ${user.nome}`, "INFORME");
+        }
         
-        // Coloca a etiqueta nesta aba para ela não puxar outro login ao recarregar
-        sessionStorage.removeItem('embrapac_active_role');
-        sessionStorage.setItem('embrapac_aba_deslogada', 'true');
-        
-        const logs = JSON.parse(localStorage.getItem('embrapac_logs') || '[]');
-        logs.unshift({
-            timestamp: Date.now(), 
-            data: new Date().toISOString(), 
-            evento: `Logout realizado: ${nome}`,
-            tipo: 'INFORME',
-            usuario: nome,
-            cargo: 'Sistema'
-        });
-        localStorage.setItem('embrapac_logs', JSON.stringify(logs));
+        sessionStorage.removeItem('embrapac_token');
+        sessionStorage.removeItem('embrapac_user');
 
         if (window.location.pathname.includes('Tela_')) {
             window.location.reload();
         }
     },
 
-obterPapelDestaAba: function() {       
-        if (sessionStorage.getItem('embrapac_aba_deslogada') === 'true') {
+    validar: function() {
+        const userStr = sessionStorage.getItem('embrapac_user');
+        if (!userStr) return null; 
+        
+        const sessao = JSON.parse(userStr);
+        const pathname = window.location.pathname;
+
+        if (pathname.includes('Tela_3_supervisor') && sessao.nivel !== 2) {
+            return null; 
+        }
+
+        const tempoLimite = (typeof CONFIG !== 'undefined' && CONFIG.AUTH_TIMEOUT[sessao.id]) 
+                            ? CONFIG.AUTH_TIMEOUT[sessao.id] 
+                            : 15; 
+                            
+        const minutosInativo = (Date.now() - sessao.ultimoAcesso) / 60000;
+
+        if (minutosInativo > tempoLimite) {
+            console.warn(`[!] Sessão expirada por inatividade.`);
+            this.sair(); 
             return null;
         }
 
-        const pathname = window.location.pathname;
-        const sessoes = this._getSessoes();
-        let role = sessionStorage.getItem('embrapac_active_role');
-
-        // --- MURALHA DE SEGURANÇA (RBAC) ---
-        if (pathname.includes('Tela_3_supervisor')) {
-            // TELA 3: Exclusiva do Supervisor. Se não for ele, bloqueia o acesso.
-            if (sessoes['admin']) {
-                role = 'admin';
-            } else {
-                role = null; 
-            }
-        } 
-        else if (pathname.includes('Tela_1_operador')) {
-            // TELA 1: Aberta para Operador ou Supervisor
-            if (!role || !sessoes[role]) {
-                if (sessoes['operador']) role = 'operador';
-                else if (sessoes['admin']) role = 'admin';
-                else role = null;
-            }
-        }
-        else {
-            // TELA 2 (Histórico) e outras: Usa o último login válido
-            if (!role || !sessoes[role]) {
-                const lastRole = localStorage.getItem('embrapac_last_role');
-                if (lastRole && sessoes[lastRole]) role = lastRole;
-                else role = null;
-            }
-        }
-
-        if (role) sessionStorage.setItem('embrapac_active_role', role);
-        return role;
-    },
-
-    validar: function() {
-        const role = this.obterPapelDestaAba();
-        if (!role) return false;
-
-        const sessoes = this._getSessoes();
-        const sessao = sessoes[role];
-        
-        if (!sessao) {
-            sessionStorage.removeItem('embrapac_active_role');
-            return false;
-        }
-
-        const minutos = (Date.now() - sessao.ultimoAcesso) / 60000;
-        const tempoLimite = CONFIG.AUTH_TIMEOUT[sessao.id] || 15;
-
-        if (minutos > tempoLimite) {
-            this.sair();
-            return false;
-        }
-       
         if (Date.now() - sessao.ultimoAcesso > 60000) {
             sessao.ultimoAcesso = Date.now();
-            sessoes[role] = sessao;
-            this._setSessoes(sessoes);
+            sessionStorage.setItem('embrapac_user', JSON.stringify(sessao));
         }
 
         return sessao;
@@ -246,6 +168,8 @@ obterPapelDestaAba: function() {
             </button>
         `;
 
+        const navLockIcon = document.querySelector('nav a[href="Tela_3_supervisor.html"] i');
+
         if (divInfo) {
             if (sessao) {                            
                 divInfo.innerHTML = `
@@ -255,18 +179,22 @@ obterPapelDestaAba: function() {
                         <i class="fas fa-sign-out-alt"></i> Sair
                     </button>
                 `;
-                // Fecha a janela de login automaticamente se logar em outra aba!
+                
                 const modal = document.getElementById('login-modal');
                 if (modal) modal.style.display = 'none';
                 
+                if (navLockIcon) {
+                    navLockIcon.className = (sessao.nivel === 2 || sessao.cargo === 'Supervisor') ? "fas fa-lock-open" : "fas fa-lock";
+                }
             } else {                     
                 divInfo.innerHTML = `
                     <span><i class="fas fa-lock"></i> Acesso Restrito</span>
                     ${btnTema}
                 `;
-                // Mostra a janela de login se o usuário clicar em "Sair" na outra aba!
                 const modal = document.getElementById('login-modal');
                 if (modal) modal.style.display = 'flex';
+
+                if (navLockIcon) navLockIcon.className = "fas fa-lock";
             }
                         
             if (typeof aplicarTemaDoUsuario === 'function') aplicarTemaDoUsuario();
@@ -284,9 +212,7 @@ obterPapelDestaAba: function() {
             const dados = await resposta.json();
 
             if (dados.sucesso) {
-                // Guarda o Token e os dados no navegador
-                localStorage.setItem('embrapac_token', dados.token);
-                this.iniciarComDados(dados.user); 
+                this.iniciarComDados(dados.user, dados.token); 
                 return true;
             } else {
                 alert(dados.erro);
@@ -300,7 +226,6 @@ obterPapelDestaAba: function() {
 };
 
 /* --- 5. CLASSE MÁQUINA (PLC Virtual Real-Time) --- */
-/* --- 5. CLASSE MÁQUINA (PLC Virtual Real-Time) --- */
 const Maquina = {
     ler: () => {
         return JSON.parse(localStorage.getItem('embrapac_estado') || JSON.stringify(ESTADO_PADRAO));
@@ -309,11 +234,13 @@ const Maquina = {
         localStorage.setItem('embrapac_estado', JSON.stringify(novoEstado));
         
         if (socket && socket.connected) {
-            // Pega o crachá que foi salvo na hora do Login
-            const meuToken = localStorage.getItem('embrapac_token');
-            
-            // Envia para o servidor o Estado + O Crachá
-            socket.emit('atualizarEstado', { estado: novoEstado, token: meuToken });
+            // A CORREÇÃO MÁGICA: Agora a máquina pega o Token do cofre correto!
+            const meuToken = sessionStorage.getItem('embrapac_token');
+            if (meuToken) {
+                socket.emit('atualizarEstado', { estado: novoEstado, token: meuToken });
+            } else {
+                console.warn("[!] Sem permissão para enviar comando.");
+            }
         }
     },
     processarCiclo: function() {
@@ -321,19 +248,18 @@ const Maquina = {
     }
 };
 
-// --- 3. SISTEMA DE TEMAS ---
-// 1. Obtém a chave de tema do usuário logado
+// --- 6. SISTEMA DE TEMAS (Sincronizado com o Isolamento de Abas) ---
 function obterChaveTema() {
-    if (typeof Sessao !== 'undefined') {
-        const role = Sessao.obterPapelDestaAba();
-        if (role) {
-            const sessoes = Sessao._getSessoes();
-            if (sessoes[role]) {
-                return 'embrapac_theme_' + sessoes[role].cargo;
-            }
-        }
+    let cargo = 'visitante';
+    
+    // Busca o usuário logado NESTA aba específica
+    const userStr = sessionStorage.getItem('embrapac_user');
+    if (userStr) {
+        const user = JSON.parse(userStr);
+        cargo = user.cargo;
     }
-    return 'embrapac_theme_visitante'; 
+    
+    return 'embrapac_theme_' + cargo; 
 }
 
 // 2. Aplica o tema específico daquele usuário na tela
@@ -348,10 +274,10 @@ function aplicarTemaDoUsuario() {
 function alternarTema() {
     const atual = document.documentElement.getAttribute('data-theme');
     const novo = atual === 'dark' ? 'light' : 'dark';
-    const chave = obterChaveTema(); // Pega a gaveta do usuário logado
+    const chave = obterChaveTema(); 
     
     document.documentElement.setAttribute('data-theme', novo);
-    localStorage.setItem(chave, novo); // Salva apenas na gaveta dele
+    localStorage.setItem(chave, novo); // Salva a preferência globalmente para este cargo
     atualizarIconeTema(novo);
 }
 
@@ -369,25 +295,50 @@ function atualizarIconeTema(modo) {
     }
 }
 
-// 5. Sincronização Inteligente entre Abas (Múltiplos Usuários)
+// 5. Sincronização de Temas entre abas do mesmo cargo
 window.addEventListener('storage', (event) => {
-    if (event.key === 'embrapac_sessions') {
-        if (typeof Sessao !== 'undefined') Sessao.atualizarHeader();
-    }
-
-    if (typeof obterChaveTema === 'function') {
-        const chaveAtual = obterChaveTema();
-        if (event.key === chaveAtual) {
-            const novoTema = event.newValue || 'light';
-            document.documentElement.setAttribute('data-theme', novoTema);
-            if (typeof atualizarIconeTema === 'function') atualizarIconeTema(novoTema);
-        }
+    const chaveAtual = obterChaveTema();
+    if (event.key === chaveAtual) {
+        const novoTema = event.newValue || 'light';
+        document.documentElement.setAttribute('data-theme', novoTema);
+        if (typeof atualizarIconeTema === 'function') atualizarIconeTema(novoTema);
     }
 });
 
-// 6. Correção de Sincronia para Arquivos Locais (file:///)
+// 6. Verificação de visibilidade para garantir que o cabeçalho esteja atualizado
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden && typeof Sessao !== 'undefined') {
         Sessao.atualizarHeader(); 
+    }
+});
+
+// --- 7. FACILITADORES DE LOGIN (TECLA ENTER) ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Escuta o Enter no campo de login do Operador (Tela 1)
+    const passInputOperador = document.getElementById('operador-pass');
+    if (passInputOperador) {
+        passInputOperador.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                // A função attemptLoginOperator() já existe no seu operador.js
+                if (typeof attemptLoginOperator === 'function') {
+                    attemptLoginOperator();
+                }
+            }
+        });
+    }
+
+   
+    const passInputSupervisor = document.getElementById('supervisor-pass');
+    if (passInputSupervisor) {
+        passInputSupervisor.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                // A função attemptLoginAdmin() já existe no seu supervisor.js
+                if (typeof attemptLoginAdmin === 'function') {
+                    attemptLoginAdmin();
+                }
+            }
+        });
     }
 });

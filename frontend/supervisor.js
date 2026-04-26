@@ -174,6 +174,12 @@ function registrarRefugo() {
     if (estado.producao > 0) {
         estado.producao--;
         estado.refugo++;
+
+        // CORREÇÃO: Mantém a matemática do Total = P + M + G perfeita
+        if (estado.producaoP > 0) estado.producaoP--;
+        else if (estado.producaoM > 0) estado.producaoM--;
+        else if (estado.producaoG > 0) estado.producaoG--;
+
         Maquina.escrever(estado);
         estado = Maquina.processarCiclo(); // ACELERAÇÃO DA UI
         Logger.registrar("Apontamento Manual de Refugo", "ALERTA"); 
@@ -299,7 +305,16 @@ function atualizarInterface() {
     } else if (estado.status === 'PARADO') {
         elDisplay.classList.add('status-stopped'); 
         elDisplay.innerText = "PARADO";        
-        if(elDetail) elDetail.innerText = "Linha parada. Aguardando comando."; 
+        
+        // NOVO: Verifica se parou porque bateu a meta
+        if (estado.producao >= estado.meta && estado.meta > 0) {
+            if(elDetail) {
+                elDetail.innerHTML = "<strong style='color: var(--success-color);'><i class='fas fa-trophy'></i> META ATINGIDA!</strong> A linha parou automaticamente.";
+            }
+        } else {
+            if(elDetail) elDetail.innerText = "Linha parada. Aguardando comando."; 
+        }
+        
         if(elBtnStart) { elBtnStart.disabled = false; elBtnStart.className = "btn-action btn-green"; }
         if(elBtnStop) { elBtnStop.disabled = true; elBtnStop.className = "btn-action btn-disabled"; }
 

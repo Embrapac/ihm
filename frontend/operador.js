@@ -89,6 +89,12 @@ function registrarRefugo() {
     if (estadoLocal.producao > 0) {
         estadoLocal.producao--;
         estadoLocal.refugo++;
+
+        // CORREÇÃO: Mantém a matemática do Total = P + M + G perfeita
+        if (estadoLocal.producaoP > 0) estadoLocal.producaoP--;
+        else if (estadoLocal.producaoM > 0) estadoLocal.producaoM--;
+        else if (estadoLocal.producaoG > 0) estadoLocal.producaoG--;
+
         Maquina.escrever(estadoLocal);
         estadoLocal = Maquina.processarCiclo();
         Logger.registrar("Apontamento Manual de Refugo (Operador)", "ALERTA"); 
@@ -187,8 +193,14 @@ function renderizar() {
             elDisplay.classList.add('status-stopped');
             elDisplay.innerText = "PARADO";
             
-            // Texto detalhado
-            if(elDetail) elDetail.innerText = "Linha parada. Aguardando comando.";
+            // NOVO: Verifica se parou porque bateu a meta
+            if (estadoLocal.producao >= estadoLocal.meta && estadoLocal.meta > 0) {
+                if(elDetail) {
+                    elDetail.innerHTML = "<strong style='color: var(--success-color);'><i class='fas fa-trophy'></i> META ATINGIDA!</strong> A linha parou automaticamente.";
+                }
+            } else {
+                if(elDetail) elDetail.innerText = "Linha parada. Aguardando comando.";
+            }
             
             // Botões: Start Verde (Ativo) / Stop Cinza (Desativado)
             if(elBtnStart) { 
@@ -239,8 +251,16 @@ function renderizar() {
 
     // --- ATUALIZAÇÃO DOS KPIS USANDO CACHE ---
 
-    // 1. Atualiza Produção
+    // 1. Atualiza Produção (Total e Categorias P, M, G)
     if (elKpiProd) elKpiProd.innerText = estadoLocal.producao;
+
+    const elKpiP = document.getElementById('kpi-prod-p');
+    const elKpiM = document.getElementById('kpi-prod-m');
+    const elKpiG = document.getElementById('kpi-prod-g');
+
+    if (elKpiP) elKpiP.innerText = estadoLocal.producaoP || 0;
+    if (elKpiM) elKpiM.innerText = estadoLocal.producaoM || 0;
+    if (elKpiG) elKpiG.innerText = estadoLocal.producaoG || 0;
 
     // 2. Atualiza Taxa de Refugo (%)
     if (elKpiRefugo) {

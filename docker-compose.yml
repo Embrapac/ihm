@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mqtt:
+    image: eclipse-mosquitto:1.6.15
+    container_name: embrapac-mqtt
+    restart: always
+    network_mode: "host" 
+
+  app:
+    build:
+      context: ./backend
+    container_name: embrapac-app
+    restart: "no"
+    network_mode: "host"
+    environment:
+      DB_HOST: 10.7.202.10
+      DB_PORT: 13306
+      DB_USER: agenor
+      DB_PASSWORD: admin123
+      DB_NAME: embrapac
+      MARIADB_ALLOW_REDIRECTS: "false" 
+      MQTT_BROKER_URL: mqtt://localhost:1883
+      MQTT_TOPIC_SENSOR: embrapac/ihm/count
+      MQTT_TOPIC_COMMAND: embrapac/comando/esteira
+    volumes:
+      - ./frontend:/app/../frontend
+      - ./backend/backup_embrapac.json:/app/backup_embrapac.json
+      - ./backend:/app
+
+  simulador:
+    build:
+      context: ./backend
+    container_name: embrapac-simulador
+    restart: "no"
+    network_mode: "host"
+    environment:
+      MQTT_BROKER_URL: mqtt://localhost:1883
+      MQTT_TOPIC_SENSOR: embrapac/ihm/count
+      MQTT_TOPIC_COMMAND: embrapac/comando/esteira
+    volumes:
+      - ./backend:/app
+    command: node simulador.js

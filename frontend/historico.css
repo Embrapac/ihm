@@ -261,20 +261,6 @@ input[type=number]::-webkit-outer-spin-button {
     display: block !important; width: 25px; height: 100%;
 }
 
-/* KPIs */
-.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-.kpi-box { 
-    background-color: rgba(0, 59, 115, 0.15); /* Fundo azul transparente (Logo) */
-    border: 1px solid rgba(0, 59, 115, 0.3);  /* Borda azul transparente */
-    backdrop-filter: blur(4px);               /* Mantém o Efeito Vidro nas caixas */
-    padding: 15px; 
-    border-radius: 8px; 
-}
-
-.kpi-val { font-size: 1.5rem; font-weight: 800; color: var(--primary-blue); }
-.kpi-label { font-size: 0.75rem; color: #666; text-transform: uppercase; margin-top: 5px; }
-
 /* Alarm Panel */
 #alarm-panel { background-color: var(--danger-color); color: var(--text-light); padding: 20px 30px; display: none; justify-content: space-between; align-items: center; position: fixed; bottom: 0; left: 0; width: 100%; box-sizing: border-box; border-top: 5px solid #b71c1c; z-index: 1000; box-shadow: 0 -4px 20px rgba(220, 53, 69, 0.3); }
 #alarm-panel.active { display: flex; animation: slideUp 0.3s ease-out; }
@@ -293,3 +279,81 @@ input[type=number]::-webkit-outer-spin-button {
 /* Pulso Verde Amigável */
 @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* Container da Grade de KPIs */
+.kpi-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px; /* Aumentamos um pouco o espaçamento para respirar melhor */
+}
+
+/* Box Individual de KPI */
+.kpi-box { 
+    background-color: rgba(0, 59, 115, 0.15); /* Fundo original */
+    border: 1px solid rgba(0, 59, 115, 0.3);
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    padding: 15px !important;
+    
+    /* FIX DE ALINHAMENTO: Altura fixa para todos os boxes */
+    height: 160px !important; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribui conteúdo no topo, meio e fundo */
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* Valor Principal (Números Grandes) */
+.kpi-val { 
+    font-size: 1.8rem; 
+    font-weight: 800; 
+    color: var(--primary-blue); 
+    margin: 0;
+    line-height: 1;
+}
+
+/* Legenda (Texto no rodapé do box) */
+.kpi-label { 
+    font-size: 0.75rem; 
+    color: #666; 
+    text-transform: uppercase; 
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Container das Sub-Caixas (P, M, G) com alinhamento perfeito */
+.sub-caixas-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+    margin: 5px 0;
+}
+
+/* Estilo base das etiquetas */
+.sub-caixa {
+    background: rgba(0,0,0,0.08);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    flex: 1;
+    text-align: center;
+}
+
+/* NOVAS CORES SOLICITADAS */
+.sub-p { 
+    border-bottom: 3px solid #f1c40f; /* Pequena -> Amarela */
+    color: #854d0e; 
+} 
+
+.sub-m { 
+    border-bottom: 3px solid #3498db; /* Média -> Azul */
+    color: #004085;
+}
+
+.sub-g { 
+    border-bottom: 3px solid #e74c3c; /* Grande -> Mantida Vermelha */
+    color: #721c24;
+}

@@ -7,34 +7,45 @@ const { Server } = require('socket.io');
 const fs = require('fs'); 
 const path = require('path');
 const jwt = require('jsonwebtoken');
-const mariadb = require('mariadb');
+const mysql = require('mysql2/promise');
 const mqtt = require('mqtt');
 
 const SECRET_KEY = "EMBRAPAC_SUPER_SECRET_2026";
 
-// ===== 1. CONEXÃO DESACOPLADA COM O MARIADB =====
-const pool = mariadb.createPool({
-    host: process.env.DB_HOST || 'localhost',       
-    user: process.env.DB_USER || 'root',            
-    password: process.env.DB_PASSWORD || 'sua_senha_aqui',   
-    database: process.env.DB_NAME || 'embrapac_db', 
-    connectionLimit: 5
+// ===== 1. CONEXÃO ESTÁVEL COM MYSQL2 =====
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT),
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 5,
+    queueLimit: 0,
+    enableKeepAlive: true
 });
 
-pool.getConnection()
-    .then(conn => {
-        console.log('[📦] Conectado com sucesso ao Banco de Dados MariaDB!');
-        conn.release();
-    })
-    .catch(err => {
-        console.error('[!] Erro Crítico: Não foi possível conectar ao Banco de Dados.', err.message);
-    });
+// Teste de conexão atualizado
+(async () => {
+    try {
+        const connection = await pool.getConnection();
+        console.log('[📦] SUCESSO: Conexão estável com o Banco de Dados!');
+        connection.release();
+    } catch (err) {
+        console.error('[!] Erro de conexão no Banco:', err.message);
+    }
+})();
 
 // ===== 2. CONFIGURAÇÃO DO SERVIDOR WEB (EXPRESS) =====
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
+// ===== REDIRECIONAMENTO PADRÃO =====
+// Se alguém entrar só no "localhost:3000", envia para a tela do Operador
+app.get('/', (req, res) => {
+    res.redirect('/Tela_1_operador.html');
+});
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -46,7 +57,7 @@ const ARQUIVO_BACKUP = './backup_embrapac.json';
 let historicoLogs = [];
 let estadoMaquina = {
     producao: 0, producaoP: 0, producaoM: 0, producaoG: 0,
-    refugo: 0, meta: 5000, ciclo: 3, status: 'OPERANDO',  
+    refugo: 0, meta: 5000, ciclo: 3, status: 'PARADO',  // <-- Só mudamos a palavra 'OPERANDO' para 'PARADO'
     ultimoUpdate: Date.now(), turnoAtivo: false, horaInicioTurno: '--:--', 
     horaFimTurno: '--:--', horaFalha: '--:--', downtime: 0, oee: 0,
     motivoParada: ''
@@ -73,11 +84,10 @@ try {
 function salvarBackup() {
     try {
         const dados = { estadoMaquina, historicoLogs };
-        const arquivoTemp = ARQUIVO_BACKUP + '.tmp'; 
-        fs.writeFileSync(arquivoTemp, JSON.stringify(dados, null, 2), 'utf8');
-        fs.renameSync(arquivoTemp, ARQUIVO_BACKUP);
+        // Gravando diretamente no arquivo sem usar o .tmp (evita o erro EBUSY)
+        fs.writeFileSync(ARQUIVO_BACKUP, JSON.stringify(dados, null, 2), 'utf8');
     } catch (erro) {
-        console.error('[!] Erro ao salvar backup no disco:', erro);
+        console.error('[!] Erro ao salvar backup no disco:', erro.message);
     }
 }
 
@@ -93,17 +103,23 @@ function registrarLogServidor(evento, tipo, usuario_nome = 'Sistema', usuario_ca
     salvarBackup();
 
     const dataFormatada = novoLog.data.slice(0, 19).replace('T', ' ');
-    pool.query(
-        `INSERT INTO Historico_Logs (data_hora, evento, tipo, usuario_nome, usuario_cargo) VALUES (?, ?, ?, ?, ?)`,
-        [dataFormatada, novoLog.evento, novoLog.tipo, novoLog.usuario, novoLog.cargo]
-    ).catch(err => {
-        console.error('[!] Falha não-crítica: Não foi possível gravar o log no MariaDB', err.message);
-    });
+    // Localize o pool.execute dentro de registrarLogServidor
+    pool.execute(
+    `INSERT INTO event (occurrence_time, description, code, message, severity, status) 
+     VALUES (NOW(), ?, 100, ?, ?, 'ACTIVE')`,
+    [
+        `[${novoLog.tipo}] ${novoLog.evento}`, 
+        `${novoLog.usuario} (${novoLog.cargo})`,
+        'LOW' // Tente 'LOW' ou remova a aspa e use 1 se continuar falhando
+    ]
+).catch(err => {
+    console.error('[!] Falha no Banco:', err.message);
+});
 }
 
 // ===== 4. COMUNICAÇÃO IoT (MQTT) =====
 const brokerUrl = process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883';
-const topicoSensor = process.env.MQTT_TOPIC_SENSOR || 'embrapac/producao/sensor';
+const topicoSensor = process.env.MQTT_TOPIC_SENSOR || 'embrapac/ihm/count';
 const topicoComando = process.env.MQTT_TOPIC_COMMAND || 'embrapac/comando/esteira';
 
 const clienteMqtt = mqtt.connect(brokerUrl, { reconnectPeriod: 5000 });
@@ -119,38 +135,46 @@ clienteMqtt.on('error', (erro) => {
 
 clienteMqtt.on('message', (topico, mensagem) => {
     const payloadBruto = mensagem.toString().trim();
-    try {
+    try {        
         const pacoteMqtt = JSON.parse(payloadBruto);
+        console.log("📥 JSON Recebido (Sensor):", JSON.stringify(pacoteMqtt));
 
-        // Verifica se é o tópico do sensor e se contém a chave 'class'
+        // A máquina deve estar OPERANDO e o tópico deve ser o correto. 
+        // Zero restrições de turno aqui! O mundo físico continua a contar.
         if (estadoMaquina.status === 'OPERANDO' && topico === topicoSensor && pacoteMqtt.class) {
             
-            const tipoCaixa = pacoteMqtt.class; // Ex: "Pequena", "Media" ou "Grande"
-            
-            if (tipoCaixa === 'Pequena') {
+            const tipoCaixa = pacoteMqtt.class; 
+            const categoria = String(tipoCaixa).trim().toLowerCase();
+
+            // 1. Conta a categoria de forma rigorosa
+            if (categoria === 'pequena' || categoria === 'p') {  
                 estadoMaquina.producaoP++;
-            } else if (tipoCaixa === 'Media') {
+            } else if (categoria === 'media' || categoria === 'média' || categoria === 'm') {
                 estadoMaquina.producaoM++;
-            } else if (tipoCaixa === 'Grande') {
+            } else if (categoria === 'grande' || categoria === 'g') {
                 estadoMaquina.producaoG++;
             } else {
-                return; // Ignora se vier um valor inesperado
+                console.warn(`[!] Categoria não reconhecida, ignorando: ${tipoCaixa}`);
+                return; // Aborta aqui: impede que a Produção Total suba se a caixa for inválida
             }
-            
+
+            // 2. Incrementa o Total (Garante que Total seja a soma perfeita de P+M+G)
             estadoMaquina.producao++;
             estadoMaquina.ultimoUpdate = Date.now();
             
-            // Lógica de meta e emissão via Socket.io
+            // 3. Verifica se atingiu a Meta
             if (estadoMaquina.producao >= estadoMaquina.meta && estadoMaquina.meta > 0) {
                 estadoMaquina.producao = estadoMaquina.meta;
                 estadoMaquina.status = 'PARADO';
-                registrarLogServidor('Meta atingida pela Inferência IA. Linha parada.', 'ALERTA');
+                registrarLogServidor('Meta atingida. Linha parada.', 'ALERTA');
             }
+            
+            // 4. Atualiza todas as abas instantaneamente
             io.emit('estadoAtualizado', estadoMaquina);
             salvarBackup(); 
         }
     } catch (erro) {
-        console.warn(`[!] Erro ao processar payload da IA: ${payloadBruto}`);
+        console.warn(`[!] Erro ao processar payload do simulador: ${payloadBruto}`);
     }
 });
 
@@ -167,18 +191,36 @@ io.on('connection', (socket) => {
         try {
             const usuarioAutenticado = jwt.verify(tokenEnviado, SECRET_KEY);
             
+            // 1. Verifica se mudou de Ligado para Desligado (START / STOP)
             if (estadoMaquina.status !== novoEstado.status) {   
-            let pacoteJson = { command: "", timestamp: Date.now(), source: usuarioAutenticado.nome };
+                let pacoteJson = { 
+                    command: "", 
+                    timestamp: Date.now(), 
+                    source: usuarioAutenticado.nome,
+                    ciclo: novoEstado.ciclo // <-- Envia o ciclo novo
+                };
 
-            if (novoEstado.status === 'OPERANDO') {
+                if (novoEstado.status === 'OPERANDO') {
                     pacoteJson.command = "START";
+                    console.log(`[⚙️] Comando START (${novoEstado.ciclo}s) enviado por ${usuarioAutenticado.nome}`);
                     clienteMqtt.publish(topicoComando, JSON.stringify(pacoteJson)); 
                 } 
-            else if (novoEstado.status === 'PARADO' || novoEstado.status === 'FALHA') {
+                else if (novoEstado.status === 'PARADO' || novoEstado.status === 'FALHA') {
                     pacoteJson.command = "STOP";
+                    console.log(`[⚙️] Comando STOP enviado por ${usuarioAutenticado.nome}`);
                     clienteMqtt.publish(topicoComando, JSON.stringify(pacoteJson)); 
                 }
-}
+            } 
+            // >>> A CORREÇÃO: Verifica se o ciclo mudou com a máquina já ligada! <<<
+            else if (estadoMaquina.ciclo !== novoEstado.ciclo) {
+                const pacoteVelocidade = { 
+                    command: "UPDATE_SPEED", 
+                    ciclo: novoEstado.ciclo, 
+                    source: usuarioAutenticado.nome 
+                };
+                console.log(`[⏱️] Nova velocidade (${novoEstado.ciclo}s) repassada ao simulador!`);
+                clienteMqtt.publish(topicoComando, JSON.stringify(pacoteVelocidade));
+            }
 
             estadoMaquina = novoEstado;
             socket.broadcast.emit('estadoAtualizado', estadoMaquina);
@@ -218,7 +260,7 @@ app.post('/v1/auth/login', async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();       
-        const rows = await conn.query("SELECT * FROM worker WHERE login = ? AND passwd = ?", [login, senha]);
+        const [rows] = await conn.query("SELECT * FROM worker WHERE login = ? AND passwd = ?", [login, senha]);
         if (rows.length > 0) {
             const user = rows[0];
             const token = jwt.sign({ id: user.login, nivel: user.access_level, nome: user.name }, SECRET_KEY, { expiresIn: '8h' });
@@ -227,6 +269,7 @@ app.post('/v1/auth/login', async (req, res) => {
             res.status(401).json({ sucesso: false, erro: "Credenciais inválidas" });
         }
     } catch (err) {
+        console.error("🚨 ERRO REAL DO BANCO DE DADOS:", err.message);
         res.status(500).json({ sucesso: false, erro: "Erro no servidor de autenticação" });
     } finally {
         if (conn) conn.release();
@@ -270,8 +313,19 @@ app.get('/v1/embrapac/logs', (req, res) => {
 app.put('/v1/embrapac/parametros', (req, res) => {
     const { meta, ciclo } = req.body;
     if (meta !== undefined) estadoMaquina.meta = parseInt(meta);
-    if (ciclo !== undefined) estadoMaquina.ciclo = parseInt(ciclo);
     
+    if (ciclo !== undefined) {
+        estadoMaquina.ciclo = parseInt(ciclo);
+        // A MÁGICA AQUI: Avisa o simulador que a velocidade mudou!
+        const pacoteVelocidade = { 
+            command: "UPDATE_SPEED", 
+            ciclo: estadoMaquina.ciclo, 
+            source: "Configuração" 
+        };
+        clienteMqtt.publish(topicoComando, JSON.stringify(pacoteVelocidade));
+    }
+    
+    // Mantendo o log e a resposta originais
     registrarLogServidor(`Parâmetros Alterados via API (Meta: ${estadoMaquina.meta}, Ciclo: ${estadoMaquina.ciclo}s)`, "ALERTA");
     io.emit('estadoAtualizado', estadoMaquina); 
     res.json({ sucesso: true, dados: estadoMaquina });
@@ -328,6 +382,16 @@ app.post('/v1/embrapac/comando/iniciar', (req, res) => {
     estadoMaquina.status = 'OPERANDO';
     estadoMaquina.motivoParada = ''; 
     estadoMaquina.ultimoUpdate = Date.now();
+
+    // >>> A MUDANÇA É AQUI: Agora a API também grita para o MQTT iniciar! <<<
+    const pacoteJson = { 
+        command: "START", 
+        timestamp: Date.now(), 
+        source: "API", 
+        ciclo: estadoMaquina.ciclo 
+    };
+    clienteMqtt.publish(topicoComando, JSON.stringify(pacoteJson));
+
     registrarLogServidor("Comando Remoto API: Iniciar", "NORMAL");
     io.emit('estadoAtualizado', estadoMaquina); 
     res.json({ sucesso: true });
@@ -336,25 +400,67 @@ app.post('/v1/embrapac/comando/iniciar', (req, res) => {
 app.post('/v1/embrapac/comando/parar', (req, res) => {
     estadoMaquina.status = 'PARADO';
     estadoMaquina.motivoParada = req.body.motivo || 'Parada Manual'; 
+    
+    // >>> A MUDANÇA É AQUI: Agora a API também grita para o MQTT parar! <<<
+    const pacoteJson = { 
+        command: "STOP", 
+        timestamp: Date.now(), 
+        source: "API" 
+    };
+    clienteMqtt.publish(topicoComando, JSON.stringify(pacoteJson));
+
     registrarLogServidor(`Parada Remota: ${estadoMaquina.motivoParada}`, "ALERTA");
     io.emit('estadoAtualizado', estadoMaquina); 
     res.json({ sucesso: true });
 });
 
-// ===== 7. LOOP CRONÔMETRO (DOWNTIME) =====
+// ===== 7. LOOP CRONÔMETRO E INTELIGÊNCIA (OEE) =====
 setInterval(() => {
     const agora = Date.now();
-    if (estadoMaquina.turnoAtivo && estadoMaquina.status !== 'OPERANDO') {
-        if (!estadoMaquina.inicioDowntimeMs) estadoMaquina.inicioDowntimeMs = agora;
-    } else if (estadoMaquina.inicioDowntimeMs) {
-        estadoMaquina.downtime += (agora - estadoMaquina.inicioDowntimeMs) / 1000;
-        estadoMaquina.inicioDowntimeMs = null;
+    
+    // Só calcula se existir um turno rodando
+    if (estadoMaquina.turnoAtivo) {
+        
+        // 1. Cálculo de tempo de parada (Downtime)
+        if (estadoMaquina.status !== 'OPERANDO') {
+            if (!estadoMaquina.inicioDowntimeMs) estadoMaquina.inicioDowntimeMs = agora;
+        } else if (estadoMaquina.inicioDowntimeMs) {
+            estadoMaquina.downtime += (agora - estadoMaquina.inicioDowntimeMs) / 1000;
+            estadoMaquina.inicioDowntimeMs = null;
+            salvarBackup(); 
+        }
+
+        // 2. Cálculo contínuo de OEE (MESCLADO E CORRIGIDO)
+        let tempoTotal = (agora - estadoMaquina.tsInicio) / 1000;
+        if (tempoTotal > 0) {
+            let currentDowntime = estadoMaquina.downtime;
+            // Estima o downtime em andamento para o gráfico não congelar
+            if (estadoMaquina.inicioDowntimeMs) {
+                currentDowntime += (agora - estadoMaquina.inicioDowntimeMs) / 1000;
+            }
+            
+            // A MÁGICA RECUPERADA: Agora ele subtrai também o tempo gasto produzindo refugo!
+            let tempoPerdido = currentDowntime + (estadoMaquina.refugo * estadoMaquina.ciclo);
+            let tempoValioso = tempoTotal - tempoPerdido;
+            if (tempoValioso < 0) tempoValioso = 0;
+
+            estadoMaquina.oee = parseFloat(((tempoValioso / tempoTotal) * 100).toFixed(1));
+        }
+
+        // 3. Atualiza as telas em tempo real
         io.emit('estadoAtualizado', estadoMaquina);
-        salvarBackup(); 
     }
-}, 500);
+}, 1000);
 
 const PORTA = process.env.PORT || 3000;
 server.listen(PORTA, () => {
     console.log(`[🚀] Servidor EmbraPac rodando na porta ${PORTA}`);
+});
+// ===== ESCUDO CONTRA CRASHES (ESSENCIAL PARA A FINALIZAÇÃO) =====
+process.on('uncaughtException', (err) => {
+    console.error('[!] Erro não capturado (evitando crash):', err.message);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('[!] Rejeição não tratada no Banco/MQTT:', reason);
 });
